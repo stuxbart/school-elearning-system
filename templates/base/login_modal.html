@@ -1,0 +1,64 @@
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+        <div class="modal-header text-white bg-info" style="background-color: #8a1002;">
+            <h5 class="modal-title" id="exampleModalLabel">Login</h5>
+            <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-4 col-6 mx-auto">
+                        <img class="card-img-top mx-auto" src="https://cas.p.lodz.pl/cas/images/kaf_pl.png" alt="Card image cap">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="row">
+                            <div class="col-6 ml-auto text-right">
+                                <h5>Languages</h5>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <form action="{% url 'login' %}" method="POST">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        <label for="recipient-name" class="col-form-label">Login:</label>
+                                        <input type="text" class="form-control" name="username" id="recipient-name">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="recipient-name" class="col-form-label">Password:</label>
+                                        <input type="password" class="form-control" name="password" id="recipient-name">
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row my-2">
+                    <div class="col">
+                        <div class="card">
+                            <div class="card-body">
+                                <p class="card-text">Loginem dla studentów jest numer albumu, natomiast dla pracowników
+                                    identyfikator użytkownika z adresu e-mail - zwykle: "[ imię.nazwisko ]".<br/>
+                                    
+                                    W pozostałych przypadkach należy podać pełny adres skrzynki pocztowej:<br/>
+                                    "[ nazwa-użytkownika ]@[ domena-poczty-PŁ ]".
+                                </p>
+                            <a href="#" class="card-link">Card link</a>
+                            <a href="#" class="card-link">Another link</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Discard</button>
+            <button type="submit" class="btn btn-info">Login</button>
+        </div>
+        </div>
+    </div>
+</div>
