@@ -22,16 +22,20 @@
                         </div>
                         <div class="row">
                             <div class="col">
-                                <form action="." method="POST">
+                                <form action="{% url 'accounts:login' %}" method="POST" class="login-form">
                                     {% csrf_token %}
                                     <div class="form-group">
                                         <label for="recipient-name" class="col-form-label">Login:</label>
-                                        <input type="text" class="form-control" name="username">
+                                        <input type="text" class="form-control" name="username" autocomplete="off" id='username'>
                                     </div>
                                     <div class="form-group">
                                         <label for="recipient-name" class="col-form-label">Password:</label>
-                                        <input type="password" class="form-control" name="password">
+                                        <input type="password" class="form-control" name="password" id='password'>
+                                        <small id="passwordHelpBlock" class="form-text text-danger" style="display: none;">
+                                            
+                                        </small>
                                     </div>
+                                    <input type="submit" style="display:none" />
                                 </form>
                             </div>
                         </div>
@@ -39,7 +43,7 @@
                 </div>
                 <div class="row my-2">
                     <div class="col">
-                        <div class="card">
+                        <div class="card login-help-info" style="display: none;">
                             <div class="card-body">
                                 <p class="card-text">Loginem dla studentów jest numer albumu, natomiast dla pracowników
                                     identyfikator użytkownika z adresu e-mail - zwykle: "[ imię.nazwisko ]".<br/>
@@ -57,7 +61,7 @@
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Discard</button>
-            <button type="submit" class="btn btn-info">Login</button>
+            <button type="button" class="btn btn-info login-form-submit">Login</button>
         </div>
         </div>
     </div>

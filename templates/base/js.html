@@ -4,3 +4,52 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
+<script>
+    $(document).ready(function() {
+        var loginForm = $('.login-form')
+        loginForm.submit(function(event){
+            event.preventDefault();
+            var thisForm = $(this)
+            var httpMethod = thisForm.attr('method')
+            var formEndpoint = thisForm.attr('action')
+            var formData = thisForm.serialize();
+            //pokazać ładowanie
+            $('#username').prop('disabled', true)
+            $('#password').prop('disabled', true)
+            $.ajax({
+                url: formEndpoint,
+                method: httpMethod,
+                data: formData,
+                success: function(data){
+                    console.log(data)
+                    loginForm[0].reset();
+                    if (data.full_name){
+                        $('.user-name-display').text(data.full_name)
+                    } else {
+                        $('.user-name-display').text(data.username)
+                    }
+                    
+                    $('.navbar-user-control').css('display', '')
+                    $('.navbar-login-button').css('display', 'none')
+                    $('#exampleModal').modal('hide')
+                    //zmienić navbar
+                    //zakończyć ładowanie
+                    // ukryć modal
+                    },
+                error: function(errorData){
+                    $('#username').addClass('is-invalid').prop('disabled', false)
+                    $('#password').addClass('is-invalid').prop('disabled', false)
+                    $('#passwordHelpBlock').html(errorData.responseJSON.message).css('display', '')
+                    $('.login-help-info').css('display', '')
+                    console.log("error")
+                    console.log(errorData)
+                    },
+                })
+            })
+
+        var loginFormSubmitButton = $('.login-form-submit')
+        loginFormSubmitButton.click(function(){
+            loginForm.submit();
+        })
+    })
+</script>
