@@ -6,6 +6,7 @@
 
 <script>
     $(document).ready(function() {
+        fetchSubjects();
         var loginForm = $('.login-form')
         loginForm.submit(function(event){
             event.preventDefault();
@@ -31,10 +32,10 @@
                     
                     $('.navbar-user-control').css('display', '')
                     $('.navbar-login-button').css('display', 'none')
+                    $('.subjects').css('display', '')
+                    fetchSubjects();
                     $('#exampleModal').modal('hide')
-                    //zmienić navbar
                     //zakończyć ładowanie
-                    // ukryć modal
                     },
                 error: function(errorData){
                     $('#username').addClass('is-invalid').prop('disabled', false)
@@ -46,7 +47,16 @@
                     },
                 })
             })
-
+        function fetchSubjects() {
+            subjects = [{ name: 'Algebra z Geometrią Analityczną II 2020', 'id': 4}, { name: 'Algebra z Geometrią Analityczną II 2020', 'id': 4}]
+            var subjectsList = $('.subjects > div > .subjects-list')
+            subjectsList.html('')
+            subjects.forEach((obj) => {
+                subjectsList.append(`<a class="dropdown-item" href="#">${obj.name}</a>`)
+            })
+            
+            subjectsList.html('<a class="dropdown-item" href="#">Algebra z Geometrią Analityczną II 2020</a><a class="dropdown-item" href="#">Algebra z Geometrią Analityczną II 2020</a>')
+        }
         var loginFormSubmitButton = $('.login-form-submit')
         loginFormSubmitButton.click(function(){
             loginForm.submit();

@@ -6,46 +6,43 @@
     
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
-        <li class="nav-item active">
-            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link login-modal" href="#">Poczta</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link login-modal" href="#">WebDziekanat</a>
-        </li>
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Moje przedmioty
-            </a>
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="#">Algebra z Geometrią Analityczną II 2020</a>
-                <a class="dropdown-item" href="#">Elementy Analizy Matematycznej I 2019/20</a>
-                <a class="dropdown-item" href="#">Elementy Analizy Matematycznej II 2020</a>
-                <a class="dropdown-item" href="#">Another action</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#">Przedmioty</a>
-            </div>
-        </li>
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Wirtualne Wydziały
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="#">WEEIA</a>
-                <a class="dropdown-item" href="#">WIPOS</a>
-                <a class="dropdown-item" href="#">Port</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#">Something else here</a>
-            </div>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link disabled" href="#">Disabled</a>
-        </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link login-modal" href="#">Poczta</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link login-modal" href="#">WebDziekanat</a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Wirtualne Wydziały
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="#">WEEIA</a>
+                    <a class="dropdown-item" href="#">WIPOS</a>
+                    <a class="dropdown-item" href="#">Port</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="#">Something else here</a>
+                </div>
+            </li>
+            <li class="nav-item dropdown subjects" style="{% if not request.user.is_authenticated %}display:none;{% else %}display: ;{% endif %}">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                My Subjects
+                </a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                    <div class="subjects-list">
+
+                    </div>
+                    <a class="dropdown-item" href="#">Physics</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="#">Subjects</a>
+                </div>
+            </li>
         </ul>
         
-    <ul class="navbar-nav ml-auto mr-4 navbar-user-control" style="{% if not request.user.is_authenticated %}display:none;{% else %}display: initial;{% endif %}">
+        <ul class="navbar-nav ml-auto mr-4 navbar-user-control" style="{% if not request.user.is_authenticated %}display:none;{% else %}display: ;{% endif %}">
             <li class="nav-item dropdown active">
             <a class="nav-link dropdown-toggle user-name-display" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{% if user.first_name and user.last_name %}{{ user.first_name }} {{ user.last_name }}{% else %}{{ user.username }}{% endif %}</a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
@@ -60,7 +57,7 @@
             </li>
         </ul>
 
-        <a class="nav-link btn btn-light btn-sm mr-4 navbar-login-button" data-toggle="modal" data-target="#exampleModal" href="#" style="{% if request.user.is_authenticated %}display:none;{% else %}display: initial;{% endif %}">Login</a>
+        <a class="nav-link btn btn-light btn-sm mr-4 navbar-login-button" data-toggle="modal" data-target="#exampleModal" href="#" style="{% if request.user.is_authenticated %}display:none;{% else %}display: ;{% endif %}">Login</a>
 
     </div>
 </nav>
