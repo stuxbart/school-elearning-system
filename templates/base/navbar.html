@@ -33,7 +33,11 @@
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                     <div class="subjects-list">
-
+                        {% if request.user.is_authenticated %}
+                            {% for course in request.user.courses.all %}
+                            <a class="dropdown-item" href="#">{{ course.title }}</a>
+                            {% endfor %}
+                        {% endif %}
                     </div>
                     <a class="dropdown-item" href="#">Physics</a>
                     <div class="dropdown-divider"></div>

@@ -6,7 +6,7 @@
 
 <script>
     $(document).ready(function() {
-        fetchSubjects();
+        // fetchSubjects();
         var loginForm = $('.login-form')
         loginForm.submit(function(event){
             event.preventDefault();
@@ -33,7 +33,7 @@
                     $('.navbar-user-control').css('display', '')
                     $('.navbar-login-button').css('display', 'none')
                     $('.subjects').css('display', '')
-                    fetchSubjects();
+                    //fetchSubjects();
                     $('#exampleModal').modal('hide')
                     //zakończyć ładowanie
                     },

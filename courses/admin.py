@@ -14,6 +14,7 @@ class ModuleAdmin(admin.ModelAdmin):
     list_display = ['subject','title','description']
     sortable_by = ['subject']
     inlines = [ContentInline]
+    
 
 @admin.register(Subject)
 class SubjectAdmin(admin.ModelAdmin):
@@ -25,4 +26,5 @@ class SubjectAdmin(admin.ModelAdmin):
             "updated",
             "created",
             ]
+    prepopulated_fields = {'slug': ('title',)}
     inlines = [ModuleInline]

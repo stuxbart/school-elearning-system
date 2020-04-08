@@ -17,6 +17,7 @@ class UserAdmin(BaseUserAdmin):
 
     fieldsets = (
         (None, {'fields': ('email', 'password', 'user_index')}),
+        ('Courses', {'fields': ('courses',)}),
         ('Personal Info', {'fields': ('full_name',)}),
         ('Permissions', {'fields': ('admin', 'staff', 'teacher', 'active')})
     )
@@ -29,6 +30,7 @@ class UserAdmin(BaseUserAdmin):
     )
     search_fields = ('email', 'full_name')
     ordering = ('email',)
+    
     filter_horizontal = ()
 
 admin.site.register(User, UserAdmin)
