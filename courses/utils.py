@@ -16,3 +16,11 @@ def slug_generator(instance, new_slug=None):
         new_slug = "{slug}-{randstr}".format(slug=slug, randstr=random_string_generator(length=5))
         return slug_generator(instance, new_slug=new_slug)
     return slug
+
+def user_index_generator(instance):
+    index = random_string_generator(length=6, chars=string.digits)
+    Klass = instance.__class__
+    qs_exists = Klass.objects.filter(user_index=index)
+    if qs_exists:
+        return user_index_generator(instance)
+    return index
