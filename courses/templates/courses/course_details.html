@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col mt-3">
+            <div class="row">
+                <div class="col-9">
+                    <h1>{{ object.title }}</h1>
+                        <p>
+                            Owner {{ object.owner.full_name }}<br/>
+                            Updated {{object.updated }}
+                        </p>
+                    <p>{{ object.overview }}</p>
+                </div>
+                <div class="col-3 py-3">
+                    <button class="btn btn-success btn-lg">Enroll</button>
+                </div>
+            </div>
+            
+            {% for module in object.module_set.all %}
+            <div class="card my-3">
+                <div class="card-header">
+                  {{ module.title }}
+                </div>
+                <div class="card-body">
+                  <blockquote class="blockquote mb-0">
+                    <p>{{ module.description }}</p>
+                    <footer class="blockquote-footer">{{ module.created }}</footer>
+                  </blockquote>
+                  <ul>
+                      {% for content in module.content_set.all %}
+                        <li>{{ content.item.title }}</li>
+                      {% endfor %}
+                  </ul>
+                </div>
+              </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

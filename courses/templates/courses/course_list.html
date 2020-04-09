@@ -12,7 +12,7 @@
             </a>
             {% if my_courses %}
             {% for course in my_courses %}
-            <a href="#" class="list-group-item list-group-item-action">
+            <a href="{% url 'courses:details' course.slug %}" class="list-group-item list-group-item-action">
               <div class="d-flex w-100 justify-content-between">
                 <h5 class="mb-1">{{ course.title }}</h5>
                 <small class="text-muted">{{ course.updated|timesince }} temu</small>
@@ -36,7 +36,7 @@
               </div>
             </a>
             {% for course in object_list %}
-            <a href="#" class="list-group-item list-group-item-action">
+            <a href="{% url 'courses:details' course.slug %}" class="list-group-item list-group-item-action">
               <div class="d-flex w-100 justify-content-between">
                 <h5 class="mb-1">{{ course.title }}</h5>
                 <small class="text-muted">{{ course.updated|timesince }} temu</small>

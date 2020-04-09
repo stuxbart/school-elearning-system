@@ -1,9 +1,22 @@
 from django.contrib import admin
 
-from .models import Subject, Module, Content
+from .models import Subject, Module, Content, Text, Image, File, Video
 # Register your models here.
-class ContentInline(admin.StackedInline):
+
+class TextInline(admin.StackedInline):
+    model = Text
+
+class ImageInline(admin.StackedInline):
+    model = Image
+
+class FileInline(admin.StackedInline):
+    model = File
+
+@admin.register(Content)
+class ContentAdmin(admin.ModelAdmin):
     model = Content
+    list_display = ['module', 'content_type', 'object_id', 'item']   
+    inlines = [] 
 
 class ModuleInline(admin.StackedInline):
     model = Module
@@ -11,9 +24,9 @@ class ModuleInline(admin.StackedInline):
 
 @admin.register(Module)
 class ModuleAdmin(admin.ModelAdmin):
-    list_display = ['subject','title','description']
+    list_display = ['title','subject','description']
     sortable_by = ['subject']
-    inlines = [ContentInline]
+    inlines = []
     
 
 @admin.register(Subject)
