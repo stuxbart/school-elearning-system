@@ -1,0 +1,72 @@
+.navbar-custom {
+    background-color: white;
+    /* border-bottom: rgb(150, 0, 142) 1px solid; */
+    border-bottom: #8a1002 1px solid;
+    -webkit-box-shadow: 0px 0px 22px -3px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 0px 22px -3px rgba(0,0,0,0.75);
+    box-shadow: 0px 0px 22px -3px rgba(0,0,0,0.75);
+}
+.navbar-login-button {
+    border: rgb(172, 19, 164) 1px solid ;
+    /* border: #8a1002  1px solid ; */
+    /* background-color: white; */
+}
+.btn-white {
+    background-color: white;
+    border: none;
+}
+.btn-white:hover {
+    background-color: white;
+    border: none;
+}
+.border-bottom-shadow {
+    border-bottom: rgb(150, 0, 142) 1px solid;
+    /* border-bottom: #8a1002 1px solid; */
+    -webkit-box-shadow: 0px 0px 8 -3px rgba(0,0,0,0.5);
+    -moz-box-shadow: 0px 0px 8 -3px rgba(0,0,0,0.5);
+    box-shadow: 0px 0px 8px -3px rgba(0,0,0,0.5);
+}
+.bg-white {
+    background-color: white;
+}
+.border-top-shadow {
+    border-top: rgb(150, 0, 142) 1px solid;
+    /* border-top: #8a1002 1px solid; */
+    -webkit-box-shadow: 0px 0px 8 -3px rgba(0,0,0,0.5);
+    -moz-box-shadow: 0px 0px 8 -3px rgba(0,0,0,0.5);
+    box-shadow: 0px 0px 8px -3px rgba(0,0,0,0.5);
+}
+/* login modal */
+
+/* home cards */
+.home .card-header{
+    background: url(http://127.0.0.1:8000/static/img/rysunek.svg) center no-repeat;
+    background-size: cover;
+    /* filter: invert(15%) sepia(0%) saturate(1600%) hue-rotate(330deg) brightness(104%) contrast(97%); */
+}
+.home .card-body > a {
+    background-color: rgb(172, 19, 164);
+    border-color: white;
+}
+.home  .card{
+    -webkit-box-shadow: 0px 2px 8 -3px rgba(0,0,0,0.5);
+    -moz-box-shadow: 0px 2px 8 -3px rgba(0,0,0,0.5);
+    box-shadow: 0px 2px 8px -3px rgba(0,0,0,0.5);
+    background: url(http://127.0.0.1:8000/static/img/rysunek-1.svg) bottom no-repeat;
+    background-size: auto;
+    background-position: right bottom;
+    border: none;
+    transition: 0.2s all;
+}
+.home .card:hover{
+    -webkit-box-shadow: 3px 5px 12px -3px rgba(0,0,0,0.5);
+    -moz-box-shadow: 3px 5px 12px -3px rgba(0,0,0,0.5);
+    box-shadow: 3px 5px 12px -3px rgba(0,0,0,0.5);
+    border: none;
+}
+
+.modal-header{
+    background: url(http://127.0.0.1:8000/static/img/rysunek.svg) left no-repeat;
+    background-size: cover;
+    background-position: left;
+}

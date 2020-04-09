@@ -8,11 +8,12 @@
     <title>E-Learning</title>
   </head>
   <body>
+    <header>
     {% include 'base/navbar.html' %}
-    
-    <div class="container">
+  </header>
+
         {% block content %}{% endblock %}      
-    </div>
+
 
     {% include 'accounts/snippets/login_modal.html' %}
     
