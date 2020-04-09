@@ -63,7 +63,7 @@ class User(AbstractBaseUser):
     admin       = models.BooleanField(default=False)  # superuser
     timestamp   = models.DateTimeField(auto_now_add=True)
 
-    courses = models.ManyToManyField(Subject, related_name='participants')
+    courses = models.ManyToManyField(Subject, related_name='participants', blank=True)
     # user_photo
     # about
     # class
