@@ -6,6 +6,50 @@
 
 <script>
     $(document).ready(function() {
+        var infoModal = $('.info-modal')
+        // infoModal.on('show.bs.modal', function(event){
+        //     console.log(event)
+        // })
+        infoModal.on('hidden.bs.modal', function(event){
+            window.location.reload()
+        })
+        // Enroll Modal
+        var enrollModal = $('#enroll-modal')
+        var enrollBtn = $('.enroll-btn')
+        enrollBtn.click(function(){
+            enrollModal.modal('show')
+        })
+        var enrollForm = $('#enroll-form')
+        enrollForm.submit(function(event){
+            event.preventDefault();
+            var thisForm = $(this)
+            var httpMethod = thisForm.attr('method')
+            var formEndpoint = thisForm.attr('action')
+            var formData = thisForm.serialize();
+            $.ajax({
+                url: formEndpoint,
+                method: httpMethod,
+                data: formData,
+                success: function(data){
+                    console.log(data)
+                    enrollModal.modal('hide')
+                    infoModal.find('.modal-body').text('Gratulacje')
+                    
+                    infoModal.modal('show')
+                    // close modal
+                    // fetch course content
+                    // remove enroll button
+                    // show conrim
+                },
+                error: function(errorData){
+                    console.log(errorData)
+                    enrollModal.find('#course_access_key').addClass("is-invalid")
+                    enrollModal.find('.invalid-feedback').text(errorData.responseJSON.message)
+                }
+            })
+        })
+        
+
         // fetchSubjects();
         var loginForm = $('.login-form')
         loginForm.submit(function(event){

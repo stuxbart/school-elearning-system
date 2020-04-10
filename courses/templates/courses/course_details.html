@@ -14,7 +14,11 @@
                     <p>{{ object.overview }}</p>
                 </div>
                 <div class="col-3 py-3">
-                    <button class="btn btn-success btn-lg">Enroll</button>
+                  {% if user not in object.participants.all %}
+                    <button class="btn btn-success btn-lg enroll-btn">Enroll</button>
+                  {% else %}
+                  <h3 class="text-muted">You already enrolled</h2>
+                  {% endif %}
                 </div>
             </div>
             
@@ -39,4 +43,10 @@
         </div>
     </div>
 </div>
+{% include 'courses/snippets/enroll_modal.html' with object=object %}
+{% include 'courses/snippets/info_modal.html' with object=object %}
+{% endblock %}
+
+{% block domready %}
+console.log('elo')
 {% endblock %}

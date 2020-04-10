@@ -15,7 +15,7 @@ class Subject(models.Model):
     owner       = models.ForeignKey(User, on_delete=models.CASCADE, related_name='subjects')
     overview    = models.TextField()
     # many owners
-    #access key
+    access_key  = models.CharField(max_length=100, blank=True, null=True)
     updated     = models.DateTimeField(auto_now=True)
     created     = models.DateTimeField(auto_now_add=True)
 
