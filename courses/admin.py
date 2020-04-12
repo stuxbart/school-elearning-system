@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Subject, Module, Content, Text, Image, File, Video
+from .models import Course, Module, Content, Text, Image, File, Video
 # Register your models here.
 
 class TextInline(admin.StackedInline):
@@ -24,13 +24,13 @@ class ModuleInline(admin.StackedInline):
 
 @admin.register(Module)
 class ModuleAdmin(admin.ModelAdmin):
-    list_display = ['title','subject','description']
-    sortable_by = ['subject']
+    list_display = ['title','course','description']
+    sortable_by = ['course']
     inlines = []
     
 
-@admin.register(Subject)
-class SubjectAdmin(admin.ModelAdmin):
+@admin.register(Course)
+class CourseAdmin(admin.ModelAdmin):
     list_display = [
             "title",
             "slug",     

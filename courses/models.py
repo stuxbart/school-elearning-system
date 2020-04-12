@@ -9,10 +9,10 @@ from .utils import slug_generator
 User = settings.AUTH_USER_MODEL
 
 # Create your models here.
-class Subject(models.Model):
+class Course(models.Model):
     title       = models.CharField(max_length=255)
     slug        = models.SlugField(unique=True)
-    owner       = models.ForeignKey(User, on_delete=models.CASCADE, related_name='subjects')
+    owner       = models.ForeignKey(User, on_delete=models.CASCADE)
     overview    = models.TextField()
     # many owners
     access_key  = models.CharField(max_length=100, blank=True, null=True)
@@ -22,14 +22,14 @@ class Subject(models.Model):
     def __str__(self):
         return self.title
 
-def subject_pre_save_receiver(sender, instance, *args, **kwargs):
+def course_pre_save_receiver(sender, instance, *args, **kwargs):
     if not instance.slug:
         instance.slug = slug_generator(instance)
 
-pre_save.connect(subject_pre_save_receiver, sender=Subject)
+pre_save.connect(course_pre_save_receiver, sender=Course)
 
 class Module(models.Model):
-    subject     = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    course      = models.ForeignKey(Course, on_delete=models.CASCADE, null=True, blank=True)
     title       = models.CharField(max_length=255)
     description = models.TextField()
     # ordering

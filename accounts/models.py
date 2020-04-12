@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 # Create your models here.
 
 from courses.utils import user_index_generator
-from courses.models import Subject
+from courses.models import Course
 
 class UserManager(BaseUserManager):
     def create_user(self, email, full_name=None, password=None, is_active=True, is_staff=False, is_teacher=False, is_admin=False):
@@ -63,7 +63,7 @@ class User(AbstractBaseUser):
     admin       = models.BooleanField(default=False)  # superuser
     timestamp   = models.DateTimeField(auto_now_add=True)
 
-    courses = models.ManyToManyField(Subject, related_name='participants', blank=True)
+    courses = models.ManyToManyField(Course, related_name='participants', blank=True)
     # user_photo
     # about
     # class
