@@ -22,6 +22,10 @@ class Course(models.Model):
     def __str__(self):
         return self.title
 
+    def get_absolute_url(self):
+        return reverse("manager:update", kwargs={"slug": self.slug})
+    
+
 def course_pre_save_receiver(sender, instance, *args, **kwargs):
     if not instance.slug:
         instance.slug = slug_generator(instance)

@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <a class="btn btn-success" href="{% url 'manage:create' %}">Add Course</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <ul class="list-group mt-4">
+                {% for course in object_list %}
+                    <li class="list-group-item">
+                       <div class="row">
+                           <div class="col-12 col-md-8 px-auto">
+                               <h3>{{ course.title }}</h3>
+                           </div>
+                           <div class="col-12 col-md-4">
+                                <div class="btn-group" role="group" aria-label="Basic example">
+                                    <a class="btn btn-primary text-white">
+                                        Actions <span class="badge badge-light">9</span>
+                                        <span class="sr-only">unread messages</span>
+                                    </a>
+                                    <a href="" class="btn btn-success">Add</a>
+                                    <a href="{% url 'manage:update' course.slug %}" class="btn btn-secondary">Edit</a>
+                                    <a href="" class="btn btn-danger">Delete</a>
+                                </div>
+                           </div>
+                       </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+<ul class="list-group">
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      Cras justo odio
+      <span class="badge badge-primary badge-pill">14</span>
+    </li>
+  </ul>
