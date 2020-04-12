@@ -44,6 +44,9 @@
                     </div>
                   </div>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'manage:list' %}">Manage Courses</a>
+            </li>
         </ul>
         
         <ul class="navbar-nav ml-auto mr-4 navbar-user-control" style="{% if not request.user.is_authenticated %}display:none;{% else %}display: ;{% endif %}">
