@@ -3,11 +3,14 @@
 {% block content %}
 <div class="container">
     <div class="row">
-        <div class="col">
+        <div class="col-8">
             <h2>{{ object.title }}</h2>
             <p>{{ object.overview }}</p>
             <p>Updated: {{object.updated }}</p>
             <p>Created: {{object.created }}</p>
+        </div>
+        <div class="col-4">
+            <button class="btn btn-success course-add-module-button">Add module</button>
         </div>
     </div>
     <div class="row">
@@ -44,4 +47,5 @@
 </div>
 {% include 'content_manage/snippets/add_content_modal.html' with forms=forms %}
 {% include 'courses/snippets/info_modal.html' with object=object %}
+{% include 'content_manage/snippets/add_module_modal.html' with form=forms.module %}
 {% endblock %}

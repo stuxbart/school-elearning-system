@@ -155,6 +155,17 @@
             var activeContentForm = activeContentFormDiv.find('form')
             activeContentForm.submit();
         })
+        var addModuleModal = $('.module-add-module-modal')
+        var addModuleButton = $('.course-add-module-button')
+        addModuleButton.click(function(event){
+            addModuleModal.modal('show')
+        })
+        var addModuleSubmitButton = $('.add-module-modal-submit-btn')
+        addModuleSubmitButton.click(function(event){
+            var addModuleForm = $('.add-module-form')
+            addModuleForm.submit()
+        })
+
     })
     
 </script>

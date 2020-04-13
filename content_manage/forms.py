@@ -1,5 +1,5 @@
 from django import forms
-from courses.models import Text, Image, File, Video
+from courses.models import Text, Image, File, Video, Module
 
 class CourseUpdateForm(forms.Form):
     title = forms.CharField(max_length=200, widget=forms.TextInput)
@@ -54,3 +54,12 @@ class VideoContentForm(forms.ModelForm):
     class Meta:
         model = Video
         fields = ['title', 'file']
+
+class ModuleCreateForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['title'].widget.attrs.update({'class': 'form-control', 'autocomplete': 'off'})
+        self.fields['description'].widget.attrs.update({'class': 'form-control'})
+    class Meta:
+        model = Module
+        fields = ['title', 'description']

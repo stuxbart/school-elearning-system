@@ -3,7 +3,14 @@ from django.shortcuts import render, redirect, get_object_or_404, reverse
 from django.views.generic import ListView, FormView, DetailView
 from django.http import JsonResponse
 
-from .forms import CourseUpdateForm, TextContentForm, ImageContentForm, FileContentForm, VideoContentForm
+from .forms import (
+        CourseUpdateForm,
+        TextContentForm, 
+        ImageContentForm, 
+        FileContentForm, 
+        VideoContentForm, 
+        ModuleCreateForm
+    )
 from courses.models import Course, Content, Module, Text
 
 class ManageCourseList(LoginRequiredMixin, ListView):
@@ -64,7 +71,8 @@ class CourseAddContentView(LoginRequiredMixin, DetailView):
                 'text': {'instance' :TextContentForm(),'action': reverse('manage:add_content_text')},
                 'image': {'instance' :ImageContentForm(), 'action': reverse('manage:add_content_image')},
                 'file': {'instance': FileContentForm(), 'action': reverse('manage:add_content_file')},
-                'video': {'instance': VideoContentForm(), 'action': reverse('manage:add_content_video')}
+                'video': {'instance': VideoContentForm(), 'action': reverse('manage:add_content_video')},
+                'module': {'instance': ModuleCreateForm(), 'action': reverse('manage:add_module', kwargs={'slug': context['object'].slug})}
             }
         return context
     
@@ -201,5 +209,35 @@ class CreateVideoContentView(LoginRequiredMixin, FormView):
                 'message': 'success',
             }
             return JsonResponse(data, status=400)
+        else:
+            return response
+
+
+class CreateModuleContentView(LoginRequiredMixin, FormView):
+    form_class = ModuleCreateForm
+    success_url = '/'
+    template_name = 'content_manage/success.html'
+
+    def post(self, request, *args, **kwargs):
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        if form.is_valid():
+            slug = kwargs.get('slug')
+            course_obj = get_object_or_404(Course, slug=slug)
+            form.instance.course = course_obj
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        form.save()
+        if self.request.is_ajax():
+            print(form.cleaned_data)
+            data = {
+                'message': 'success',
+            }
+            return JsonResponse(data)
         else:
             return response
