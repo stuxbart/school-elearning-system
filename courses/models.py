@@ -62,6 +62,10 @@ class ItemBase(models.Model):
     def __str__(self):
         return self.title
 
+    def get_absolute_url(self):
+        return reverse(f"courses:{self.__class__.__name__.lower()}_detail", kwargs={"pk": self.pk})
+    
+
 class Text(ItemBase):
     content = models.TextField()
 

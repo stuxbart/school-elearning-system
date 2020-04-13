@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, HttpResponse
 from django.views.generic import ListView, DetailView
 from django.http import JsonResponse
-from .models import Course
+from .models import Course, Text, Image, File, Video
 # Create your views here.
 class CourseListView(ListView):
     model = Course
@@ -38,3 +38,19 @@ def enroll_course(request):
         else:
             return JsonResponse({'message': 'zaloguj sie'}, status=400)
     return JsonResponse({'message': 'not gut'}, status=400)
+
+class TextDetailView(DetailView):
+    model = Text
+    template_name = 'courses/content/text.html'
+
+class ImageDetailView(DetailView):
+    model = Image
+    template_name = 'courses/content/image.html'
+
+class FileDetailView(DetailView):
+    model = File
+    template_name = 'courses/content/file.html'
+
+class VideoDetailView(DetailView):
+    model = Video
+    template_name = 'courses/content/video.html'

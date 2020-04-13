@@ -34,7 +34,7 @@
                   </blockquote>
                   <ul>
                       {% for content in module.content_set.all %}
-                        <li>{{ content.item.title }}</li>
+                        <li><a href="{{ content.item.get_absolute_url }}">{{ content.item.title }}</a></li>
                       {% endfor %}
                   </ul>
                 </div>
