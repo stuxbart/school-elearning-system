@@ -3,6 +3,7 @@ from django.conf import settings
 from django.db.models.signals import pre_save
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
+from django.shortcuts import reverse
 
 from .utils import slug_generator
 
@@ -50,8 +51,8 @@ class Content(models.Model):
 
 
 class ItemBase(models.Model):
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
-    title = models.CharField(max_length=255)
+    owner       = models.ForeignKey(User, on_delete=models.CASCADE)
+    title       = models.CharField(max_length=255)
     updated     = models.DateTimeField(auto_now=True)
     created     = models.DateTimeField(auto_now_add=True)
 

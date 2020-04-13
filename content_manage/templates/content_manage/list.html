@@ -22,7 +22,7 @@
                                         Actions <span class="badge badge-light">9</span>
                                         <span class="sr-only">unread messages</span>
                                     </a>
-                                    <a href="" class="btn btn-success">Add</a>
+                                    <a href="{% url 'manage:add_content' course.slug %}" class="btn btn-success">Add</a>
                                     <a href="{% url 'manage:update' course.slug %}" class="btn btn-secondary">Edit</a>
                                     <a href="" class="btn btn-danger">Delete</a>
                                 </div>

@@ -1,9 +1,10 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect, get_object_or_404, reverse
-from django.views.generic import ListView, FormView
+from django.views.generic import ListView, FormView, DetailView
+from django.http import JsonResponse
 
-from .forms import CourseUpdateForm
-from courses.models import Course
+from .forms import CourseUpdateForm, TextContentForm, ImageContentForm, FileContentForm, VideoContentForm
+from courses.models import Course, Content, Module, Text
 
 class ManageCourseList(LoginRequiredMixin, ListView):
     model = Course
@@ -53,3 +54,152 @@ class ManageCourseEdit(LoginRequiredMixin, FormView):
         self.success_url = reverse('manage:update',kwargs={'slug': self.object.slug})
         return super(ManageCourseEdit, self).form_valid(form)
 
+class CourseAddContentView(LoginRequiredMixin, DetailView):
+    model = Course
+    template_name = 'content_manage/add_content.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(CourseAddContentView, self).get_context_data(**kwargs)
+        context["forms"] = {
+                'text': {'instance' :TextContentForm(),'action': reverse('manage:add_content_text')},
+                'image': {'instance' :ImageContentForm(), 'action': reverse('manage:add_content_image')},
+                'file': {'instance': FileContentForm(), 'action': reverse('manage:add_content_file')},
+                'video': {'instance': VideoContentForm(), 'action': reverse('manage:add_content_video')}
+            }
+        return context
+    
+
+class CreateTextContentView(LoginRequiredMixin, FormView):
+    form_class = TextContentForm
+    success_url = '/'
+    
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        module_id = form.cleaned_data.get('module_id')
+        module_obj = get_object_or_404(Module, pk=module_id)
+        form.instance.owner = self.request.user
+        item = form.save()
+        content_obj = Content(module=module_obj, item=item)
+        content_obj.save()
+        if self.request.is_ajax():
+            print(form.cleaned_data)
+            data = {
+                'message': 'success',
+            }
+            return JsonResponse(data)
+        else:
+            return response
+
+class CreateImageContentView(LoginRequiredMixin, FormView):
+    form_class = ImageContentForm
+    success_url = '/'
+
+    def post(self, request, *args, **kwargs):
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        print('files: ', request.FILES)
+        print('post: ', request.POST)
+        print(form.errors)
+        
+        if form.is_valid():
+            # for f in files:
+            #     ...  # Do something with each file.
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+    
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        module_id = form.cleaned_data.get('module_id')
+        module_obj = get_object_or_404(Module, pk=module_id)
+        form.instance.owner = self.request.user
+        item = form.save()
+        content_obj = Content(module=module_obj, item=item)
+        content_obj.save()
+        if self.request.is_ajax():
+            print(form.cleaned_data)
+            data = {
+                'message': 'success',
+            }
+            return JsonResponse(data)
+        else:
+            return response
+
+    def form_invalid(self, form):
+        response = super().form_invalid(form)
+        if self.request.is_ajax():
+            
+            print(form.cleaned_data)
+            data = {
+                'message': 'success',
+            }
+            return JsonResponse(data, status=400)
+        else:
+            return response
+
+
+class CreateFileContentView(LoginRequiredMixin, FormView):
+    form_class = FileContentForm
+    success_url = '/'
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        module_id = form.cleaned_data.get('module_id')
+        module_obj = get_object_or_404(Module, pk=module_id)
+        form.instance.owner = self.request.user
+        item = form.save()
+        content_obj = Content(module=module_obj, item=item)
+        content_obj.save()
+        if self.request.is_ajax():
+            print(form.cleaned_data)
+            data = {
+                'message': 'success',
+            }
+            return JsonResponse(data)
+        else:
+            return response
+
+    def form_invalid(self, form):
+        response = super().form_invalid(form)
+        if self.request.is_ajax():
+            print(form.cleaned_data)
+            data = {
+                'message': 'not gut',
+            }
+            return JsonResponse(data, status=400)
+        else:
+            return response
+
+
+class CreateVideoContentView(LoginRequiredMixin, FormView):
+    form_class = VideoContentForm
+    success_url = '/'
+    
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        module_id = form.cleaned_data.get('module_id')
+        module_obj = get_object_or_404(Module, pk=module_id)
+        form.instance.owner = self.request.user
+        item = form.save()
+        content_obj = Content(module=module_obj, item=item)
+        content_obj.save()
+        if self.request.is_ajax():
+            print(form.cleaned_data)
+            data = {
+                'message': 'success',
+            }
+            return JsonResponse(data)
+        else:
+            return response
+
+    def form_invalid(self, form):
+        response = super().form_invalid(form)
+        if self.request.is_ajax():
+            
+            print(form.cleaned_data)
+            data = {
+                'message': 'success',
+            }
+            return JsonResponse(data, status=400)
+        else:
+            return response

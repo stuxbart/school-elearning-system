@@ -1,0 +1,57 @@
+<div class="modal fade module-add-text-modal" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalCenterTitle">Modal title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-4">
+                  <div class="list-group" id="list-tab" role="tablist">
+                    <a class="list-group-item list-group-item-action active" id="list-text-list" data-toggle="list" href="#list-text" role="tab" aria-controls="text">Text</a>
+                    <a class="list-group-item list-group-item-action" id="list-image-list" data-toggle="list" href="#list-image" role="tab" aria-controls="image">Image</a>
+                    <a class="list-group-item list-group-item-action" id="list-file-list" data-toggle="list" href="#list-file" role="tab" aria-controls="file">File</a>
+                    <a class="list-group-item list-group-item-action" id="list-video-list" data-toggle="list" href="#list-video" role="tab" aria-controls="video">Video</a>
+                  </div>
+                </div>
+                <div class="col-8">
+                  <div class="tab-content" id="nav-tabContent">
+                    <div class="tab-pane fade show active" id="list-text" role="tabpanel" aria-labelledby="list-text-list">
+                        <form action="{{ forms.text.action }}" method="POST" class="add-content-form">
+                            {% csrf_token %}
+                            {{ forms.text.instance }}
+                        </form>
+                    </div>
+                    <div class="tab-pane fade" id="list-image" role="tabpanel" aria-labelledby="list-image-list">
+                        <form action="{{ forms.image.action }}" method="POST" class="add-content-form custom-file">
+                          {% csrf_token %}
+                          {{ forms.image.instance.as_p }}
+                        </form>
+                    </div>
+                    <div class="tab-pane fade" id="list-file" role="tabpanel" aria-labelledby="list-file-list">
+                      <form action="{{ forms.file.action }}" method="POST" class="add-content-form custom-file">
+                        {% csrf_token %}
+                        {{ forms.file.instance.as_p }}
+                      </form>
+                    </div>
+                    <div class="tab-pane fade" id="list-video" role="tabpanel" aria-labelledby="list-video-list">
+                      <form action="{{ forms.video.action }}" method="POST" class="add-content-form">
+                        {% csrf_token %}
+                        {{ forms.video.instance.as_p }}
+                      </form>
+                    </div>
+                  </div>
+                </div>
+            </div>
+            
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-success add-content-modal-submit-btn">Submit</button>
+        </div>
+      </div>
+    </div>
+</div>

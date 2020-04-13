@@ -105,5 +105,56 @@
         loginFormSubmitButton.click(function(){
             loginForm.submit();
         })
+
+        // add content modal
+        var addContentModal = $('.module-add-text-modal')
+        var moduleAddTextButton = $('.module-add-text')
+        moduleAddTextButton.click(function(event){
+            addContentModal.modal('show', data={'ta': 'nom'})
+            addContentModal.find('.add-content-form').find('#id_module_id').val(event.originalEvent.target.dataset.id)
+            
+        })
+        addContentModal.on('show.bs.modal', function(event){
+            var thisModal = $(this)
+            // console.log(thisModal.find('.add-content-form').find('#id_module_id').val())
+        })
+        var addContentForm = addContentModal.find('.add-content-form')
+        addContentForm.submit(function(event){
+            event.preventDefault();
+            var thisForm = $(this)
+            var httpMethod = thisForm.attr('method')
+            var formEndpoint = thisForm.attr('action')
+            // var formData = thisForm.serialize();
+            var fd = new FormData(this);
+            // if (thisForm.attr('data-type') === 'image'){
+            //     var files = thisForm.find('#id_file')[0].files[0];
+            // }
+                        
+
+            $.ajax({
+                url: formEndpoint,
+                method: httpMethod,
+                data: fd,
+                enctype: 'multipart/form-data',
+                contentType: false,
+                cache: false,
+                processData:false,
+                success: function(data){
+                    infoModal.find('.modal-body').text(data.message)
+                    addContentModal.modal('hide')
+                    infoModal.modal('show')
+                },
+                error: function(errorData){
+                    console.log(errorData)
+                }
+            })
+        })
+        var contentSubmitBtn = $('.add-content-modal-submit-btn')
+        contentSubmitBtn.click(function(event){
+            var activeContentFormDiv = addContentModal.find('.tab-pane.fade.show.active')
+            var activeContentForm = activeContentFormDiv.find('form')
+            activeContentForm.submit();
+        })
     })
+    
 </script>

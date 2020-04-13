@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h2>{{ object.title }}</h2>
+            <p>{{ object.overview }}</p>
+            <p>Updated: {{object.updated }}</p>
+            <p>Created: {{object.created }}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            {% for module in object.module_set.all %}
+                <li class="list-group-item">
+                    <div class="row my-2">
+                        <div class="col-8">
+                            <h4>{{ module.title }}</h4>
+                        </div>
+                        <div class="col-4 text-right">
+                            <button type="button" data-id="{{ module.id }}" class="btn btn-success module-add-text">Add</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <ul class="list-group">
+                                {% for content in module.content_set.all %}
+                                <li class="list-group-item">
+                                    {{ content.item.title }}
+                                    <p>Created: {{ content.item.created }}</p>
+                                    <p>{{ content.content_type }}</p>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    
+                </li>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% include 'content_manage/snippets/add_content_modal.html' with forms=forms %}
+{% include 'courses/snippets/info_modal.html' with object=object %}
+{% endblock %}
