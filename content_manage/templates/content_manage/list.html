@@ -14,7 +14,7 @@
                     <li class="list-group-item">
                        <div class="row">
                            <div class="col-12 col-md-8 px-auto">
-                               <h3>{{ course.title }}</h3>
+                               <a href="{% url 'manage:course_home' course.slug %}"><h3>{{ course.title }}</h3></a>
                            </div>
                            <div class="col-12 col-md-4">
                                 <div class="btn-group" role="group" aria-label="Basic example">

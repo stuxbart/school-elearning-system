@@ -30,7 +30,7 @@
                             <ul class="list-group">
                                 {% for content in module.content_set.all %}
                                 <li class="list-group-item">
-                                    {{ content.item.title }}
+                                    <a href="{{ content.item.get_absolute_url }}">{{ content.item.title }}</a>
                                     <p>Created: {{ content.item.created }}</p>
                                     <p>{{ content.content_type }}</p>
                                 </li>

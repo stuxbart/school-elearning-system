@@ -48,12 +48,13 @@
     background-color: rgb(172, 19, 164);
     border-color: white;
 }
-.home  .card{
+.home .card{
     -webkit-box-shadow: 0px 2px 8 -3px rgba(0,0,0,0.5);
     -moz-box-shadow: 0px 2px 8 -3px rgba(0,0,0,0.5);
     box-shadow: 0px 2px 8px -3px rgba(0,0,0,0.5);
     background: url(http://127.0.0.1:8000/static/img/rysunek-1.svg) bottom no-repeat;
     background-size: auto;
+    background-color: white;
     background-position: right bottom;
     border: none;
     transition: 0.2s all;
@@ -69,4 +70,33 @@
     background: url(http://127.0.0.1:8000/static/img/rysunek.svg) left no-repeat;
     background-size: cover;
     background-position: left;
+}
+body {
+    background-color: rgb(250, 250, 250);
+}
+.course-main .card{
+    -webkit-box-shadow: 3px 5px 12px -3px rgba(0,0,0,0.5);
+    -moz-box-shadow: 3px 5px 12px -3px rgba(0,0,0,0.5);
+    box-shadow: 3px 5px 12px -3px rgba(0,0,0,0.5);
+    border: none;
+    border-top: 3px solid rgb(150, 0, 142);
+    border-radius: 5px;
+}
+pre {
+    display: block;
+    border-radius: 4px;
+    padding: 10px;
+    margin-top: 7px;
+    background-color: rgb(243, 243, 243);
+    border: 1px solid rgb(189, 189, 189);
+}
+/* code {
+    background-color: rgb(243, 243, 243);
+    border: 1px solid rgb(189, 189, 189);
+    
+} */
+.container{
+    background-color: white;
+    min-height: 90vh;
+    min-width: 7v;
 }

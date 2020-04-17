@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container course-main">
+    <div class="row mt-4">
+        <div class="col-6 mr-auto p-3 pl-5 card">
+            <h2>{{ object.title }}</h2>
+            <p class="text-muted">
+                Created: {{ object.created }}</br>
+                Updated: {{ object.updated }}
+            </p>
+            <p>
+                Modules: {{ object.module_set.count }}</br>
+                Content:
+                <ul>
+                    <li>Texts: {{ object.texts }}</li>
+                    <li>Images: {{ object.images }}</li>
+                    <li>Files: {{ object.files }}</li>
+                    <li>Videos: {{ object.videos }}</li>
+                </ul>
+            </p>
+        </div>
+        <div class="col-5">
+            <div class="row my-4">
+                <div class="col-8 mx-auto px-0 card">
+                    <div class="btn-group-vertical" role="group" aria-label="Basic example">
+                        <a class="btn text-dark" href="{% url 'manage:update' object.slug %}"><h5>Update Course Info</h5></a>
+                        <a class="btn text-dark" href="{% url 'manage:add_content' object.slug %}"><h5>Add Content</h5></a>
+                    </div>
+                    
+                </div>
+            </div>
+            <div class="row">
+                <div class="col card" >
+                    <h4>Participants</h4>
+                    <div class="overflow-auto" style="max-height: 200px; overflow-y: auto;" >
+                            <table class="table table-borderless">
+                                <thead>
+                                  <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Last Tiem Active</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                    {% for participant in object.participants.all %}
+                                    <tr>
+                                        <th scope="row">{{ forloop.counter }}</th>
+                                        <td>{{ participant.user_index }}</td>
+                                        <td>Otto</td>
+                                    </tr>
+                                    {% endfor %}
+                                    <tr>
+                                        <th scope="row">1</th>
+                                        <td>Mark</td>
+                                        <td>Otto</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">2</th>
+                                        <td>Jacob</td>
+                                        <td>Thornton</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">3</th>
+                                        <td>Jacob</td>
+                                        <td>Thornton</td>
+                                    </tr>
+                                </tbody>
+                              </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col my-4 card">
+            <h3 class="text-center">Latest Activity</h3>
+            <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">First</th>
+                    <th scope="col">Last</th>
+                    <th scope="col">Handle</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">1</th>
+                    <td>Mark</td>
+                    <td>Otto</td>
+                    <td>@mdo</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">2</th>
+                    <td>Jacob</td>
+                    <td>Thornton</td>
+                    <td>@fat</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">3</th>
+                    <td>Larry</td>
+                    <td>the Bird</td>
+                    <td>@twitter</td>
+                  </tr>
+                </tbody>
+              </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

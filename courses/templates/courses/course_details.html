@@ -32,11 +32,13 @@
                     <p>{{ module.description }}</p>
                     <footer class="blockquote-footer">{{ module.created }}</footer>
                   </blockquote>
+                  {% if user in object.participants.all %}
                   <ul>
                       {% for content in module.content_set.all %}
                         <li><a href="{{ content.item.get_absolute_url }}">{{ content.item.title }}</a></li>
                       {% endfor %}
                   </ul>
+                  {% endif %}
                 </div>
               </div>
             {% endfor %}

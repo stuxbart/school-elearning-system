@@ -8,7 +8,8 @@ from .views import (
         CreateImageContentView,
         CreateFileContentView,
         CreateVideoContentView,
-        CreateModuleContentView
+        CreateModuleContentView,
+        ManageCourseMainView
     )
 
 app_name = 'manage'
@@ -16,6 +17,7 @@ app_name = 'manage'
 urlpatterns = [
     path('', ManageCourseList.as_view(), name='list'),
     path('course/', ManageCourseEdit.as_view(), name="create"),
+    path('course/<slug>', ManageCourseMainView.as_view(), name="course_home"),
     path('course/<slug>/edit', ManageCourseEdit.as_view(), name="update"),
     path('course/<slug>/add', CourseAddContentView.as_view(), name="add_content"),
     path('course/<slug>/add-module', CreateModuleContentView.as_view(), name="add_module"),

@@ -11,7 +11,7 @@ from .forms import (
         VideoContentForm, 
         ModuleCreateForm
     )
-from courses.models import Course, Content, Module, Text
+from courses.models import Course, Content, Module, Text, Image, File
 
 class ManageCourseList(LoginRequiredMixin, ListView):
     model = Course
@@ -241,3 +241,9 @@ class CreateModuleContentView(LoginRequiredMixin, FormView):
             return JsonResponse(data)
         else:
             return response
+
+class ManageCourseMainView(LoginRequiredMixin, DetailView):
+    model = Course
+    template_name = 'content_manage/course_main.html'
+
+    

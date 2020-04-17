@@ -5,11 +5,59 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.shortcuts import reverse
 
+from django.db.models import Sum, Count, Q
+
 from .utils import slug_generator
 
 User = settings.AUTH_USER_MODEL
 
-# Create your models here.
+class CourseQuerySet(models.query.QuerySet):
+    pass
+    # def content_count(self, *args, **kwargs):
+    #     obj = self.get(*args, **kwargs)
+    #     text_type = ContentType.objects.get_for_model(Text)
+    #     image_type = ContentType.objects.get_for_model(Image)
+    #     modules = obj.module_set.annotate(
+    #             texts=Count('content', filter=Q(content__content_type=text_type))
+    #         ).annotate(
+    #             images=Count('content', filter=Q(content__content_type=image_type))
+    #         )
+    #     #obj.annotate(Sum('images'), Sum('texts'))
+    #     return modules.aggregate(Sum('images'), Sum('texts'))
+
+    # def objects_with_counts(self):
+    #     text_type = ContentType.objects.get_for_model(Text)
+    #     image_type = ContentType.objects.get_for_model(Image)
+    #     file_type = ContentType.objects.get_for_model(File)
+    #     video_type = ContentType.objects.get_for_model(Video)
+    #     objects = self.all().annotate(
+    #         texts=Count('module__content', filter=Q(module__content__content_type=text_type)),
+    #         images=Count('module__content', filter=Q(module__content__content_type=image_type)),
+    #         files=Count('module__content', filter=Q(module__content__content_type=file_type)),
+    #         videos=Count('module__content', filter=Q(module__content__content_type=video_type)),
+    #     )
+    #     return objects
+
+
+class CourseManager(models.Manager):
+    def get_queryset(self):
+        return CourseQuerySet(self.model, self._db)
+
+    def all(self):
+        text_type = ContentType.objects.get_for_model(Text)
+        image_type = ContentType.objects.get_for_model(Image)
+        file_type = ContentType.objects.get_for_model(File)
+        video_type = ContentType.objects.get_for_model(Video)
+        objects = self.get_queryset().all().annotate(
+            texts=Count('module__content', filter=Q(module__content__content_type=text_type)),
+            images=Count('module__content', filter=Q(module__content__content_type=image_type)),
+            files=Count('module__content', filter=Q(module__content__content_type=file_type)),
+            videos=Count('module__content', filter=Q(module__content__content_type=video_type)),
+        )
+        return objects
+
+
+
 class Course(models.Model):
     title       = models.CharField(max_length=255)
     slug        = models.SlugField(unique=True)
@@ -19,6 +67,8 @@ class Course(models.Model):
     access_key  = models.CharField(max_length=100, blank=True, null=True)
     updated     = models.DateTimeField(auto_now=True)
     created     = models.DateTimeField(auto_now_add=True)
+
+    objects = CourseManager()
 
     def __str__(self):
         return self.title

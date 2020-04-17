@@ -9,7 +9,9 @@
     </div>
     <div class="row">
         <div class="col-10">
-            <a href="{{ object.file }}">Open Video</a>
+            <div class="embed-responsive embed-responsive-16by9">
+                <iframe class="embed-responsive-item" src="{{ object.file }}" allowfullscreen></iframe>
+              </div>
         </div>
     </div>
 </div>
