@@ -23,32 +23,32 @@
             </div>
             
             {% for module in object.module_set.all %}
-            <div class="card my-3">
-                <div class="card-header">
-                  {{ module.title }}
+              {% if module.visible %}
+              <div class="card my-3">
+                  <div class="card-header">
+                    {{ module.title }}
+                  </div>
+                  <div class="card-body">
+                    <blockquote class="blockquote mb-0">
+                      <p>{{ module.description }}</p>
+                      <footer class="blockquote-footer">{{ module.created }}</footer>
+                    </blockquote>
+                    {% if user in object.participants.all %}
+                    <ul>
+                        {% for content in module.content_set.all %}
+                          {% if content.visible %}
+                            <li><a href="{{ content.item.get_absolute_url }}">{{ content.item.title }}</a></li>
+                          {% endif %}
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                  </div>
                 </div>
-                <div class="card-body">
-                  <blockquote class="blockquote mb-0">
-                    <p>{{ module.description }}</p>
-                    <footer class="blockquote-footer">{{ module.created }}</footer>
-                  </blockquote>
-                  {% if user in object.participants.all %}
-                  <ul>
-                      {% for content in module.content_set.all %}
-                        <li><a href="{{ content.item.get_absolute_url }}">{{ content.item.title }}</a></li>
-                      {% endfor %}
-                  </ul>
-                  {% endif %}
-                </div>
-              </div>
+              {% endif %}
             {% endfor %}
         </div>
     </div>
 </div>
 {% include 'courses/snippets/enroll_modal.html' with object=object %}
 {% include 'courses/snippets/info_modal.html' with object=object %}
-{% endblock %}
-
-{% block domready %}
-console.log('elo')
 {% endblock %}

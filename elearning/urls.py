@@ -27,4 +27,5 @@ urlpatterns = [
     path('accounts/', include('accounts.urls', 'accounts')),
     path('courses/', include('courses.urls', 'courses')),
     path('manage/', include('content_manage.urls', 'manage')),
+    path('search/', include('search.urls', 'search'))
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -32,41 +32,43 @@
             </div>
             <div class="row">
                 <div class="col card" >
-                    <h4>Participants</h4>
-                    <div class="overflow-auto" style="max-height: 200px; overflow-y: auto;" >
-                            <table class="table table-borderless">
-                                <thead>
-                                  <tr>
-                                    <th scope="col">#</th>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Last Tiem Active</th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                    {% for participant in object.participants.all %}
-                                    <tr>
-                                        <th scope="row">{{ forloop.counter }}</th>
-                                        <td>{{ participant.user_index }}</td>
-                                        <td>Otto</td>
-                                    </tr>
-                                    {% endfor %}
-                                    <tr>
-                                        <th scope="row">1</th>
-                                        <td>Mark</td>
-                                        <td>Otto</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">2</th>
-                                        <td>Jacob</td>
-                                        <td>Thornton</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">3</th>
-                                        <td>Jacob</td>
-                                        <td>Thornton</td>
-                                    </tr>
-                                </tbody>
-                              </table>
+                  <div class="row my-2">
+                    <div class="col-6">
+                      <h4>Participants</h4>
+                    </div>
+                    <div class="col-6 text-right">
+                      <a class="btn text-dark mx-5" href="{% url 'manage:participants' object.slug %}"><h5>Manage</h5></a>
+                    </div>
+                    
+                  </div>
+                  <div class="row">
+                    <div class="col">
+                      <div class="overflow-auto" style="max-height: 200px; overflow-y: auto;" >
+                        <table class="table table-borderless">
+                            <thead>
+                              <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Last Time Active</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                {% for activity in last_activities %}
+                                <tr>
+                                    <th scope="row">{{ forloop.counter }}</th>
+                                    <td>{{ activity.user }}</td>
+                                    {% if activity.last %}
+                                      <td>{{ activity.last|timesince }} ago</td>
+                                    {% else %}
+                                    <td>Never active</td>
+                                    {% endif %}
+                                </tr>
+                                {% endfor %}
+                                
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
                     </div>
                 </div>
             </div>

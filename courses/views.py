@@ -1,11 +1,16 @@
 from django.shortcuts import render, get_object_or_404, HttpResponse
 from django.views.generic import ListView, DetailView
 from django.http import JsonResponse
-from .models import Course, Text, Image, File, Video
+from .models import Course, Text, Image, File, Video, Membership
 # Create your views here.
+from activity.mixins import CourseViewedMixin
+
 class CourseListView(ListView):
-    model = Course
+    queryset = Course.objects.all()
     template_name = 'courses/course_list.html'    
+
+    def get_queryset(self):
+        return Course.objects.exclude(participants__id=self.request.user.id)
 
     def get_context_data(self, *args, **kwargs):
         context = super(CourseListView, self).get_context_data(*args, **kwargs)
@@ -14,7 +19,7 @@ class CourseListView(ListView):
             context['my_courses'] = request.user.courses.all()
         return context
 
-class CourseDetailView(DetailView):
+class CourseDetailView(CourseViewedMixin, DetailView):
     queryset = Course.objects.all()
     template_name = 'courses/course_details.html'
 
@@ -25,7 +30,6 @@ class CourseDetailView(DetailView):
         return instance
 
 def enroll_course(request):
-    print(request.POST)
     course_id = request.POST.get('course_id')
     course_obj = get_object_or_404(Course, id=course_id)
     course_access_key = request.POST.get('course_access_key')
@@ -33,11 +37,17 @@ def enroll_course(request):
     if course_obj.access_key == course_access_key:
         user = request.user
         if user.is_authenticated:
-            user.courses.add(course_id)
-            return JsonResponse({'message': 'gut'}, status=200)
+            # user.courses.add(course_id, method="key")
+            m = Membership(
+                user=request.user,
+                course=course_obj,
+                method="key"
+            )
+            m.save()
+            return JsonResponse({'message': 'success'}, status=200)
         else:
-            return JsonResponse({'message': 'zaloguj sie'}, status=400)
-    return JsonResponse({'message': 'not gut'}, status=400)
+            return JsonResponse({'message': 'log in'}, status=400)
+    return JsonResponse({'message': 'error'}, status=400)
 
 class TextDetailView(DetailView):
     model = Text

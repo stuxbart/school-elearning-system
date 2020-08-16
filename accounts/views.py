@@ -24,6 +24,7 @@ def login_view(request):
             response_obj = {
                     'message': 'Pomyślnie zalogowano',
                     'username': user.email,
+                    'teacher': user.is_teacher,
                 }
             if user.full_name:
                 response_obj['full_name'] = user.full_name

@@ -6,7 +6,7 @@
     -moz-box-shadow: 0px 0px 22px -3px rgba(0,0,0,0.75);
     box-shadow: 0px 0px 22px -3px rgba(0,0,0,0.75);
 }
-.navbar-login-button {
+.navbar-login-button, .navbar-search-btn {
     border: rgb(172, 19, 164) 1px solid ;
     /* border: #8a1002  1px solid ; */
     /* background-color: white; */
@@ -96,7 +96,13 @@ pre {
     
 } */
 .container{
-    background-color: white;
-    min-height: 90vh;
+    /* background-color: white; */
+    /* min-height: 90vh; */
     min-width: 7v;
+}
+footer {
+    background-color: white;
+}
+main {
+    background-color: whitesmoke;
 }

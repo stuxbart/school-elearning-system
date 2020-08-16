@@ -15,6 +15,7 @@ class UserManager(BaseUserManager):
             email=email,
             full_name=full_name,
         )
+
         user_obj.user_index = user_index_generator(user_obj)
         user_obj.set_password(password)
         user_obj.active = is_active
@@ -54,7 +55,7 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser):
-    user_index  = models.CharField(max_length=100)
+    user_index  = models.CharField(max_length=100, blank=True, null=True)
     email       = models.EmailField(max_length=255, unique=True)
     full_name   = models.CharField(max_length=255, blank=True, null=True)
     active      = models.BooleanField(default=True)
@@ -63,7 +64,11 @@ class User(AbstractBaseUser):
     admin       = models.BooleanField(default=False)  # superuser
     timestamp   = models.DateTimeField(auto_now_add=True)
 
-    courses = models.ManyToManyField(Course, related_name='participants', blank=True)
+    courses     = models.ManyToManyField(
+        Course, related_name='participants', blank=True,
+        through="courses.Membership"
+
+    )
     # user_photo
     # about
     # class
@@ -74,8 +79,11 @@ class User(AbstractBaseUser):
     objects = UserManager()
 
 
-    def __str__(self):
-        return self.user_index
+    # def __str__(self):
+    #     if self.user_index:
+    #         return self.user_index
+    #     else:
+    #         return self.email
 
     def get_full_name(self):
         if self.full_name:
@@ -107,3 +115,10 @@ class User(AbstractBaseUser):
     def is_active(self):
         return self.active
     
+from django.db.models.signals import pre_save
+
+def pre_save_user_receiver(sender, instance, *args, **kwargs):
+    if not instance.user_index:
+        instance.user_index = user_index_generator(instance)
+
+pre_save.connect(pre_save_user_receiver, sender=User)

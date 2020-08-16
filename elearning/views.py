@@ -1,4 +1,6 @@
 from django.shortcuts import render, redirect
+from informations.models import News
 
 def home_view(request):
-    return render(request, 'home/home.html', {})
+    news = News.objects.all()[:6]
+    return render(request, 'home/home.html', {"news": news})

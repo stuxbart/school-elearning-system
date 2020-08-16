@@ -13,11 +13,11 @@ class UserAdmin(BaseUserAdmin):
     # add_form = UserAdminCreationForm
 
     list_display = ('email','user_index', 'admin')
-    list_filter = ('admin', 'staff', 'admin')
+    list_filter = ('admin', 'staff', 'teacher')
 
     fieldsets = (
         (None, {'fields': ('email', 'password', 'user_index')}),
-        ('Courses', {'fields': ('courses',)}),
+        # ('Courses', {'fields': ('courses',)}),
         ('Personal Info', {'fields': ('full_name',)}),
         ('Permissions', {'fields': ('admin', 'staff', 'teacher', 'active')})
     )

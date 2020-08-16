@@ -2,18 +2,19 @@
 
 {% block content %}
 {% if user.is_authenticated %}
+<div class="container">
 <div class="row">
     <div class="col-10 mx-auto">
         <div class="list-group mt-3">
             <a href="#" class="list-group-item list-group-item-action bg-success text-white">
-              <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">Moje przedmioty</h5>
+              <div class="d-flex justify-content-between">
+                <h5 class="mb-1">My Courses</h5>
               </div>
             </a>
             {% if my_courses %}
             {% for course in my_courses %}
             <a href="{% url 'courses:details' course.slug %}" class="list-group-item list-group-item-action">
-              <div class="d-flex w-100 justify-content-between">
+              <div class="d-flex justify-content-between">
                 <h5 class="mb-1">{{ course.title }}</h5>
                 <small class="text-muted">{{ course.updated|timesince }} temu</small>
               </div>
@@ -31,15 +32,15 @@
     <div class="col-10 mx-auto">
         <div class="list-group mt-3">
             <a href="#" class="list-group-item list-group-item-action text-white bg-secondary">
-              <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">Wszystkie przedmioty</h5>
+              <div class="d-flex justify-content-between">
+                <h5 class="mb-1">All Courses</h5>
               </div>
             </a>
             {% for course in object_list %}
             <a href="{% url 'courses:details' course.slug %}" class="list-group-item list-group-item-action">
               <div class="d-flex w-100 justify-content-between">
                 <h5 class="mb-1">{{ course.title }}</h5>
-                <small class="text-muted">{{ course.updated|timesince }} temu</small>
+                <small class="text-muted">{{ course.updated|timesince }} ago</small>
               </div>
               <p class="mb-1">{{ course.overview }}</p>
               <small class="text-muted">{{ course.owner.full_name }}</small>
@@ -47,5 +48,6 @@
             {% endfor %}
           </div>
     </div>
+</div>
 </div>
 {% endblock %}

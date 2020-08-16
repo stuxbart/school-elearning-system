@@ -1,4 +1,4 @@
-<!doctype html>
+<!doctype html >
 <html lang="en">
   <head>
     <!-- Required meta tags -->
@@ -7,17 +7,20 @@
     {% include 'base/css.html' %}
     <title>E-Learning</title>
   </head>
-  <body>
-    <header>
+  <body class="h-100">
+  <header>
     {% include 'base/navbar.html' %}
   </header>
+  <main class="py-3">
+    {% block content %}{% endblock %}
+  </main>
+  {% include 'base/footer.html' %}
 
-        {% block content %}{% endblock %}      
-
-
+        
     {% include 'accounts/snippets/login_modal.html' %}
     
     {% include 'base/js.html' %}
     
+  
   </body>
 </html>

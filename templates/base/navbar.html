@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-lg bg-light navbar-light border-bottom-shadow sticky-top" >
-    <a class="navbar-brand" href="/">Wikamp FTIMS</a>
+    <a class="navbar-brand" href="/">E-Learning</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -7,29 +7,12 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="/">Główna <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link login-modal" href="#">Poczta</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link login-modal" href="#">WebDziekanat</a>
-            </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Wirtualne Wydziały
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="#">WEEIA</a>
-                    <a class="dropdown-item" href="#">WIPOS</a>
-                    <a class="dropdown-item" href="#">Port</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#">Inne wydziały</a>
-                </div>
-            </li>
-            <li class="nav-item dropdown subjects" style="{% if not request.user.is_authenticated %}display:none;{% else %}display: ;{% endif %}">
+
+            <li class="nav-item dropdown subjects" style="{% if not request.user.is_authenticated %}display:none;{% else %}display: visible;{% endif %}">
                 <div class="btn-group">
-                    <a type="button" class="btn btn-light" href='/courses/'>Przedmioty</a>
+                    <a type="button" class="btn btn-light" href='/courses/'>Courses</a>
                     <button type="button" class="btn dropdown-toggle dropdown-toggle-split btn-light" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       <span class="sr-only">Toggle Dropdown</span>
                     </button>
@@ -40,24 +23,26 @@
                         {% endfor %}
                         {% endif %}
                       <div class="dropdown-divider"></div>
-                      <a class="dropdown-item" href="/courses/">Wszystkie przedmioty</a>
+                      <a class="dropdown-item" href="/courses/">All courses</a>
                     </div>
                   </div>
             </li>
-            <li class="nav-item">
+            <li class="nav-item content-manage" style="{% if not request.user.is_authenticated or not request.user.is_teacher %}display:none;{% else %}display: unset;{% endif %}">
                 <a class="nav-link" href="{% url 'manage:list' %}">Manage Courses</a>
             </li>
         </ul>
+
+        {% include 'search/snippets/navbar_search_bar.html' %}
         
         <ul class="navbar-nav ml-auto mr-4 navbar-user-control" style="{% if not request.user.is_authenticated %}display:none;{% else %}display: ;{% endif %}">
             <li class="nav-item dropdown active">
             <a class="nav-link dropdown-toggle user-name-display" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{% if user.first_name and user.last_name %}{{ user.first_name }} {{ user.last_name }}{% else %}{{ user.email }}{% endif %}</a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="#"><i class="fas fa-columns"></i> &nbsp;Kokpit</a>
-                    <a class="dropdown-item" href="#"><i class="fas fa-user-cog"></i>&nbsp; Modyfikuj Profil</a>
-                    <a class="dropdown-item" href="#"><i class="fas fa-chart-line"></i> &nbsp;Oceny</a>
-                    <a class="dropdown-item" href="#"><i class="fas fa-cog"></i>&nbsp; Preferencje</a>
-                    <a class="dropdown-item" href="#"><i class="fas fa-calendar-week"></i> &nbsp;Kalendarz</a>
+                    <a class="dropdown-item" href="#"><i class="fas fa-columns"></i> &nbsp;Home</a>
+                    <a class="dropdown-item" href="#"><i class="fas fa-user-cog"></i>&nbsp; Edit profile</a>
+                    <a class="dropdown-item" href="#"><i class="fas fa-chart-line"></i> &nbsp;Marks</a>
+                    <a class="dropdown-item" href="#"><i class="fas fa-cog"></i>&nbsp; Settings</a>
+                    <a class="dropdown-item" href="#"><i class="fas fa-calendar-week"></i> &nbsp;Calendar</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="{% url 'accounts:logout' %}"><i class="fas fa-sign-out-alt"></i> &nbsp; Logout</a>
                 </div>

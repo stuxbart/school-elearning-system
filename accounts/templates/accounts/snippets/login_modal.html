@@ -1,3 +1,4 @@
+{% load static %}
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -12,7 +13,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-4 col-6 mx-auto">
-                        <img class="card-img-top mx-auto" src="https://cas.p.lodz.pl/cas/images/kaf_pl.png" alt="Card image cap">
+                        <img class="card-img-top mx-auto" src="{% static 'img/login-img.jpg' %}" alt="Card image cap">
                     </div>
                     <div class="col-md-8">
                         <div class="row">
@@ -45,14 +46,10 @@
                     <div class="col">
                         <div class="card login-help-info" style="display: none;">
                             <div class="card-body">
-                                <p class="card-text">Loginem dla studentów jest numer albumu, natomiast dla pracowników
-                                    identyfikator użytkownika z adresu e-mail - zwykle: "[ imię.nazwisko ]".<br/>
-                                    
-                                    W pozostałych przypadkach należy podać pełny adres skrzynki pocztowej:<br/>
-                                    "[ nazwa-użytkownika ]@[ domena-poczty-PŁ ]".
+                                <p class="card-text">Use user id or email.<br/>
                                 </p>
-                            <a href="#" class="card-link">Card link</a>
-                            <a href="#" class="card-link">Another link</a>
+                            <!-- <a href="#" class="card-link">Card link</a>
+                            <a href="#" class="card-link">Another link</a> -->
                             </div>
                         </div>
                     </div>

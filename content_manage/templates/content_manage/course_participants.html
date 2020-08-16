@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row my-3">
+        <div class="col-5">
+            <form method="POST">
+                {% csrf_token %}
+                {{ form }}
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+        <div class="col-7">
+            <ul class="list-group" style="max-height: 500px; overflow-y: auto;">
+                {% for member in participants %}
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-4">
+                                {{ member.user }}
+                            </div>
+                            <div class="col-4">
+                                {{ member.get_method_display }}
+                            </div>
+                            <div class="col-4">
+                                {{ member.date_joined }}
+                            </div>
+                        </div>
+                        
+                        
+                    </li>
+                {% endfor %}
+              </ul>
+        </div>
+    </div>
+</div>
+    
+{% endblock %}

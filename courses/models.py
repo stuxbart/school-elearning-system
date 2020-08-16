@@ -8,6 +8,7 @@ from django.shortcuts import reverse
 from django.db.models import Sum, Count, Q
 
 from .utils import slug_generator
+from .fields import OrderField
 
 User = settings.AUTH_USER_MODEL
 
@@ -61,7 +62,7 @@ class CourseManager(models.Manager):
 class Course(models.Model):
     title       = models.CharField(max_length=255)
     slug        = models.SlugField(unique=True)
-    owner       = models.ForeignKey(User, on_delete=models.CASCADE)
+    owner       = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     overview    = models.TextField()
     # many owners
     access_key  = models.CharField(max_length=100, blank=True, null=True)
@@ -86,22 +87,31 @@ pre_save.connect(course_pre_save_receiver, sender=Course)
 class Module(models.Model):
     course      = models.ForeignKey(Course, on_delete=models.CASCADE, null=True, blank=True)
     title       = models.CharField(max_length=255)
-    description = models.TextField()
-    # ordering
+    description = models.TextField(blank=True, null=True)
+    visible     = models.BooleanField(default=False, blank=False, null=False)
+    order       = OrderField(for_fields=['course'], blank=True)
     created     = models.DateTimeField(auto_now_add=True)
     
+    class Meta:
+        ordering = ['order']
+
     def __str__(self):
         return self.title
     
 class Content(models.Model):
     module          = models.ForeignKey(Module, on_delete=models.CASCADE)
+    visible         = models.BooleanField(default=False, blank=False, null=False)
     content_type    = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id       = models.PositiveIntegerField()
     item            = GenericForeignKey('content_type', 'object_id')
+    order           = OrderField(for_fields=['module'], blank=True)
+
+    class Meta:
+        ordering = ['order']
 
 
 class ItemBase(models.Model):
-    owner       = models.ForeignKey(User, on_delete=models.CASCADE)
+    owner       = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     title       = models.CharField(max_length=255)
     updated     = models.DateTimeField(auto_now=True)
     created     = models.DateTimeField(auto_now_add=True)
@@ -127,3 +137,15 @@ class Image(ItemBase):
     
 class Video(ItemBase):
     file = models.URLField()
+
+
+join_methods = (
+    ('key', 'Key'),
+    ('owner', "Added by owner")
+)
+
+class Membership(models.Model):
+    user        = models.ForeignKey(User, on_delete=models.CASCADE)
+    course      = models.ForeignKey(Course, on_delete=models.CASCADE)
+    date_joined = models.DateTimeField(auto_now_add=True)
+    method      = models.CharField(max_length=20, choices=join_methods)
