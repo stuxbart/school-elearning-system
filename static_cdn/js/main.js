@@ -41,7 +41,7 @@ $(document).ready(function() {
             success: function(data){
                 console.log(data)
                 enrollModal.modal('hide')
-                infoModal.find('.modal-body').text('Gratulacje')
+                infoModal.find('.modal-body').text('Congratulations')
                 
                 infoModal.modal('show')
                 // close modal
@@ -89,9 +89,7 @@ $(document).ready(function() {
                     $('.content-manage').css('display','unset')
                 }
                 
-                //fetchSubjects();
                 $('#exampleModal').modal('hide')
-                //zakończyć ładowanie
                 },
             error: function(errorData){
                 $('#username').addClass('is-invalid').prop('disabled', false)
@@ -103,16 +101,7 @@ $(document).ready(function() {
                 },
             })
         })
-    function fetchSubjects() {
-        subjects = [{ name: 'Algebra z Geometrią Analityczną II 2020', 'id': 4}, { name: 'Algebra z Geometrią Analityczną II 2020', 'id': 4}]
-        var subjectsList = $('.subjects > div > .subjects-list')
-        subjectsList.html('')
-        subjects.forEach((obj) => {
-            subjectsList.append(`<a class="dropdown-item" href="#">${obj.name}</a>`)
-        })
-        
-        subjectsList.html('<a class="dropdown-item" href="#">Algebra z Geometrią Analityczną II 2020</a><a class="dropdown-item" href="#">Algebra z Geometrią Analityczną II 2020</a>')
-    }
+
     var loginFormSubmitButton = $('.login-form-submit')
     loginFormSubmitButton.click(function(){
         loginForm.submit();
@@ -122,7 +111,7 @@ $(document).ready(function() {
     var addContentModal = $('.module-add-text-modal')
     var moduleAddTextButton = $('.module-add-text')
     moduleAddTextButton.click(function(event){
-        addContentModal.modal('show', data={'ta': 'nom'})
+        addContentModal.modal('show')
         addContentModal.find('.add-content-form').find('#id_module_id').val(event.originalEvent.target.dataset.id)
     })
     addContentModal.on('show.bs.modal', function(event){
@@ -185,7 +174,6 @@ $(document).ready(function() {
         var thisForm = $(this)
         var httpMethod = thisForm.attr('method')
         var formEndpoint = thisForm.attr('action')
-        console.log("to chociaż działa?")
         $.ajax({
             url: formEndpoint,
             method: httpMethod,
@@ -233,7 +221,6 @@ $(document).ready(function() {
     })
     moduleDeleteSubmitBtn.click(function(event){
         var endpoint = event.originalEvent.target.dataset.endpoint
-        console.log("Legancko")
         $.ajax({
             method: 'POST',
             url: endpoint,
@@ -365,7 +352,6 @@ $(document).ready(function() {
     addContentModal.on('show.bs.modal', function(event){
         var thisModal = $(this)
         if (event.relatedTarget.edit){
-            console.log("EDYCJAAAA")
             switch (event.relatedTarget.type.substring(10)) {
             case 'text':
                 thisModal.find('.add-content-form').find('#id_content').val(event.relatedTarget.text)
