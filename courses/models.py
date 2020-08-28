@@ -5,12 +5,13 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.shortcuts import reverse
 
-from django.db.models import Sum, Count, Q
+from django.db.models import Count, Q
 
 from .utils import slug_generator
 from .fields import OrderField
 
 User = settings.AUTH_USER_MODEL
+
 
 class CourseQuerySet(models.query.QuerySet):
     pass
@@ -58,16 +59,15 @@ class CourseManager(models.Manager):
         return objects
 
 
-
 class Course(models.Model):
-    title       = models.CharField(max_length=255)
-    slug        = models.SlugField(unique=True)
-    owner       = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    overview    = models.TextField()
+    title = models.CharField(max_length=255)
+    slug = models.SlugField(unique=True)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    overview = models.TextField()
     # many owners
-    access_key  = models.CharField(max_length=100, blank=True, null=True)
-    updated     = models.DateTimeField(auto_now=True)
-    created     = models.DateTimeField(auto_now_add=True)
+    access_key = models.CharField(max_length=100, blank=True, null=True)
+    updated = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
 
     objects = CourseManager()
 
@@ -76,65 +76,108 @@ class Course(models.Model):
 
     def get_absolute_url(self):
         return reverse("manager:update", kwargs={"slug": self.slug})
-    
+
 
 def course_pre_save_receiver(sender, instance, *args, **kwargs):
     if not instance.slug:
         instance.slug = slug_generator(instance)
 
+
 pre_save.connect(course_pre_save_receiver, sender=Course)
 
+
+class Category(models.Model):
+    name = models.CharField(max_length=40, unique=True)
+    slug = models.SlugField(max_length=50)
+    parent_category = models.ForeignKey(
+        'Category',
+        on_delete=models.CASCADE,
+        related_name='child_categories',
+        blank=True,
+        null=True
+    )
+
+    class Meta:
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+    def get_category_tree(self):
+        categories = []
+
+        def parse(category):
+            categories.append(category)
+            if category.parent_category:
+                parse(category.parent_category)
+
+        parse(self)
+        return categories
+
+
+def course_pre_save_receiver(sender, instance, *args, **kwargs):
+    if not instance.slug:
+        instance.slug = slug_generator(instance)
+
+
+pre_save.connect(course_pre_save_receiver, sender=Category)
+
+
 class Module(models.Model):
-    course      = models.ForeignKey(Course, on_delete=models.CASCADE, null=True, blank=True)
-    title       = models.CharField(max_length=255)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, null=True, blank=True)
+    title = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
-    visible     = models.BooleanField(default=False, blank=False, null=False)
-    order       = OrderField(for_fields=['course'], blank=True)
-    created     = models.DateTimeField(auto_now_add=True)
-    
+    visible = models.BooleanField(default=False, blank=False, null=False)
+    order = OrderField(for_fields=['course'], blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+
     class Meta:
         ordering = ['order']
 
     def __str__(self):
         return self.title
-    
+
+
 class Content(models.Model):
-    module          = models.ForeignKey(Module, on_delete=models.CASCADE)
-    visible         = models.BooleanField(default=False, blank=False, null=False)
-    content_type    = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id       = models.PositiveIntegerField()
-    item            = GenericForeignKey('content_type', 'object_id')
-    order           = OrderField(for_fields=['module'], blank=True)
+    module = models.ForeignKey(Module, on_delete=models.CASCADE)
+    visible = models.BooleanField(default=False, blank=False, null=False)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    item = GenericForeignKey('content_type', 'object_id')
+    order = OrderField(for_fields=['module'], blank=True)
 
     class Meta:
         ordering = ['order']
 
 
 class ItemBase(models.Model):
-    owner       = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    title       = models.CharField(max_length=255)
-    updated     = models.DateTimeField(auto_now=True)
-    created     = models.DateTimeField(auto_now_add=True)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    title = models.CharField(max_length=255)
+    updated = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         abstract = True
-    
+
     def __str__(self):
         return self.title
 
     def get_absolute_url(self):
         return reverse(f"courses:{self.__class__.__name__.lower()}_detail", kwargs={"pk": self.pk})
-    
+
 
 class Text(ItemBase):
     content = models.TextField()
 
+
 class File(ItemBase):
     file = models.FileField(upload_to='files')
 
+
 class Image(ItemBase):
     file = models.FileField(upload_to='images')
-    
+
+
 class Video(ItemBase):
     file = models.URLField()
 
@@ -144,8 +187,9 @@ join_methods = (
     ('owner', "Added by owner")
 )
 
+
 class Membership(models.Model):
-    user        = models.ForeignKey(User, on_delete=models.CASCADE)
-    course      = models.ForeignKey(Course, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
     date_joined = models.DateTimeField(auto_now_add=True)
-    method      = models.CharField(max_length=20, choices=join_methods)
+    method = models.CharField(max_length=20, choices=join_methods)
