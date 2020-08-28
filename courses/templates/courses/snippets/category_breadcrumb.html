@@ -1,0 +1,14 @@
+
+{% if categories %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'courses:home' %}">Courses</a></li>
+        {% for category in categories %}
+            <li class="breadcrumb-item"><a href="{{ category.get_absolute_url }}">{{ category }}</a></li>
+        {% endfor %}
+        {% if last_obj %}
+            <li class="breadcrumb-item active" aria-current="page">{{ last_obj }}</li>
+        {% endif %}
+    </ol>
+</nav>
+{% endif %}

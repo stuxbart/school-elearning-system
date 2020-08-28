@@ -82,7 +82,10 @@ class Course(models.Model):
         return reverse("manager:update", kwargs={"slug": self.slug})
 
     def get_category_tree(self):
-        return self.category.get_category_tree()
+        if self.category is not None:
+            return self.category.get_category_tree()
+        else:
+            return []
 
 
 def course_pre_save_receiver(sender, instance, *args, **kwargs):
@@ -121,7 +124,7 @@ class Category(models.Model):
                 parse(category.parent_category)
 
         parse(self)
-        return categories
+        return categories[::-1]
 
 
 def course_pre_save_receiver(sender, instance, *args, **kwargs):
