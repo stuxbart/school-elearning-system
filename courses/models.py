@@ -68,14 +68,21 @@ class Course(models.Model):
     access_key = models.CharField(max_length=100, blank=True, null=True)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
+    category = models.ForeignKey("Category", on_delete=models.CASCADE, blank=True, null=True)
 
     objects = CourseManager()
+
+    class Meta:
+        ordering = ['title']
 
     def __str__(self):
         return self.title
 
     def get_absolute_url(self):
         return reverse("manager:update", kwargs={"slug": self.slug})
+
+    def get_category_tree(self):
+        return self.category.get_category_tree()
 
 
 def course_pre_save_receiver(sender, instance, *args, **kwargs):
