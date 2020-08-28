@@ -4,7 +4,11 @@
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{% url 'courses:home' %}">Courses</a></li>
         {% for category in categories %}
-            <li class="breadcrumb-item"><a href="{{ category.get_absolute_url }}">{{ category }}</a></li>
+            {% if forloop.last and not last_obj %}
+                <li class="breadcrumb-item active" aria-current="page">{{ category }}</li>
+            {% else %}
+                <li class="breadcrumb-item"><a href="{{ category.get_absolute_url }}">{{ category }}</a></li>
+            {% endif %}
         {% endfor %}
         {% if last_obj %}
             <li class="breadcrumb-item active" aria-current="page">{{ last_obj }}</li>

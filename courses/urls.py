@@ -1,5 +1,5 @@
 
-from django.urls import path, include
+from django.urls import path
 
 from .views import (
     CourseListView,
@@ -8,12 +8,14 @@ from .views import (
     TextDetailView,
     ImageDetailView,
     FileDetailView,
-    VideoDetailView
+    VideoDetailView,
+    CategoryCoursesListView
 )
 app_name = 'courses'
 
 urlpatterns = [
     path('', CourseListView.as_view(), name='home'),
+    path('category/<slug>/', CategoryCoursesListView.as_view(), name="category"),
     path('details/<slug>/', CourseDetailView.as_view(), name='details'),
     path('enroll/', enroll_course, name='enroll'),
     path('details/content/text/<pk>', TextDetailView.as_view() , name='text_detail'),
