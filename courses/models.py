@@ -79,7 +79,7 @@ class Course(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse("manager:update", kwargs={"slug": self.slug})
+        return reverse("courses:details", kwargs={"slug": self.slug})
 
     def get_category_tree(self):
         if self.category is not None:

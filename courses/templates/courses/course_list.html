@@ -1,59 +1,46 @@
 {% extends 'base.html' %}
 
 {% block content %}
-{% if user.is_authenticated %}
 <div class="container">
-    {% if category %}
     <div class="row">
         <div class="col-10 mx-auto">
             {% include 'courses/snippets/category_breadcrumb.html' with categories=object.get_category_tree %}
         </div>
     </div>
-    {% endif %}
     <div class="row">
         <div class="col-10 mx-auto">
             <div class="list-group mt-3">
-                <a href="#" class="list-group-item list-group-item-action bg-success text-white">
-                    <div class="d-flex justify-content-between">
-                        <h5 class="mb-1">My Courses</h5>
+                {% if object_list %}
+                <div class="card my-3">
+                    <div class="card-header">
+                        {{ object.name }}
                     </div>
-                </a>
-                {% if my_courses %}
-                {% for course in my_courses %}
-                <a href="{% url 'courses:details' course.slug %}" class="list-group-item list-group-item-action">
-                    <div class="d-flex justify-content-between">
-                        <h5 class="mb-1">{{ course.title }}</h5>
-                        <small class="text-muted">{{ course.updated|timesince }} temu</small>
+                    <div class="card-body">
+                        <ul>
+                            {% for course in object_list %}
+                                <li><a href="{{ course.get_absolute_url }}">{{ course }}</a></li>
+                            {% endfor %}
+                        </ul>
                     </div>
-                    <p class="mb-1">{{ course.overview }}</p>
-                    <small class="text-muted">{{ course.owner.full_name }}</small>
-                </a>
-                {% endfor %}
+                </div>
                 {% endif %}
-          </div>
+                {% for category in categories %}
+                    <div class="card my-3">
+                        <div class="card-header">
+                            {{ object.name }} / <a href="{{ category.get_absolute_url }}">{{ category.name }}</a>
+                        </div>
+                        <div class="card-body">
+                            <ul>
+                                {% for course in category.course_set.all %}
+                                    <li><a href="{{ course.get_absolute_url }}">{{ course }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                {% endfor %}
+
+            </div>
+        </div>
     </div>
-</div>
-{% endif %}
-<div class="row">
-    <div class="col-10 mx-auto">
-        <div class="list-group mt-3">
-            <a href="#" class="list-group-item list-group-item-action text-white bg-secondary">
-              <div class="d-flex justify-content-between">
-                <h5 class="mb-1">All Courses</h5>
-              </div>
-            </a>
-            {% for course in object_list %}
-            <a href="{% url 'courses:details' course.slug %}" class="list-group-item list-group-item-action">
-              <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">{{ course.title }}</h5>
-                <small class="text-muted">{{ course.updated|timesince }} ago</small>
-              </div>
-              <p class="mb-1">{{ course.overview }}</p>
-              <small class="text-muted">{{ course.owner.full_name }}</small>
-            </a>
-            {% endfor %}
-          </div>
-    </div>
-</div>
 </div>
 {% endblock %}

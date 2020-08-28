@@ -6,17 +6,13 @@ from activity.mixins import CourseViewedMixin
 
 
 class CourseListView(ListView):
-    queryset = Course.objects.all()
+    queryset = Category.objects.all()
     template_name = 'courses/course_list.html'
-
-    def get_queryset(self):
-        return Course.objects.exclude(participants__id=self.request.user.id)
+    context_object_name = "categories"
 
     def get_context_data(self, *args, **kwargs):
-        context = super(CourseListView, self).get_context_data(*args, **kwargs)
-        request = self.request
-        if request.user.is_authenticated:
-            context['my_courses'] = request.user.courses.all()
+        context = super().get_context_data(*args, **kwargs)
+        context['object_list'] = Course.objects.filter(category=None)
         return context
 
 
@@ -27,6 +23,7 @@ class CategoryCoursesListView(DetailView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context['object_list'] = self.object.course_set.all()
+        context['categories'] = self.object.child_categories.all()
         return context
 
 
