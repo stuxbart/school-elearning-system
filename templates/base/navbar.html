@@ -28,7 +28,7 @@
                   </div>
             </li>
             <li class="nav-item content-manage" style="{% if not request.user.is_authenticated or not request.user.is_teacher %}display:none;{% else %}display: unset;{% endif %}">
-                <a class="nav-link" href="{% url 'manage:list' %}">Manage Courses</a>
+                <a class="nav-link" href="{% url 'courses:manage_list' %}">Manage Courses</a>
             </li>
         </ul>
 

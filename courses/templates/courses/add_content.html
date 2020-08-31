@@ -23,13 +23,13 @@
                         </div>
                         <div class="col-4 text-right">
                             {% if module.visible %}
-                                <button type="button" data-id="{{ module.id }}" data-endpoint="{% url 'manage:show_module' module.id %}" class="btn btn-secondary module-hide">Hide</button>
+                                <button type="button" data-id="{{ module.id }}" data-endpoint="{% url 'courses:show_module' module.id %}" class="btn btn-secondary module-hide">Hide</button>
                             {% else %}
-                                <button type="button" data-id="{{ module.id }}" data-endpoint="{% url 'manage:show_module' module.id %}" class="btn btn-primary module-hide">Show</button>
+                                <button type="button" data-id="{{ module.id }}" data-endpoint="{% url 'courses:show_module' module.id %}" class="btn btn-primary module-hide">Show</button>
                             {% endif %}
                             <button type="button" data-id="{{ module.id }}" class="btn btn-success module-add-text">Add</button>
-                            <button type="button" data-id="{{ module.id }}" data-endpoint="{% url 'manage:edit_module' module.id %}" data-moduletitle="{{ module.title }}" data-moduledesc="{{ module.description }}" data-visible="{{ module.visible }}" class="btn btn-success module-desc-edit">Edit</button>
-                            <button type="button" data-id="{{ module.id }}" data-endpoint="{% url 'manage:delete_module' module.id %}" data-moduletitle="{{ module.title }}" class="btn btn-danger module-delete">Delete</button>
+                            <button type="button" data-id="{{ module.id }}" data-endpoint="{% url 'courses:edit_module' module.id %}" data-moduletitle="{{ module.title }}" data-moduledesc="{{ module.description }}" data-visible="{{ module.visible }}" class="btn btn-success module-desc-edit">Edit</button>
+                            <button type="button" data-id="{{ module.id }}" data-endpoint="{% url 'courses:delete_module' module.id %}" data-moduletitle="{{ module.title }}" class="btn btn-danger module-delete">Delete</button>
                         </div>
                     </div>
                     <div class="row">
@@ -45,9 +45,9 @@
                                         </div>
                                         <div class="col-4 text-right">
                                             {% if content.visible %}
-                                                <button type="button" data-id="{{ content.id }}" data-endpoint="{% url 'manage:show_hide_content' content.id %}" class="btn btn-secondary content-hide">Hide</button>
+                                                <button type="button" data-id="{{ content.id }}" data-endpoint="{% url 'courses:show_hide_content' content.id %}" class="btn btn-secondary content-hide">Hide</button>
                                             {% else %}
-                                                <button type="button" data-id="{{ content.id }}" data-endpoint="{% url 'manage:show_hide_content' content.id %}" class="btn btn-primary content-hide">Show</button>
+                                                <button type="button" data-id="{{ content.id }}" data-endpoint="{% url 'courses:show_hide_content' content.id %}" class="btn btn-primary content-hide">Show</button>
                                             {% endif %}
                                             <button 
                                                 type="button" 
@@ -59,11 +59,11 @@
                                                 data-file="{{ content.item.file }}"
                                                 class="btn btn-success content-edit"
                                             >Edit</button>
-                                            <button type="button" data-id="{{ content.id }}" data-endpoint="{% url 'manage:delete_content' content.id %}" data-contenttitle="{{ content.item.title }}" class="btn btn-danger content-delete">Delete</button>
+                                            <button type="button" data-id="{{ content.id }}" data-endpoint="{% url 'courses:delete_content' content.id %}" data-contenttitle="{{ content.item.title }}" class="btn btn-danger content-delete">Delete</button>
                                             <div class="btn-group-vertical btn-group-sm">
-                                                <button type="button" class="btn btn-secondary move-content" data-id="{{ content.id }}" data-direc="up" data-endpoint="{% url 'manage:move_content' %}"><i class="fas fa-arrow-up"></i></button>
+                                                <button type="button" class="btn btn-secondary move-content" data-id="{{ content.id }}" data-direc="up" data-endpoint="{% url 'courses:move_content' %}"><i class="fas fa-arrow-up"></i></button>
                                                 <button type="button" class="btn btn-outline-secondary">{{ content.order }}</button>
-                                                <button type="button" class="btn btn-secondary move-content" data-id="{{ content.id }}" data-direc="down" data-endpoint="{% url 'manage:move_content' %}"><i class="fas fa-arrow-down"></i></button>
+                                                <button type="button" class="btn btn-secondary move-content" data-id="{{ content.id }}" data-direc="down" data-endpoint="{% url 'courses:move_content' %}"><i class="fas fa-arrow-down"></i></button>
                                             </div>
                                         </div>
                                     </div>
@@ -80,8 +80,8 @@
         </div>
     </div>
 </div>
-{% include 'content_manage/snippets/add_content_modal.html' with forms=forms %}
+{% include 'courses/snippets/add_content_modal.html' with forms=forms %}
 {% include 'courses/snippets/info_modal.html' with object=object %}
-{% include 'content_manage/snippets/add_module_modal.html' with form=forms.module %}
-{% include 'content_manage/snippets/delete_confirm_modal.html' %}
+{% include 'courses/snippets/add_module_modal.html' with form=forms.module %}
+{% include 'courses/snippets/delete_confirm_modal.html' %}
 {% endblock %}

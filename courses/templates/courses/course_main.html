@@ -24,8 +24,8 @@
             <div class="row my-4">
                 <div class="col-8 mx-auto px-0 card">
                     <div class="btn-group-vertical" role="group" aria-label="Basic example">
-                        <a class="btn text-dark" href="{% url 'manage:update' object.slug %}"><h5>Update Course Info</h5></a>
-                        <a class="btn text-dark" href="{% url 'manage:add_content' object.slug %}"><h5>Add Content</h5></a>
+                        <a class="btn text-dark" href="{% url 'courses:update' object.slug %}"><h5>Update Course Info</h5></a>
+                        <a class="btn text-dark" href="{% url 'courses:add_content' object.slug %}"><h5>Add Content</h5></a>
                     </div>
                     
                 </div>
@@ -37,7 +37,7 @@
                       <h4>Participants</h4>
                     </div>
                     <div class="col-6 text-right">
-                      <a class="btn text-dark mx-5" href="{% url 'manage:participants' object.slug %}"><h5>Manage</h5></a>
+                      <a class="btn text-dark mx-5" href="{% url 'courses:participants' object.slug %}"><h5>Manage</h5></a>
                     </div>
                     
                   </div>

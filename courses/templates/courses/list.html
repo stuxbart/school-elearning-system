@@ -4,7 +4,7 @@
 <div class="container">
     <div class="row">
         <div class="col">
-            <a class="btn btn-success" href="{% url 'manage:create' %}">Add Course</a>
+            <a class="btn btn-success" href="{% url 'courses:create' %}">Add Course</a>
         </div>
     </div>
     <div class="row">
@@ -14,7 +14,7 @@
                     <li class="list-group-item">
                        <div class="row">
                            <div class="col-12 col-md-8 px-auto">
-                               <a href="{% url 'manage:course_home' course.slug %}"><h3>{{ course.title }}</h3></a>
+                               <a href="{% url 'courses:course_home' course.slug %}"><h3>{{ course.title }}</h3></a>
                            </div>
                            <div class="col-12 col-md-4">
                                 <div class="btn-group" role="group" aria-label="Basic example">
@@ -22,9 +22,9 @@
                                         Actions <span class="badge badge-light">9</span>
                                         <span class="sr-only">unread messages</span>
                                     </a>
-                                    <a href="{% url 'manage:add_content' course.slug %}" class="btn btn-success">Add</a>
-                                    <a href="{% url 'manage:update' course.slug %}" class="btn btn-secondary">Edit</a>
-                                    <a href="{% url 'manage:delete' course.slug %}" data-title="{{ course.title }}" class="btn btn-danger course-delete-btn">Delete</a>
+                                    <a href="{% url 'courses:add_content' course.slug %}" class="btn btn-success">Add</a>
+                                    <a href="{% url 'courses:update' course.slug %}" class="btn btn-secondary">Edit</a>
+                                    <a href="{% url 'courses:delete' course.slug %}" data-title="{{ course.title }}" class="btn btn-danger course-delete-btn">Delete</a>
                                 </div>
                            </div>
                        </div>
@@ -34,7 +34,7 @@
         </div>
     </div>
 </div>
-{% include 'content_manage/snippets/course_delete_modal.html' %}
+{% include 'courses/snippets/course_delete_modal.html' %}
 {% include 'courses/snippets/info_modal.html' %}
 {% endblock %}
 

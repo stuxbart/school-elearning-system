@@ -4,24 +4,25 @@ from django.views.generic import ListView, FormView, DetailView, View, DeleteVie
 from django.http import JsonResponse
 from operator import itemgetter
 import json
-from .forms import (
-        CourseUpdateForm,
-        TextContentForm, 
-        ImageContentForm, 
-        FileContentForm, 
-        VideoContentForm, 
-        ModuleCreateForm,
-        AddUserToCourseForm
-    )
+from ..forms import (
+    CourseUpdateForm,
+    TextContentForm,
+    ImageContentForm,
+    FileContentForm,
+    VideoContentForm,
+    ModuleCreateForm,
+    AddUserToCourseForm
+)
 
-from .mixins import IsTeacherMixin
-from courses.models import Course, Content, Module, Text, Image, File, Membership
+from ..mixins import IsTeacherMixin
+from ..models import Course, Content, Module, Text, Image, File, Membership
 
 from activity.models import CourseViewed
 
+
 class ManageCourseList(LoginRequiredMixin, IsTeacherMixin, ListView):
     model = Course
-    template_name='content_manage/list.html'
+    template_name = 'courses/list.html'
 
     def get_queryset(self):
         return Course.objects.filter(owner=self.request.user)
@@ -29,7 +30,7 @@ class ManageCourseList(LoginRequiredMixin, IsTeacherMixin, ListView):
 
 class ManageCourseEdit(LoginRequiredMixin, IsTeacherMixin, FormView):
     form_class = CourseUpdateForm
-    template_name = 'content_manage/edit.html'
+    template_name = 'courses/edit.html'
 
     def get_context_data(self, *args, **kwargs):
         context = super(ManageCourseEdit, self).get_context_data(*args, **kwargs)
@@ -42,10 +43,10 @@ class ManageCourseEdit(LoginRequiredMixin, IsTeacherMixin, FormView):
             slug = kwargs.get('slug')
             self.object = get_object_or_404(Course, slug=slug)
             self.initial = {
-                    'title': self.object.title,
-                    'overview': self.object.overview,
-                    'access_key': self.object.access_key
-                }
+                'title': self.object.title,
+                'overview': self.object.overview,
+                'access_key': self.object.access_key
+            }
         else:
             self.object = None
         return super(ManageCourseEdit, self).get(request, *args, **kwargs)
@@ -54,7 +55,7 @@ class ManageCourseEdit(LoginRequiredMixin, IsTeacherMixin, FormView):
         if kwargs.get('slug', None):
             slug = kwargs.get('slug')
             self.object = get_object_or_404(Course, slug=slug)
-            self.success_url = reverse('manage:update',kwargs={'slug': slug})
+            self.success_url = reverse('courses:update', kwargs={'slug': slug})
         else:
             self.object = Course(owner=request.user)
         return super(ManageCourseEdit, self).post(request, *args, **kwargs)
@@ -64,8 +65,9 @@ class ManageCourseEdit(LoginRequiredMixin, IsTeacherMixin, FormView):
         self.object.overview = form.cleaned_data.get('overview')
         self.object.access_key = form.cleaned_data.get('access_key')
         self.object.save()
-        self.success_url = reverse('manage:update',kwargs={'slug': self.object.slug})
+        self.success_url = reverse('courses:update', kwargs={'slug': self.object.slug})
         return super(ManageCourseEdit, self).form_valid(form)
+
 
 class DeleteCourseView(LoginRequiredMixin, IsTeacherMixin, View):
     # model = Course
@@ -90,24 +92,25 @@ class DeleteCourseView(LoginRequiredMixin, IsTeacherMixin, View):
 
 class CourseAddContentView(LoginRequiredMixin, IsTeacherMixin, DetailView):
     model = Course
-    template_name = 'content_manage/add_content.html'
+    template_name = 'courses/add_content.html'
 
     def get_context_data(self, **kwargs):
         context = super(CourseAddContentView, self).get_context_data(**kwargs)
         context["forms"] = {
-                'text': {'instance' :TextContentForm(),'action': reverse('manage:add_content_text')},
-                'image': {'instance' :ImageContentForm(), 'action': reverse('manage:add_content_image')},
-                'file': {'instance': FileContentForm(), 'action': reverse('manage:add_content_file')},
-                'video': {'instance': VideoContentForm(), 'action': reverse('manage:add_content_video')},
-                'module': {'instance': ModuleCreateForm(), 'action': reverse('manage:add_module', kwargs={'slug': context['object'].slug})}
-            }
+            'text': {'instance': TextContentForm(), 'action': reverse('courses:add_content_text')},
+            'image': {'instance': ImageContentForm(), 'action': reverse('courses:add_content_image')},
+            'file': {'instance': FileContentForm(), 'action': reverse('courses:add_content_file')},
+            'video': {'instance': VideoContentForm(), 'action': reverse('courses:add_content_video')},
+            'module': {'instance': ModuleCreateForm(),
+                       'action': reverse('courses:add_module', kwargs={'slug': context['object'].slug})}
+        }
         return context
-    
+
 
 class CreateTextContentView(LoginRequiredMixin, IsTeacherMixin, FormView):
     form_class = TextContentForm
     success_url = '/'
-    
+
     def form_valid(self, form):
         pk = form.cleaned_data.get('content_id') or None
         if pk is not None:
@@ -143,9 +146,10 @@ class CreateTextContentView(LoginRequiredMixin, IsTeacherMixin, FormView):
                 return JsonResponse(data)
             else:
                 return response
-    
+
     def form_invalid(self, form):
         print(form.errors)
+
 
 class CreateImageContentView(LoginRequiredMixin, IsTeacherMixin, FormView):
     form_class = ImageContentForm
@@ -155,14 +159,14 @@ class CreateImageContentView(LoginRequiredMixin, IsTeacherMixin, FormView):
         form_class = self.get_form_class()
         form = self.get_form(form_class)
         print(form.errors)
-        
+
         if form.is_valid():
             # for f in files:
             #     ...  # Do something with each file.
             return self.form_valid(form)
         else:
             return self.form_invalid(form)
-    
+
     def form_valid(self, form):
         response = super().form_valid(form)
         module_id = form.cleaned_data.get('module_id')
@@ -183,7 +187,7 @@ class CreateImageContentView(LoginRequiredMixin, IsTeacherMixin, FormView):
     def form_invalid(self, form):
         response = super().form_invalid(form)
         if self.request.is_ajax():
-            
+
             print(form.cleaned_data)
             data = {
                 'message': 'error',
@@ -229,7 +233,7 @@ class CreateFileContentView(LoginRequiredMixin, IsTeacherMixin, FormView):
 class CreateVideoContentView(LoginRequiredMixin, IsTeacherMixin, FormView):
     form_class = VideoContentForm
     success_url = '/'
-    
+
     def form_valid(self, form):
         response = super().form_valid(form)
         module_id = form.cleaned_data.get('module_id')
@@ -250,7 +254,7 @@ class CreateVideoContentView(LoginRequiredMixin, IsTeacherMixin, FormView):
     def form_invalid(self, form):
         response = super().form_invalid(form)
         if self.request.is_ajax():
-            
+
             print(form.cleaned_data)
             data = {
                 'message': 'success',
@@ -263,7 +267,7 @@ class CreateVideoContentView(LoginRequiredMixin, IsTeacherMixin, FormView):
 class CreateModuleContentView(LoginRequiredMixin, IsTeacherMixin, FormView):
     form_class = ModuleCreateForm
     success_url = '/'
-    template_name = 'content_manage/success.html'
+    template_name = 'courses/success.html'
 
     def post(self, request, *args, **kwargs):
         form_class = self.get_form_class()
@@ -276,7 +280,6 @@ class CreateModuleContentView(LoginRequiredMixin, IsTeacherMixin, FormView):
         else:
             return self.form_invalid(form)
 
-    
     def form_valid(self, form):
         response = super().form_valid(form)
         form.save()
@@ -289,10 +292,11 @@ class CreateModuleContentView(LoginRequiredMixin, IsTeacherMixin, FormView):
         else:
             return response
 
+
 class EditModuleContentView(LoginRequiredMixin, IsTeacherMixin, FormView):
     form_class = ModuleCreateForm
     success_url = '/'
-    template_name = 'content_manage/success.html'
+    template_name = 'courses/success.html'
 
     def post(self, request, *args, **kwargs):
         form_class = self.get_form_class()
@@ -306,10 +310,9 @@ class EditModuleContentView(LoginRequiredMixin, IsTeacherMixin, FormView):
         else:
             return self.form_invalid(form)
 
-    
     def form_valid(self, form):
         response = super().form_valid(form)
-        
+
         module_id = self.kwargs.get('pk', None)
         if module_id is None:
             if self.request.is_ajax():
@@ -341,6 +344,7 @@ class EditModuleContentView(LoginRequiredMixin, IsTeacherMixin, FormView):
         else:
             return response
 
+
 class DeleteModuleView(LoginRequiredMixin, IsTeacherMixin, View):
     def post(self, request, *args, **kwargs):
         module_id = self.kwargs.get('pk', None)
@@ -363,6 +367,7 @@ class DeleteModuleView(LoginRequiredMixin, IsTeacherMixin, View):
             return JsonResponse(data)
         else:
             return response
+
 
 class ShowModuleView(LoginRequiredMixin, IsTeacherMixin, View):
     def post(self, request, *args, **kwargs):
@@ -391,7 +396,7 @@ class ShowModuleView(LoginRequiredMixin, IsTeacherMixin, View):
 
 class ManageCourseMainView(LoginRequiredMixin, IsTeacherMixin, DetailView):
     model = Course
-    template_name = 'content_manage/course_main.html'
+    template_name = 'courses/course_main.html'
 
     def get_context_data(self, *args, **kwargs):
         context = super(ManageCourseMainView, self).get_context_data(*args, **kwargs)
@@ -403,9 +408,9 @@ class ManageCourseMainView(LoginRequiredMixin, IsTeacherMixin, DetailView):
             activities = CourseViewed.objects.filter(user=p, course=obj)
             if activities.exists():
                 last = activities.first()
-                last_activities.append({'user':p, 'last': last.timestamp})
+                last_activities.append({'user': p, 'last': last.timestamp})
             else:
-                never_active.append({'user':p, 'last': None})
+                never_active.append({'user': p, 'last': None})
         context['last_activities'] = sorted(last_activities, key=itemgetter('last'), reverse=True)
         context['last_activities'] += never_active
         return context
@@ -413,8 +418,9 @@ class ManageCourseMainView(LoginRequiredMixin, IsTeacherMixin, DetailView):
 
 class ManageCourseParticipantsView(LoginRequiredMixin, IsTeacherMixin, FormView):
     form_class = AddUserToCourseForm
-    template_name = 'content_manage/course_participants.html'
-    # success_url = reverse("manage:participants", kwargs={"slug": })
+    template_name = 'courses/course_participants.html'
+
+    # success_url = reverse("courses:participants", kwargs={"slug": })
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -423,17 +429,18 @@ class ManageCourseParticipantsView(LoginRequiredMixin, IsTeacherMixin, FormView)
         return context
 
     def get_success_url(self):
-        return reverse("manage:participants", kwargs={'slug':self.kwargs['slug']})
+        return reverse("courses:participants", kwargs={'slug': self.kwargs['slug']})
 
     # def post(self, request, *args, **kwargs):
     #     return super().post(request, *args, **kwargs)
-        # return render(request, self.template_name, self.get_context_data())
+    # return render(request, self.template_name, self.get_context_data())
 
     def form_valid(self, form):
         course = get_object_or_404(Course, slug=self.kwargs['slug'])
         course.participants.set(form.cleaned_data['participants'], through_defaults={'method': 'owner'})
         course.save()
         return super().form_valid(form)
+
 
 class DeleteContentView(LoginRequiredMixin, IsTeacherMixin, View):
     def post(self, request, *args, **kwargs):
@@ -447,6 +454,7 @@ class DeleteContentView(LoginRequiredMixin, IsTeacherMixin, View):
         else:
             return super().post(request, *args, **kwargs)
 
+
 class ShowHideContentView(LoginRequiredMixin, IsTeacherMixin, View):
     def post(self, request, *args, **kwargs):
         content = Content.objects.get(pk=self.kwargs['pk'])
@@ -459,6 +467,7 @@ class ShowHideContentView(LoginRequiredMixin, IsTeacherMixin, View):
             return JsonResponse(data)
         else:
             return response
+
 
 class ContentOrderView(LoginRequiredMixin, IsTeacherMixin, View):
     def post(self, request, *args, **kwargs):
@@ -480,7 +489,7 @@ class ContentOrderView(LoginRequiredMixin, IsTeacherMixin, View):
                 else:
                     return response
             else:
-                up_content = module.content_set.get(order=content.order-1)
+                up_content = module.content_set.get(order=content.order - 1)
 
                 up_content.order = content.order
                 content.order -= 1
@@ -504,7 +513,7 @@ class ContentOrderView(LoginRequiredMixin, IsTeacherMixin, View):
                 else:
                     return response
             else:
-                down_content = module.content_set.get(order=content.order+1)
+                down_content = module.content_set.get(order=content.order + 1)
 
                 down_content.order = content.order
                 content.order += 1
