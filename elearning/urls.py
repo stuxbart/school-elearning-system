@@ -21,10 +21,18 @@ from django.conf.urls.static import static
 
 from .views import home_view
 
+api_urlpatterns = [
+    path('courses/', include('courses.api.urls')),
+    path('users/', include('accounts.api.urls.users')),
+    path('auth/', include('accounts.api.urls.auth'))
+]
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home_view, name='home'),
     path('accounts/', include('accounts.urls', 'accounts')),
     path('courses/', include('courses.urls', 'courses')),
-    path('search/', include('search.urls', 'search'))
+    path('search/', include('search.urls', 'search')),
+
+    path('api/', include(api_urlpatterns))
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
