@@ -96,6 +96,27 @@ def course_pre_save_receiver(sender, instance, *args, **kwargs):
 pre_save.connect(course_pre_save_receiver, sender=Course)
 
 
+class CategoryQuerySet(models.query.QuerySet):
+    def get_root_categories(self):
+        return self.filter(parent_category=None)
+
+    def get_used_categories(self):
+        return self.exclude(
+            Q(child_categories=None) & Q(course=None)
+        )
+
+
+class CategoryManager(models.Manager):
+    def get_queryset(self):
+        return CategoryQuerySet(model=self.model, using=self._db)
+
+    def get_root_categories(self):
+        return self.get_queryset().get_root_categories()
+
+    def get_used_categories(self):
+        return self.get_queryset().get_used_categories()
+
+
 class Category(models.Model):
     name = models.CharField(max_length=40, unique=True)
     slug = models.SlugField(max_length=50)
@@ -106,6 +127,8 @@ class Category(models.Model):
         blank=True,
         null=True
     )
+
+    objects = CategoryManager()
 
     class Meta:
         ordering = ['name']
@@ -128,6 +151,18 @@ class Category(models.Model):
 
         parse(self)
         return categories[::-1]
+
+    def get_child_categories(self):
+        categories = []
+
+        def parse(category):
+            categories.append(category)
+            for child_category in category.child_categories.all():
+                if child_category not in categories:
+                    parse(child_category)
+
+        parse(self)
+        return categories
 
 
 def course_pre_save_receiver(sender, instance, *args, **kwargs):
