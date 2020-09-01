@@ -52,3 +52,10 @@ class IsAdminStaffDeleteOnly(BasePermission):
         if request.method == "DELETE":
             return bool(request.user.is_admin or request.user.is_staff)
         return True
+
+
+class IsAdminStaffOrReadOnly(BasePermission):
+    def has_permission(self, request, view):
+        if request.method in SAFE_METHODS:
+            return True
+        return bool(request.user.is_admin or request.user.is_staff)
