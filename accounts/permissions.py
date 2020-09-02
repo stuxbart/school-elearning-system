@@ -67,3 +67,11 @@ class IsAdminStaffTeacherOrReadOnly(BasePermission):
             return True
         user = request.user
         return bool(user.is_admin or user.is_staff or user.is_teacher)
+
+
+class IsAdminStaffOwnerOrReadOnly(BasePermission):
+    def has_object_permission(self, request, view, obj):
+        if request.method in SAFE_METHODS:
+            return True
+        user = request.user
+        return bool(user.is_admin or user.is_staff or user == obj.owner)
