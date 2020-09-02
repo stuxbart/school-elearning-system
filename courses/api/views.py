@@ -17,9 +17,13 @@ from ..serializers import (
     EnrollCourseSerializer,
     ModuleSerializer,
     CreateModuleSerializer,
-    SnippetModuleSerializer
+    SnippetModuleSerializer,
+    TextContentSerializer,
+    ImageContentSerializer,
+    VideoContentSerializer,
+    FileContentSerializer
 )
-from ..models import Course, Category, Membership, Module
+from ..models import Course, Category, Membership, Module, Text, Content
 
 from accounts.permissions import (
     IsAdminStaffOrReadOnly,
@@ -120,28 +124,6 @@ class CourseEnrolAPIView(generics.GenericAPIView):
         return Response({'enrolled': False}, status=status.HTTP_400_BAD_REQUEST)
 
 
-# class ModuleListCreateAPIView(generics.ListCreateAPIView):
-#     queryset = Module.objects.all()
-#     permission_classes = [
-#         permissions.IsAuthenticated,
-#         IsAdminStaffTeacherOrReadOnly
-#     ]
-#
-#     def get_serializer_class(self):
-#         if self.request.method == "GET":
-#             return SnippetModuleSerializer
-#         return CreateModuleSerializer
-#
-#
-# class ModuleRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
-#     queryset = Module.objects.all()
-#     permission_classes = [
-#         permissions.IsAuthenticated,
-#         IsAdminStaffOwnerOrReadOnly
-#     ]
-#     serializer_class = ModuleSerializer
-
-
 class ModuleViewSet(viewsets.ModelViewSet):
     queryset = Module.objects.all()
 
@@ -188,9 +170,98 @@ class ModuleViewSet(viewsets.ModelViewSet):
         return Response({'order': module.order}, status=status.HTTP_200_OK)
 
 
-# Add content Text / Image / File / Video
-# Edit content
-# Delete content
-# Show / Hide content
-# Content Order change
+class BaseContentViewSet(viewsets.ModelViewSet):
+    @action(detail=True, methods=['post'])
+    def show(self, request, pk=None):
+        content = self.get_object()
+        content.visible = True
+        content.save()
+        return Response({'show': content.visible}, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['post'])
+    def hide(self, request, pk=None):
+        content = self.get_object()
+        content.visible = False
+        content.save()
+        return Response({'show': content.visible}, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['post'])
+    def move_down(self, request, pk=None):
+        content = self.get_object()
+        content.move_down()
+        return Response({'order': content.order}, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['post'])
+    def move_up(self, request, pk=None):
+        content = self.get_object()
+        content.move_up()
+        return Response({'order': content.order}, status=status.HTTP_200_OK)
+
+
+class TextContentViewSet(BaseContentViewSet):
+    serializer_class = TextContentSerializer
+
+    def get_queryset(self):
+        queryset = Content.objects.get_texts(user=self.request.user)
+        return queryset
+
+    def get_permissions(self):
+        permission_classes = [permissions.IsAuthenticated]
+        if self.action in ['list', 'create']:
+            permission_classes.append(IsAdminStaffTeacherOrReadOnly)
+        else:
+            permission_classes.append(IsAdminStaffOwnerOrReadOnly)
+        return [permission() for permission in permission_classes]
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+
+class ImageContentViewSet(viewsets.ModelViewSet):
+    serializer_class = ImageContentSerializer
+
+    def get_queryset(self):
+        queryset = Content.objects.get_images(user=self.request.user)
+        return queryset
+
+    def get_permissions(self):
+        permission_classes = [permissions.IsAuthenticated]
+        if self.action in ['list', 'create']:
+            permission_classes.append(IsAdminStaffTeacherOrReadOnly)
+        else:
+            permission_classes.append(IsAdminStaffOwnerOrReadOnly)
+        return [permission() for permission in permission_classes]
+
+
+class VideoContentViewSet(viewsets.ModelViewSet):
+    serializer_class = VideoContentSerializer
+
+    def get_queryset(self):
+        queryset = Content.objects.get_videos(user=self.request.user)
+        return queryset
+
+    def get_permissions(self):
+        permission_classes = [permissions.IsAuthenticated]
+        if self.action in ['list', 'create']:
+            permission_classes.append(IsAdminStaffTeacherOrReadOnly)
+        else:
+            permission_classes.append(IsAdminStaffOwnerOrReadOnly)
+        return [permission() for permission in permission_classes]
+
+
+class FileContentViewSet(viewsets.ModelViewSet):
+    serializer_class = FileContentSerializer
+
+    def get_queryset(self):
+        queryset = Content.objects.get_files(user=self.request.user)
+        return queryset
+
+    def get_permissions(self):
+        permission_classes = [permissions.IsAuthenticated]
+        if self.action in ['list', 'create']:
+            permission_classes.append(IsAdminStaffTeacherOrReadOnly)
+        else:
+            permission_classes.append(IsAdminStaffOwnerOrReadOnly)
+        return [permission() for permission in permission_classes]
+
 # Show hide course
