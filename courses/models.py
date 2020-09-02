@@ -184,6 +184,7 @@ class Module(models.Model):
     description = models.TextField(blank=True, null=True)
     visible = models.BooleanField(default=False, blank=False, null=False)
     order = OrderField(for_fields=['course'], blank=True)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     created = models.DateTimeField(auto_now_add=True)
 
     objects = ModuleManager()
