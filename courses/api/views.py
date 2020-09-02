@@ -120,26 +120,47 @@ class CourseEnrolAPIView(generics.GenericAPIView):
         return Response({'enrolled': False}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ModuleListCreateAPIView(generics.ListCreateAPIView):
+# class ModuleListCreateAPIView(generics.ListCreateAPIView):
+#     queryset = Module.objects.all()
+#     permission_classes = [
+#         permissions.IsAuthenticated,
+#         IsAdminStaffTeacherOrReadOnly
+#     ]
+#
+#     def get_serializer_class(self):
+#         if self.request.method == "GET":
+#             return SnippetModuleSerializer
+#         return CreateModuleSerializer
+#
+#
+# class ModuleRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+#     queryset = Module.objects.all()
+#     permission_classes = [
+#         permissions.IsAuthenticated,
+#         IsAdminStaffOwnerOrReadOnly
+#     ]
+#     serializer_class = ModuleSerializer
+
+
+class ModuleViewSet(viewsets.ModelViewSet):
     queryset = Module.objects.all()
-    permission_classes = [
-        permissions.IsAuthenticated,
-        IsAdminStaffTeacherOrReadOnly
-    ]
+
+    def get_permissions(self):
+        permission_classes = [permissions.IsAuthenticated]
+        if self.action in ['list', 'create']:
+            permission_classes.append(IsAdminStaffTeacherOrReadOnly)
+        else:
+            permission_classes.append(IsAdminStaffOwnerOrReadOnly)
+        return [permission() for permission in permission_classes]
 
     def get_serializer_class(self):
-        if self.request.method == "GET":
+        if self.action == 'list':
             return SnippetModuleSerializer
-        return CreateModuleSerializer
+        elif self.action in ['create', 'update', 'partial_update']:
+            return CreateModuleSerializer
+        else:
+            return ModuleSerializer
 
-
-class ModuleRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Module.objects.all()
-    permission_classes = [
-        permissions.IsAuthenticated,
-        # IsAdminStaffOwnerOrReadOnly
-    ]
-    serializer_class = ModuleSerializer
 
 
 # Text / Image / File / Video

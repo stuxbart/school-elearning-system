@@ -6,8 +6,6 @@ import django.db.models.deletion
 
 
 def set_module_owner(apps, schema_editor):
-    # We can't import the Person model directly as it may be a newer
-    # version than this migration expects. We use the historical version.
     Module = apps.get_model('courses', 'Module')
     User = apps.get_model('accounts', 'User')
     default_user = User.objects.get(email='admin@admin.com')
