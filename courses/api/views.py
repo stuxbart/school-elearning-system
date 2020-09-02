@@ -161,16 +161,36 @@ class ModuleViewSet(viewsets.ModelViewSet):
         else:
             return ModuleSerializer
 
+    @action(detail=True, methods=['post'])
+    def show(self, request, pk=None):
+        module = self.get_object()
+        module.visible = True
+        module.save()
+        return Response({'show': module.visible}, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['post'])
+    def hide(self, request, pk=None):
+        module = self.get_object()
+        module.visible = False
+        module.save()
+        return Response({'show': module.visible}, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['post'])
+    def move_down(self, request, pk=None):
+        module = self.get_object()
+        module.move_down()
+        return Response({'order': module.order}, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['post'])
+    def move_up(self, request, pk=None):
+        module = self.get_object()
+        module.move_up()
+        return Response({'order': module.order}, status=status.HTTP_200_OK)
 
 
-# Text / Image / File / Video
 # Add content Text / Image / File / Video
 # Edit content
 # Delete content
 # Show / Hide content
 # Content Order change
-# Create Module
-# Edit Module
-# Delete Module
-# Show/hide module
-# Module Order change
+# Show hide course

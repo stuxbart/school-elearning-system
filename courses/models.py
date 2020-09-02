@@ -195,6 +195,29 @@ class Module(models.Model):
     def __str__(self):
         return self.title
 
+    def move(self, n):
+        if isinstance(n, int):
+            qs = self.course.module_set
+            current_n = self.order
+            to_swap = qs.get(order=n)
+
+            if to_swap:
+                to_swap.order = current_n
+                self.order = n
+
+                to_swap.save()
+                self.save()
+        return self.order
+
+    def move_up(self):
+        if self.order != 1:
+            return self.move(self.order-1)
+
+    def move_down(self):
+        course = self.course
+        if self.order != course.module_set.latest('order').order:
+            return self.move(self.order+1)
+
 
 class Content(models.Model):
     module = models.ForeignKey(Module, on_delete=models.CASCADE)
