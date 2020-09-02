@@ -219,6 +219,33 @@ class Module(models.Model):
             return self.move(self.order+1)
 
 
+class AvailableContentManager(models.Manager):
+    def get_queryset(self, user):
+        qs = super().get_queryset()
+        return qs.filter(module__course__participants__in=[user])
+
+
+class ContentManager(AvailableContentManager):
+    def get_texts(self, user):
+        text_type = ContentType.objects.get_for_model(Text)
+        return self.get_queryset(user).filter(content_type=text_type)
+
+    def get_images(self, user):
+        image_type = ContentType.objects.get_for_model(Image)
+        return self.get_queryset(user).filter(content_type=image_type)
+
+    def get_videos(self, user):
+        video_type = ContentType.objects.get_for_model(Video)
+        return self.get_queryset(user).filter(content_type=video_type)
+
+    def get_files(self, user):
+        file_type = ContentType.objects.get_for_model(File)
+        return self.get_queryset(user).filter(content_type=file_type)
+
+    def all(self, user):
+        return self.get_queryset(user)
+
+
 class Content(models.Model):
     module = models.ForeignKey(Module, on_delete=models.CASCADE)
     visible = models.BooleanField(default=False, blank=False, null=False)
@@ -227,8 +254,54 @@ class Content(models.Model):
     item = GenericForeignKey('content_type', 'object_id')
     order = OrderField(for_fields=['module'], blank=True)
 
+    objects = ContentManager()
+
     class Meta:
         ordering = ['order']
+
+    @property
+    def owner(self):
+        if self.item:
+            return self.item.owner
+        else:
+            return None
+
+    @property
+    def title(self):
+        if self.item:
+            return self.item.title
+        else:
+            return None
+
+    @property
+    def course(self):
+        return self.module.course
+
+    def __str__(self):
+        return f"{self.order}. {self.item.title}"
+
+    def move(self, n):
+        if isinstance(n, int):
+            qs = self.module.content_set
+            current_n = self.order
+            to_swap = qs.get(order=n)
+
+            if to_swap:
+                to_swap.order = current_n
+                self.order = n
+
+                to_swap.save()
+                self.save()
+        return self.order
+
+    def move_up(self):
+        if self.order != 1:
+            return self.move(self.order-1)
+
+    def move_down(self):
+        module = self.module
+        if self.order != module.content_set.latest('order').order:
+            return self.move(self.order+1)
 
 
 class ItemBase(models.Model):
