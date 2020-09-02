@@ -59,3 +59,7 @@ class DetailCategorySerializer(serializers.HyperlinkedModelSerializer):
             'url': {'lookup_field': 'slug'},
             'parent_category': {'lookup_field': 'slug'}
         }
+
+
+class EnrollCourseSerializer(serializers.Serializer):
+    access_key = serializers.CharField()

@@ -1,4 +1,5 @@
 from django.http import Http404
+from django.shortcuts import get_object_or_404
 
 from rest_framework import viewsets
 from rest_framework import permissions
@@ -12,9 +13,10 @@ from ..serializers import (
     CourseSerializer,
     CategorySerializer,
     DetailCategorySerializer,
-    CreateCourseSerializer
+    CreateCourseSerializer,
+    EnrollCourseSerializer
 )
-from ..models import Course, Category
+from ..models import Course, Category, Membership
 
 from accounts.permissions import (
     IsAdminStaffOrReadOnly,
@@ -85,10 +87,36 @@ class CourseDetail(generics.RetrieveUpdateDestroyAPIView):
     #     return CreateCourseSerializer
 
 
-# enroll_course
+class CourseEnrolAPIView(generics.GenericAPIView):
+    serializer_class = EnrollCourseSerializer
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]
+
+    def get_object(self):
+        slug = self.kwargs['slug'] or None
+        if slug is not None:
+            course = get_object_or_404(Course, slug=slug)
+            return course
+        raise Http404()
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        course_access_key = serializer.validated_data['access_key']
+        user = request.user
+        course = self.get_object()
+        if course.access_key == course_access_key:
+            m = Membership(
+                user=user,
+                course=course,
+                method="key"
+            )
+            m.save()
+            return Response({'enrolled': True}, status=status.HTTP_200_OK)
+        return Response({'enrolled': False}, status=status.HTTP_400_BAD_REQUEST)
+
 # Text / Image / File / Video
-# Course by category
-# Manage Course List
 # Add content Text / Image / File / Video
 # Edit content
 # Delete content
