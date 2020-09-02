@@ -23,7 +23,7 @@ from ..serializers import (
     VideoContentSerializer,
     FileContentSerializer
 )
-from ..models import Course, Category, Membership, Module, Text, Content
+from ..models import Course, Category, Membership, Module, Content
 
 from accounts.permissions import (
     IsAdminStaffOrReadOnly,

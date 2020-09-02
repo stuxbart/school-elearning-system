@@ -27,7 +27,8 @@ api_urlpatterns = [
     path('categories/', include('courses.api.urls.category')),
     path('content/', include('courses.api.urls.content')),
     path('users/', include('accounts.api.urls.users')),
-    path('auth/', include('accounts.api.urls.auth'))
+    path('auth/', include('accounts.api.urls.auth')),
+    path('news/', include('informations.api.urls'))
 ]
 
 urlpatterns = [
