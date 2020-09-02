@@ -165,12 +165,17 @@ class Category(models.Model):
         return categories
 
 
-def course_pre_save_receiver(sender, instance, *args, **kwargs):
+def category_pre_save_receiver(sender, instance, *args, **kwargs):
     if not instance.slug:
         instance.slug = slug_generator(instance)
 
 
-pre_save.connect(course_pre_save_receiver, sender=Category)
+pre_save.connect(category_pre_save_receiver, sender=Category)
+
+
+class ModuleManager(models.Manager):
+    def visible(self):
+        return self.get_queryset().filter(visible=True)
 
 
 class Module(models.Model):
@@ -180,6 +185,8 @@ class Module(models.Model):
     visible = models.BooleanField(default=False, blank=False, null=False)
     order = OrderField(for_fields=['course'], blank=True)
     created = models.DateTimeField(auto_now_add=True)
+
+    objects = ModuleManager()
 
     class Meta:
         ordering = ['order']
