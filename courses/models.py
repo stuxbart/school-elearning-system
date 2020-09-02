@@ -220,7 +220,7 @@ class Module(models.Model):
 
 
 class AvailableContentManager(models.Manager):
-    def get_queryset(self, user):
+    def get_available_queryset(self, user):
         qs = super().get_queryset()
         return qs.filter(module__course__participants__in=[user])
 
@@ -228,22 +228,19 @@ class AvailableContentManager(models.Manager):
 class ContentManager(AvailableContentManager):
     def get_texts(self, user):
         text_type = ContentType.objects.get_for_model(Text)
-        return self.get_queryset(user).filter(content_type=text_type)
+        return self.get_available_queryset(user).filter(content_type=text_type)
 
     def get_images(self, user):
         image_type = ContentType.objects.get_for_model(Image)
-        return self.get_queryset(user).filter(content_type=image_type)
+        return self.get_available_queryset(user).filter(content_type=image_type)
 
     def get_videos(self, user):
         video_type = ContentType.objects.get_for_model(Video)
-        return self.get_queryset(user).filter(content_type=video_type)
+        return self.get_available_queryset(user).filter(content_type=video_type)
 
     def get_files(self, user):
         file_type = ContentType.objects.get_for_model(File)
-        return self.get_queryset(user).filter(content_type=file_type)
-
-    def all(self, user):
-        return self.get_queryset(user)
+        return self.get_available_queryset(user).filter(content_type=file_type)
 
 
 class Content(models.Model):
@@ -276,6 +273,14 @@ class Content(models.Model):
     @property
     def course(self):
         return self.module.course
+
+    @property
+    def created(self):
+        return self.module.created
+
+    @property
+    def updated(self):
+        return self.module.updated
 
     def __str__(self):
         return f"{self.order}. {self.item.title}"
