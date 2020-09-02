@@ -22,7 +22,9 @@ from django.conf.urls.static import static
 from .views import home_view
 
 api_urlpatterns = [
-    path('courses/', include('courses.api.urls')),
+    path('courses/', include('courses.api.urls.course')),
+    path('modules/', include('courses.api.urls.module')),
+    path('categories/', include('courses.api.urls.category')),
     path('users/', include('accounts.api.urls.users')),
     path('auth/', include('accounts.api.urls.auth'))
 ]
