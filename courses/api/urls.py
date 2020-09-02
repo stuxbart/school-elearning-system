@@ -6,7 +6,9 @@ from .views import (
     CategoryViewSet,
     CourseListCreateAPIView,
     CourseDetail,
-    CourseEnrolAPIView
+    CourseEnrolAPIView,
+    ModuleListCreateAPIView,
+    ModuleRetrieveUpdateDestroyAPIView
 )
 
 router = routers.DefaultRouter()
@@ -17,7 +19,8 @@ urlpatterns = [
     path('<slug>/', CourseDetail.as_view(), name="course-detail"),
     path('<slug>/enroll', CourseEnrolAPIView.as_view(), name="course-enroll"),
     path('', include(router.urls)),
-
+    path('module', ModuleListCreateAPIView.as_view(), name="module-list"),
+    path('module/<int:pk>', ModuleRetrieveUpdateDestroyAPIView.as_view(), name="module-detail")
 ]
 
 # urlpatterns = format_suffix_patterns(urlpatterns)

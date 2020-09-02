@@ -14,9 +14,12 @@ from ..serializers import (
     CategorySerializer,
     DetailCategorySerializer,
     CreateCourseSerializer,
-    EnrollCourseSerializer
+    EnrollCourseSerializer,
+    ModuleSerializer,
+    CreateModuleSerializer,
+    SnippetModuleSerializer
 )
-from ..models import Course, Category, Membership
+from ..models import Course, Category, Membership, Module
 
 from accounts.permissions import (
     IsAdminStaffOrReadOnly,
@@ -115,6 +118,29 @@ class CourseEnrolAPIView(generics.GenericAPIView):
             m.save()
             return Response({'enrolled': True}, status=status.HTTP_200_OK)
         return Response({'enrolled': False}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ModuleListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Module.objects.all()
+    permission_classes = [
+        permissions.IsAuthenticated,
+        IsAdminStaffTeacherOrReadOnly
+    ]
+
+    def get_serializer_class(self):
+        if self.request.method == "GET":
+            return SnippetModuleSerializer
+        return CreateModuleSerializer
+
+
+class ModuleRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Module.objects.all()
+    permission_classes = [
+        permissions.IsAuthenticated,
+        # IsAdminStaffOwnerOrReadOnly
+    ]
+    serializer_class = ModuleSerializer
+
 
 # Text / Image / File / Video
 # Add content Text / Image / File / Video
