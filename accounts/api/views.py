@@ -50,6 +50,14 @@ class LoginAPIView(generics.GenericAPIView):
         }, *args, **kwargs)
 
 
+class LoggedInUserRetrieveAPIView(generics.RetrieveAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = UserSerializer
+
+    def get_object(self):
+        return self.request.user
+
+
 class UserListAPIView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
