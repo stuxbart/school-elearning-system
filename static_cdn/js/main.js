@@ -241,16 +241,16 @@ $(document).ready(function() {
     var courseDeleteModal = $('.course-delete-modal')
     var courseDeleteModalSubmitBtn = $('.delete-course-modal-submit-btn')
     var courseDeleteTitleSpan = $('.course-delete-title')
-    courseDeleteBtn.click(function(event){
-        event.preventDefault()
-        var url = event.originalEvent.target.attributes.href.value
-        courseDeleteModal.modal('show')
-        console.log(url)
-        courseDeleteModalSubmitBtn[0].dataset.endpoint = url
-        console.log(courseDeleteTitleSpan)
-        courseDeleteTitleSpan[0].textContent = event.originalEvent.target.dataset.title
-        console.log(courseDeleteModalSubmitBtn[0].dataset.endpoint)
-    })
+//    courseDeleteBtn.click(function(event){
+//        event.preventDefault()
+//        var url = event.originalEvent.target.attributes.href.value
+//        courseDeleteModal.modal('show')
+//        console.log(url)
+//        courseDeleteModalSubmitBtn[0].dataset.endpoint = url
+//        console.log(courseDeleteTitleSpan)
+//        courseDeleteTitleSpan[0].textContent = event.originalEvent.target.dataset.title
+//        console.log(courseDeleteModalSubmitBtn[0].dataset.endpoint)
+//    })
     courseDeleteModalSubmitBtn.click(function(event){
         var endpoint = event.originalEvent.target.dataset.endpoint
         console.log(endpoint)

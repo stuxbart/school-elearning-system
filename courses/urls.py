@@ -10,7 +10,6 @@ from .views import (
     VideoDetailView,
     CategoryCoursesListView,
     ManageCourseList,
-    ManageCourseEdit,
     CourseAddContentView,
     CreateTextContentView,
     CreateImageContentView,
@@ -25,15 +24,17 @@ from .views import (
     DeleteContentView,
     ShowHideContentView,
     ShowModuleView,
-    ContentOrderView
+    ContentOrderView,
+    CourseCreateView,
+    CourseEditView
 )
 
 app_name = 'courses'
 
 manage_urls = [
     path('', ManageCourseList.as_view(), name='manage_list'),
-    path('course/', ManageCourseEdit.as_view(), name="create"),
-    path('course/<slug>/edit', ManageCourseEdit.as_view(), name="update"),
+    path('course/', CourseCreateView.as_view(), name="create"),
+    path('course/<slug>/edit', CourseEditView.as_view(), name="update"),
     path('course/<slug>/delete', DeleteCourseView.as_view(), name="delete"),
 
     path('course/<slug>', ManageCourseMainView.as_view(), name="course_home"),

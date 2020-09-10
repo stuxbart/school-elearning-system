@@ -24,7 +24,8 @@
                                     </a>
                                     <a href="{% url 'courses:add_content' course.slug %}" class="btn btn-success">Add</a>
                                     <a href="{% url 'courses:update' course.slug %}" class="btn btn-secondary">Edit</a>
-                                    <a href="{% url 'courses:delete' course.slug %}" data-title="{{ course.title }}" class="btn btn-danger course-delete-btn">Delete</a>
+                                    <a href="{% url 'courses:delete' course.slug %}" class="btn btn-danger course-delete-btn">Delete</a>
+<!--                                    <a href="{% url 'courses:delete' course.slug %}" data-title="{{ course.title }}" class="btn btn-danger course-delete-btn">Delete</a>-->
                                 </div>
                            </div>
                        </div>

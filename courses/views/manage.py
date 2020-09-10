@@ -1,21 +1,21 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import render, redirect, get_object_or_404, reverse
-from django.views.generic import ListView, FormView, DetailView, View, DeleteView
+from django.shortcuts import get_object_or_404, reverse
+from django.views.generic import ListView, FormView, DetailView, View, DeleteView, CreateView, UpdateView
 from django.http import JsonResponse
 from operator import itemgetter
 import json
 from ..forms import (
-    CourseUpdateForm,
     TextContentForm,
     ImageContentForm,
     FileContentForm,
     VideoContentForm,
     ModuleCreateForm,
-    AddUserToCourseForm
+    AddUserToCourseForm,
+    CourseCreateForm
 )
 
 from ..mixins import IsTeacherMixin
-from ..models import Course, Content, Module, Text, Image, File, Membership
+from ..models import Course, Content, Module, Membership
 
 from activity.models import CourseViewed
 
@@ -28,66 +28,38 @@ class ManageCourseList(LoginRequiredMixin, IsTeacherMixin, ListView):
         return Course.objects.filter(owner=self.request.user)
 
 
-class ManageCourseEdit(LoginRequiredMixin, IsTeacherMixin, FormView):
-    form_class = CourseUpdateForm
+class CourseCreateView(LoginRequiredMixin, IsTeacherMixin, CreateView):
+    form_class = CourseCreateForm
     template_name = 'courses/edit.html'
 
-    def get_context_data(self, *args, **kwargs):
-        context = super(ManageCourseEdit, self).get_context_data(*args, **kwargs)
-        if self.object:
-            context['object'] = self.object
-        return context
+    def get_success_url(self):
+        return reverse('courses:manage_list')
 
-    def get(self, request, *args, **kwargs):
-        if kwargs.get('slug', None):
-            slug = kwargs.get('slug')
-            self.object = get_object_or_404(Course, slug=slug)
-            self.initial = {
-                'title': self.object.title,
-                'overview': self.object.overview,
-                'access_key': self.object.access_key
-            }
-        else:
-            self.object = None
-        return super(ManageCourseEdit, self).get(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        if kwargs.get('slug', None):
-            slug = kwargs.get('slug')
-            self.object = get_object_or_404(Course, slug=slug)
-            self.success_url = reverse('courses:update', kwargs={'slug': slug})
-        else:
-            self.object = Course(owner=request.user)
-        return super(ManageCourseEdit, self).post(request, *args, **kwargs)
-
-    def form_valid(self, form, *args, **kwargs):
-        self.object.title = form.cleaned_data.get('title')
-        self.object.overview = form.cleaned_data.get('overview')
-        self.object.access_key = form.cleaned_data.get('access_key')
-        self.object.save()
-        self.success_url = reverse('courses:update', kwargs={'slug': self.object.slug})
-        return super(ManageCourseEdit, self).form_valid(form)
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super().form_valid(form)
 
 
-class DeleteCourseView(LoginRequiredMixin, IsTeacherMixin, View):
-    # model = Course
-    # success_url = '/'
+class CourseEditView(LoginRequiredMixin, IsTeacherMixin, UpdateView):
+    form_class = CourseCreateForm
+    template_name = 'courses/edit.html'
 
-    def post(self, request, *args, **kwargs):
-        slug = self.kwargs.get('slug')
-        if slug is None:
-            return redirect('/')
-        course_obj = get_object_or_404(Course, slug=slug)
-        if course_obj.owner != self.request.user:
-            return redirect('/')
-        course_obj.delete()
-        if self.request.is_ajax():
-            data = {
-                'message': 'success',
-            }
-            return JsonResponse(data)
-        else:
-            return response
+    def get_success_url(self):
+        return reverse('courses:manage_list')
+
+    def get_queryset(self):
+        return Course.objects.filter(owner=self.request.user)
+
+
+class DeleteCourseView(LoginRequiredMixin, IsTeacherMixin, DeleteView):
+    model = Course
+    template_name = 'courses/delete.html'
+
+    def get_success_url(self):
+        return reverse('courses:manage_list')
+
+    def get_queryset(self):
+        return Course.objects.filter(owner=self.request.user)
 
 
 class CourseAddContentView(LoginRequiredMixin, IsTeacherMixin, DetailView):
