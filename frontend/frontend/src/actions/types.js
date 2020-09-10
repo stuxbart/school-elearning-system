@@ -1,0 +1,7 @@
+export const SET_FIXED_NAVBAR = 'SET_FIXED_NAVBAR'
+export const UNSET_FIXED_NAVBAR = 'UNSET_FIXED_NAVBAR'
+export const LOGIN = 'LOGIN'
+export const LOGOUT = 'LOGOUT'
+export const USER_LOADED = 'USER_LOADED'
+export const SHOW_MESSAGE = 'SHOW_MESSAGE'
+export const HIDE_MESSAGE = 'HIDE_MESSAGE'
