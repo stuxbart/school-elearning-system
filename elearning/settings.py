@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'informations',
     'rest_framework',
     'knox',
+    'corsheaders',
 ]
 
 REST_FRAMEWORK = {
@@ -57,6 +58,7 @@ REST_FRAMEWORK = {
 AUTH_USER_MODEL = 'accounts.User'
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -146,3 +148,10 @@ STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'static_my_proj_cdn', 'sta
 MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'static_my_proj_cdn', 'media')
 
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static_cdn')]
+
+CORS_ALLOWED_ORIGINS = [
+    "https://example.com",
+    "https://sub.example.com",
+    "http://localhost:3000",
+    "http://127.0.0.1:9000"
+]
