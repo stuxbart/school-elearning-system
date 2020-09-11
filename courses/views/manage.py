@@ -371,8 +371,10 @@ class ModuleShowHideView(LoginRequiredMixin, IsTeacherMixin, DetailView):
 
 
 class CourseManageDetailView(LoginRequiredMixin, IsTeacherMixin, DetailView):
-    model = Course
     template_name = 'courses/course_main.html'
+
+    def get_queryset(self):
+        return Course.objects.filter(owner=self.request.user)
 
     def get_context_data(self, **kwargs):
         context = super(CourseManageDetailView, self).get_context_data(**kwargs)
@@ -405,6 +407,9 @@ class CourseParticipantsManageDetailView(LoginRequiredMixin, IsTeacherMixin, For
     form_class = AddUserToCourseForm
     template_name = 'courses/course_participants.html'
 
+    def get_queryset(self):
+        return Course.objects.filter(owner=self.request.user)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         course = get_object_or_404(Course, slug=self.kwargs['slug'])
@@ -415,7 +420,8 @@ class CourseParticipantsManageDetailView(LoginRequiredMixin, IsTeacherMixin, For
         return reverse("courses:participants", kwargs={'slug': self.kwargs['slug']})
 
     def form_valid(self, form):
-        course = get_object_or_404(Course, slug=self.kwargs['slug'])
+        course_qs = self.get_queryset()
+        course = get_object_or_404(course_qs, slug=self.kwargs['slug'])
         course.participants.set(form.cleaned_data['participants'], through_defaults={'method': 'owner'})
         return super().form_valid(form)
 
