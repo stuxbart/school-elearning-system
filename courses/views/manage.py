@@ -9,6 +9,7 @@ from django.views.generic import (
     CreateView,
     UpdateView
 )
+from django.views.generic.detail import SingleObjectMixin
 from django.http import JsonResponse
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.db.models import F, Subquery, OuterRef
@@ -450,18 +451,28 @@ class ContentDeleteView(LoginRequiredMixin, IsTeacherMixin, DeleteView):
             return super().post(request, *args, **kwargs)
 
 
-class ShowHideContentView(LoginRequiredMixin, IsTeacherMixin, View):
-    def post(self, request, *args, **kwargs):
-        content = Content.objects.get(pk=self.kwargs['pk'])
-        content.visible = not content.visible
-        content.save()
+class ContentShowHideView(LoginRequiredMixin, IsTeacherMixin, SingleObjectMixin, View):
+    http_method_names = 'post'
+
+    def get_object(self, queryset=None):
+        obj = get_object_or_404(Content, pk=self.kwargs.get('pk'))
+        if obj.item.owner != self.request.user:
+            raise ObjectDoesNotExist()
+        return obj
+
+    def post(self, request, **_):
+        obj = self.get_object()
+
+        obj.visible = not obj.visible
+        obj.save()
+
         if request.is_ajax():
             data = {
-                'message': 'success',
+                'message': 'Success',
             }
             return JsonResponse(data)
         else:
-            return response
+            raise Exception("Ajax only")
 
 
 class ContentOrderView(LoginRequiredMixin, IsTeacherMixin, View):
