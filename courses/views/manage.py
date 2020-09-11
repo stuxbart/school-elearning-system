@@ -1,11 +1,20 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, reverse
-from django.views.generic import ListView, FormView, DetailView, View, DeleteView, CreateView, UpdateView
+from django.views.generic import (
+    ListView,
+    FormView,
+    DetailView,
+    View,
+    DeleteView,
+    CreateView,
+    UpdateView
+)
 from django.http import JsonResponse
 from django.core.exceptions import PermissionDenied
-from django.db.models import Count, F, Subquery, OuterRef
-from operator import itemgetter
+from django.db.models import F, Subquery, OuterRef
+
 import json
+
 from ..forms import (
     TextContentForm,
     ImageContentForm,
@@ -392,14 +401,12 @@ class CourseManageDetailView(LoginRequiredMixin, IsTeacherMixin, DetailView):
         return context
 
 
-class ManageCourseParticipantsView(LoginRequiredMixin, IsTeacherMixin, FormView):
+class CourseParticipantsManageDetailView(LoginRequiredMixin, IsTeacherMixin, FormView):
     form_class = AddUserToCourseForm
     template_name = 'courses/course_participants.html'
 
-    # success_url = reverse("courses:participants", kwargs={"slug": })
-
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         course = get_object_or_404(Course, slug=self.kwargs['slug'])
         context['participants'] = Membership.objects.filter(course=course)
         return context
@@ -407,14 +414,9 @@ class ManageCourseParticipantsView(LoginRequiredMixin, IsTeacherMixin, FormView)
     def get_success_url(self):
         return reverse("courses:participants", kwargs={'slug': self.kwargs['slug']})
 
-    # def post(self, request, *args, **kwargs):
-    #     return super().post(request, *args, **kwargs)
-    # return render(request, self.template_name, self.get_context_data())
-
     def form_valid(self, form):
         course = get_object_or_404(Course, slug=self.kwargs['slug'])
         course.participants.set(form.cleaned_data['participants'], through_defaults={'method': 'owner'})
-        course.save()
         return super().form_valid(form)
 
 

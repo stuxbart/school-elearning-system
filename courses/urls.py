@@ -20,7 +20,7 @@ from .views import (
     ModuleUpdateView,
     ModuleDeleteView,
     DeleteCourseView,
-    ManageCourseParticipantsView,
+    CourseParticipantsManageDetailView,
     DeleteContentView,
     ShowHideContentView,
     ModuleShowHideView,
@@ -39,7 +39,7 @@ manage_urls = [
 
     path('course/<slug>', CourseManageDetailView.as_view(), name="course_home"),
     path('course/<slug>/add', CourseAddContentView.as_view(), name="add_content"),
-    path('course/<slug>/participants', ManageCourseParticipantsView.as_view(), name="participants"),
+    path('course/<slug>/participants', CourseParticipantsManageDetailView.as_view(), name="participants"),
 
 
     path('course/<slug>/add-module', ModuleCreateView.as_view(), name="add_module"),
