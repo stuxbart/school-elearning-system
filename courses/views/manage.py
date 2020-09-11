@@ -313,24 +313,23 @@ class ModuleUpdateView(LoginRequiredMixin, IsTeacherMixin, UpdateView):
             return response
 
 
-class DeleteModuleView(LoginRequiredMixin, IsTeacherMixin, View):
+class ModuleDeleteView(LoginRequiredMixin, IsTeacherMixin, DeleteView):
+    template_name = 'courses/module/delete.html'
+
+    def get_success_url(self):
+        obj = self.get_object()
+        course = obj.course
+        return reverse('courses:add_content', kwargs={'slug': course.slug})
+
+    def get_queryset(self):
+        return Module.objects.filter(owner=self.request.user)
+
     def post(self, request, *args, **kwargs):
-        module_id = self.kwargs.get('pk', None)
-        request = self.request
-        if module_id is not None:
-            module_obj = get_object_or_404(Module, id=module_id)
-            if request.user == module_obj.course.owner:
-                module_obj.delete()
-                if request.is_ajax():
-                    data = {
-                        'message': 'Deleted',
-                    }
-                    return JsonResponse(data)
-                else:
-                    return response
+        response = super().post(request, *args, **kwargs)
+
         if request.is_ajax():
             data = {
-                'message': 'Error',
+                'message': 'Deleted',
             }
             return JsonResponse(data)
         else:
