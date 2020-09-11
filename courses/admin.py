@@ -30,7 +30,7 @@ class ModuleInline(admin.StackedInline):
 
 @admin.register(Module)
 class ModuleAdmin(admin.ModelAdmin):
-    list_display = ['title', 'course', 'description']
+    list_display = ['pk', 'title', 'course', 'description']
     sortable_by = ['course']
     inlines = []
 

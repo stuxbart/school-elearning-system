@@ -253,7 +253,7 @@ class CreateVideoContentView(LoginRequiredMixin, IsTeacherMixin, FormView):
 
 class ModuleCreateView(LoginRequiredMixin, IsTeacherMixin, FormView):
     form_class = ModuleCreateForm
-    template_name = 'courses/module_create.html'
+    template_name = 'courses/module/create.html'
 
     def get_success_url(self):
         return reverse('courses:add_content', kwargs={'slug': self.kwargs.get('slug')})
@@ -289,49 +289,21 @@ class ModuleCreateView(LoginRequiredMixin, IsTeacherMixin, FormView):
             return response
 
 
-class EditModuleContentView(LoginRequiredMixin, IsTeacherMixin, FormView):
+class ModuleUpdateView(LoginRequiredMixin, IsTeacherMixin, UpdateView):
     form_class = ModuleCreateForm
-    success_url = '/'
-    template_name = 'courses/success.html'
+    template_name = 'courses/module/edit.html'
 
-    def post(self, request, *args, **kwargs):
-        form_class = self.get_form_class()
-        form = self.get_form(form_class)
-        print(self.kwargs.get('pk'))
-        if form.is_valid():
-            # slug = kwargs.get('slug')
-            # course_obj = get_object_or_404(Course, slug=slug)
-            # form.instance.course = course_obj
-            return self.form_valid(form)
-        else:
-            return self.form_invalid(form)
+    def get_success_url(self):
+        obj = self.get_object()
+        course = obj.course
+        return reverse('courses:add_content', kwargs={'slug': course.slug})
+
+    def get_queryset(self):
+        return Module.objects.filter(owner=self.request.user)
 
     def form_valid(self, form):
         response = super().form_valid(form)
 
-        module_id = self.kwargs.get('pk', None)
-        if module_id is None:
-            if self.request.is_ajax():
-                data = {
-                    'message': 'error',
-                }
-                return JsonResponse(data)
-            else:
-                return response
-        module_obj = get_object_or_404(Module, id=module_id)
-        if self.request.user != module_obj.course.owner:
-            if self.request.is_ajax():
-                data = {
-                    'message': 'error',
-                }
-                return JsonResponse(data)
-            else:
-                return response
-        cd = form.cleaned_data
-
-        module_obj.title = cd['title']
-        module_obj.description = cd['description']
-        module_obj.save()
         if self.request.is_ajax():
             data = {
                 'message': 'success',
