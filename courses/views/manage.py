@@ -336,29 +336,28 @@ class ModuleDeleteView(LoginRequiredMixin, IsTeacherMixin, DeleteView):
             return response
 
 
-class ShowModuleView(LoginRequiredMixin, IsTeacherMixin, View):
-    def post(self, request, *args, **kwargs):
-        module_id = self.kwargs.get('pk', None)
-        request = self.request
-        if module_id is not None:
-            module_obj = get_object_or_404(Module, id=module_id)
-            module_obj.visible = not module_obj.visible
+class ModuleShowHideView(LoginRequiredMixin, IsTeacherMixin, DetailView):
+    http_method_names = 'post'
 
-            module_obj.save()
-            if request.is_ajax():
-                data = {
-                    'message': 'success',
-                }
-                return JsonResponse(data)
-            else:
-                return response
+    def get_template_names(self):
+        return []
+
+    def get_queryset(self):
+        return Module.objects.filter(owner=self.request.user)
+
+    def post(self, request, **_):
+        obj = self.get_object()
+
+        obj.visible = not obj.visible
+        obj.save()
+
         if request.is_ajax():
             data = {
-                'message': 'Error',
+                'message': 'Success',
             }
             return JsonResponse(data)
         else:
-            return response
+            raise Exception("Ajax only")
 
 
 class ManageCourseMainView(LoginRequiredMixin, IsTeacherMixin, DetailView):
