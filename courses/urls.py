@@ -22,7 +22,7 @@ from .views import (
     DeleteCourseView,
     CourseParticipantsManageDetailView,
     ContentDeleteView,
-    ShowHideContentView,
+    ContentShowHideView,
     ModuleShowHideView,
     ContentOrderView,
     CourseCreateView,
@@ -59,7 +59,7 @@ manage_urls = [
 
     path('course/move-content/', ContentOrderView.as_view(), name='move_content'),
     path('course/delete-content/<pk>/', ContentDeleteView.as_view(), name='delete_content'),
-    path('course/show-hide-content/<pk>/', ShowHideContentView.as_view(), name='show_hide_content')
+    path('course/show-hide-content/<pk>/', ContentShowHideView.as_view(), name='show_hide_content')
 ]
 
 urlpatterns = [
