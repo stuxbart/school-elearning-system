@@ -21,7 +21,7 @@ from .views import (
     ModuleDeleteView,
     DeleteCourseView,
     CourseParticipantsManageDetailView,
-    DeleteContentView,
+    ContentDeleteView,
     ShowHideContentView,
     ModuleShowHideView,
     ContentOrderView,
@@ -58,7 +58,7 @@ manage_urls = [
     path('course/edit/video/<pk>/', CreateVideoContentView.as_view(), name='edit_content_video'),
 
     path('course/move-content/', ContentOrderView.as_view(), name='move_content'),
-    path('course/delete-content/<pk>/', DeleteContentView.as_view(), name='delete_content'),
+    path('course/delete-content/<pk>/', ContentDeleteView.as_view(), name='delete_content'),
     path('course/show-hide-content/<pk>/', ShowHideContentView.as_view(), name='show_hide_content')
 ]
 

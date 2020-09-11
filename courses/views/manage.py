@@ -10,7 +10,7 @@ from django.views.generic import (
     UpdateView
 )
 from django.http import JsonResponse
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.db.models import F, Subquery, OuterRef
 
 import json
@@ -426,10 +426,21 @@ class CourseParticipantsManageDetailView(LoginRequiredMixin, IsTeacherMixin, For
         return super().form_valid(form)
 
 
-class DeleteContentView(LoginRequiredMixin, IsTeacherMixin, View):
+class ContentDeleteView(LoginRequiredMixin, IsTeacherMixin, DeleteView):
+    template_name = 'courses/content/delete.html'
+
+    def get_success_url(self):
+        obj = self.get_object()
+        course = obj.module.course
+        return reverse('courses:add_content', kwargs={'slug': course.slug})
+
+    def get_object(self, queryset=None):
+        obj = get_object_or_404(Content, pk=self.kwargs.get('pk'))
+        if obj.item.owner != self.request.user:
+            raise ObjectDoesNotExist()
+        return obj
+
     def post(self, request, *args, **kwargs):
-        content = Content.objects.get(pk=self.kwargs['pk'])
-        content.delete()
         if request.is_ajax():
             data = {
                 'message': 'success',
