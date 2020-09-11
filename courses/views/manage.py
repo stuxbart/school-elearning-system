@@ -2,6 +2,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, reverse
 from django.views.generic import ListView, FormView, DetailView, View, DeleteView, CreateView, UpdateView
 from django.http import JsonResponse
+from django.core.exceptions import PermissionDenied
 from operator import itemgetter
 import json
 from ..forms import (
@@ -69,12 +70,26 @@ class CourseAddContentView(LoginRequiredMixin, IsTeacherMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(CourseAddContentView, self).get_context_data(**kwargs)
         context["forms"] = {
-            'text': {'instance': TextContentForm(), 'action': reverse('courses:add_content_text')},
-            'image': {'instance': ImageContentForm(), 'action': reverse('courses:add_content_image')},
-            'file': {'instance': FileContentForm(), 'action': reverse('courses:add_content_file')},
-            'video': {'instance': VideoContentForm(), 'action': reverse('courses:add_content_video')},
-            'module': {'instance': ModuleCreateForm(),
-                       'action': reverse('courses:add_module', kwargs={'slug': context['object'].slug})}
+            'text': {
+                'instance': TextContentForm(),
+                'action': reverse('courses:add_content_text')
+            },
+            'image': {
+                'instance': ImageContentForm(),
+                'action': reverse('courses:add_content_image')
+            },
+            'file': {
+                'instance': FileContentForm(),
+                'action': reverse('courses:add_content_file')
+            },
+            'video': {
+                'instance': VideoContentForm(),
+                'action': reverse('courses:add_content_video')
+            },
+            'module': {
+                'instance': ModuleCreateForm(),
+                'action': reverse('courses:add_module', kwargs={'slug': context['object'].slug})
+            }
         }
         return context
 
@@ -236,27 +251,36 @@ class CreateVideoContentView(LoginRequiredMixin, IsTeacherMixin, FormView):
             return response
 
 
-class CreateModuleContentView(LoginRequiredMixin, IsTeacherMixin, FormView):
+class ModuleCreateView(LoginRequiredMixin, IsTeacherMixin, FormView):
     form_class = ModuleCreateForm
-    success_url = '/'
-    template_name = 'courses/success.html'
+    template_name = 'courses/module_create.html'
 
-    def post(self, request, *args, **kwargs):
-        form_class = self.get_form_class()
-        form = self.get_form(form_class)
-        if form.is_valid():
-            slug = kwargs.get('slug')
-            course_obj = get_object_or_404(Course, slug=slug)
-            form.instance.course = course_obj
-            return self.form_valid(form)
-        else:
-            return self.form_invalid(form)
+    def get_success_url(self):
+        return reverse('courses:add_content', kwargs={'slug': self.kwargs.get('slug')})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        course_slug = self.kwargs.get('slug')
+        course_qs = Course.objects.filter(owner=self.request.user)
+        course = get_object_or_404(course_qs, slug=course_slug)
+        context['course'] = course
+        return context
 
     def form_valid(self, form):
+        user = self.request.user
+        form.instance.owner = user
+
+        slug = self.kwargs.get('slug')
+        course_obj = get_object_or_404(Course, slug=slug)
+
+        if user == course_obj.owner:
+            form.instance.course = course_obj
+            form.save()
+        else:
+            raise PermissionDenied()
+
         response = super().form_valid(form)
-        form.save()
         if self.request.is_ajax():
-            print(form.cleaned_data)
             data = {
                 'message': 'success',
             }
