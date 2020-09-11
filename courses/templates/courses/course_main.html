@@ -56,7 +56,7 @@
                                 {% for activity in last_activities %}
                                 <tr>
                                     <th scope="row">{{ forloop.counter }}</th>
-                                    <td>{{ activity.user }}</td>
+                                    <td>{{ activity.user_index }}</td>
                                     {% if activity.last %}
                                       <td>{{ activity.last|timesince }} ago</td>
                                     {% else %}

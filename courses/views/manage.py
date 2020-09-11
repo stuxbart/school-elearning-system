@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404, reverse
 from django.views.generic import ListView, FormView, DetailView, View, DeleteView, CreateView, UpdateView
 from django.http import JsonResponse
 from django.core.exceptions import PermissionDenied
+from django.db.models import Count, F, Subquery, OuterRef
 from operator import itemgetter
 import json
 from ..forms import (
@@ -360,25 +361,34 @@ class ModuleShowHideView(LoginRequiredMixin, IsTeacherMixin, DetailView):
             raise Exception("Ajax only")
 
 
-class ManageCourseMainView(LoginRequiredMixin, IsTeacherMixin, DetailView):
+class CourseManageDetailView(LoginRequiredMixin, IsTeacherMixin, DetailView):
     model = Course
     template_name = 'courses/course_main.html'
 
-    def get_context_data(self, *args, **kwargs):
-        context = super(ManageCourseMainView, self).get_context_data(*args, **kwargs)
+    def get_context_data(self, **kwargs):
+        context = super(CourseManageDetailView, self).get_context_data(**kwargs)
         obj = context['object']
         participants = obj.participants.all()
-        last_activities = []
-        never_active = []
-        for p in participants:
-            activities = CourseViewed.objects.filter(user=p, course=obj)
-            if activities.exists():
-                last = activities.first()
-                last_activities.append({'user': p, 'last': last.timestamp})
-            else:
-                never_active.append({'user': p, 'last': None})
-        context['last_activities'] = sorted(last_activities, key=itemgetter('last'), reverse=True)
-        context['last_activities'] += never_active
+        # last_activities = []
+        # never_active = []
+        # for p in participants:
+        #     activities = CourseViewed.objects.filter(user=p, course=obj)
+        #     if activities.exists():
+        #         last = activities.first()
+        #         last_activities.append({'user': p, 'last': last.timestamp})
+        #     else:
+        #         never_active.append({'user': p, 'last': None})
+        # context['last_activities'] = sorted(last_activities, key=itemgetter('last'), reverse=True)
+        # context['last_activities'] += never_active
+
+        newest = CourseViewed \
+            .objects.filter(user=OuterRef('pk')) \
+            .order_by('-timestamp')
+        activities = participants \
+            .annotate(last=Subquery(newest.values('timestamp')[:1])) \
+            .order_by(F('last').desc(nulls_last=True))
+
+        context['last_activities'] = activities
         return context
 
 

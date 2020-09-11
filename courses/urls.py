@@ -16,7 +16,7 @@ from .views import (
     CreateFileContentView,
     CreateVideoContentView,
     ModuleCreateView,
-    ManageCourseMainView,
+    CourseManageDetailView,
     ModuleUpdateView,
     ModuleDeleteView,
     DeleteCourseView,
@@ -37,7 +37,7 @@ manage_urls = [
     path('course/<slug>/edit', CourseEditView.as_view(), name="update"),
     path('course/<slug>/delete', DeleteCourseView.as_view(), name="delete"),
 
-    path('course/<slug>', ManageCourseMainView.as_view(), name="course_home"),
+    path('course/<slug>', CourseManageDetailView.as_view(), name="course_home"),
     path('course/<slug>/add', CourseAddContentView.as_view(), name="add_content"),
     path('course/<slug>/participants', ManageCourseParticipantsView.as_view(), name="participants"),
 
