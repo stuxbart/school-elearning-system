@@ -199,14 +199,21 @@ class Module(models.Model):
         if isinstance(n, int):
             qs = self.course.module_set
             current_n = self.order
-            to_swap = qs.get(order=n)
+            to_swap = qs.filter(order=n)
 
-            if to_swap:
+            if to_swap.exists():
+                to_swap = to_swap.first()
                 to_swap.order = current_n
                 self.order = n
 
                 to_swap.save()
                 self.save()
+            else:
+                self.order = n
+                self.save()
+        else:
+            self.order = 1
+            self.save()
         return self.order
 
     def move_up(self):
@@ -287,15 +294,23 @@ class Content(models.Model):
 
     def move(self, n):
         if isinstance(n, int):
-            qs = self.module.content_set
-            current_n = self.order
-            to_swap = qs.get(order=n)
+            if n > 0:
+                qs = self.module.content_set
+                current_n = self.order
+                to_swap = qs.filter(order=n)
 
-            if to_swap:
-                to_swap.order = current_n
-                self.order = n
+                if to_swap.exists():
+                    to_swap = to_swap.first()
+                    to_swap.order = current_n
+                    self.order = n
 
-                to_swap.save()
+                    to_swap.save()
+                    self.save()
+                else:
+                    self.order = n
+                    self.save()
+            else:
+                self.order = 1
                 self.save()
         return self.order
 
