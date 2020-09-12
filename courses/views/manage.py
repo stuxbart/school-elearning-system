@@ -113,7 +113,6 @@ class CreateTextContentView(LoginRequiredMixin, IsTeacherMixin, FormView):
         pk = form.cleaned_data.get('content_id') or None
         if pk is not None:
             content = Content.objects.get(pk=pk)
-            visible = form.cleaned_data.get('visible')
             content.item.title = form.cleaned_data.get('title')
             content.visible = form.cleaned_data.get('visible')
             content.item.content = form.cleaned_data.get('content')
@@ -442,13 +441,14 @@ class ContentDeleteView(LoginRequiredMixin, IsTeacherMixin, DeleteView):
         return obj
 
     def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
         if request.is_ajax():
             data = {
                 'message': 'success',
             }
             return JsonResponse(data)
         else:
-            return super().post(request, *args, **kwargs)
+            return response
 
 
 class ContentShowHideView(LoginRequiredMixin, IsTeacherMixin, SingleObjectMixin, View):
@@ -476,6 +476,8 @@ class ContentShowHideView(LoginRequiredMixin, IsTeacherMixin, SingleObjectMixin,
 
 
 class ContentOrderView(LoginRequiredMixin, IsTeacherMixin, View):
+    http_method_names = 'post'
+
     def post(self, request, *args, **kwargs):
         data = request.body.decode('utf-8')
         json_data = json.loads(data)
