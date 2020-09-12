@@ -26,7 +26,8 @@ from .views import (
     ModuleShowHideView,
     ContentOrderView,
     CourseCreateView,
-    CourseEditView
+    CourseEditView,
+    ModuleOrderView
 )
 
 app_name = 'courses'
@@ -44,6 +45,7 @@ manage_urls = [
 
     path('course/<slug>/add-module', ModuleCreateView.as_view(), name="add_module"),
     path('course/show-module/<pk>/', ModuleShowHideView.as_view(), name="show_module"),
+    path('course/move-module/', ModuleOrderView.as_view(), name='move_module'),
     path('course/edit-module/<pk>/', ModuleUpdateView.as_view(), name="edit_module"),
     path('course/delete-module/<pk>/', ModuleDeleteView.as_view(), name="delete_module"),
 

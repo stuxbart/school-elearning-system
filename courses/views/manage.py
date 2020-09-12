@@ -503,61 +503,31 @@ class ContentOrderView(LoginRequiredMixin, IsTeacherMixin, View):
             course = content.module.course
             return HttpResponseRedirect(reverse('courses:course_home', kwargs={'slug': course.slug}))
 
-# class ModuleOrderView(LoginRequiredMixin, IsTeacherMixin, View):
-#     def post(self, request, *args, **kwargs):
-#         data = request.body.decode('utf-8')
-#         json_data = json.loads(data)
 
-#         pk = json_data.get('id')
-#         up_down = json_data.get('direction')
+class ModuleOrderView(LoginRequiredMixin, IsTeacherMixin, View):
+    http_method_names = 'post'
 
-#         content = Content.objects.get(pk=pk)
-#         module = content.module
-#         if up_down == "up":
-#             if content.order == 1:
-#                 if request.is_ajax():
-#                     data = {
-#                         'message': 'success',
-#                     }
-#                     return JsonResponse(data)
-#                 else:
-#                     return response
-#             else:
-#                 up_content = module.content_set.get(order=content.order-1)
+    def post(self, request, **_):
+        data = request.body.decode('utf-8')
+        json_data = json.loads(data)
 
-#                 up_content.order = content.order
-#                 content.order -= 1
-#                 content.save()
-#                 up_content.save()
+        pk = json_data.get('id')
+        up_down = json_data.get('direction')
 
-#                 if request.is_ajax():
-#                     data = {
-#                         'message': 'success',
-#                     }
-#                     return JsonResponse(data)
-#                 else:
-#                     return response
-#         elif up_down == "down":
-#             if content.order == module.content_set.latest('order').order:
-#                 if request.is_ajax():
-#                     data = {
-#                         'message': 'success',
-#                     }
-#                     return JsonResponse(data)
-#                 else:
-#                     return response
-#             else:
-#                 down_content = module.content_set.get(order=content.order+1)
+        module = get_object_or_404(Module, pk=pk)
+        if module.owner != self.request.user:
+            raise Http404
 
-#                 down_content.order = content.order
-#                 content.order += 1
-#                 content.save()
-#                 down_content.save()
+        if up_down == "up":
+            module.move_up()
+        elif up_down == "down":
+            module.move_down()
 
-#                 if request.is_ajax():
-#                     data = {
-#                         'message': 'success',
-#                     }
-#                     return JsonResponse(data)
-#                 else:
-#                     return response
+        if request.is_ajax():
+            data = {
+                'message': 'success',
+            }
+            return JsonResponse(data)
+        else:
+            course = module.course
+            return HttpResponseRedirect(reverse('courses:course_home', kwargs={'slug': course.slug}))
