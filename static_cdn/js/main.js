@@ -44,10 +44,6 @@ $(document).ready(function() {
                 infoModal.find('.modal-body').text('Congratulations')
                 
                 infoModal.modal('show')
-                // close modal
-                // fetch course content
-                // remove enroll button
-                // show conrim
             },
             error: function(errorData){
                 console.log(errorData)
@@ -57,8 +53,6 @@ $(document).ready(function() {
         })
     })
     
-
-    // fetchSubjects();
     var loginForm = $('.login-form')
     loginForm.submit(function(event){
         event.preventDefault();
@@ -66,7 +60,6 @@ $(document).ready(function() {
         var httpMethod = thisForm.attr('method')
         var formEndpoint = thisForm.attr('action')
         var formData = thisForm.serialize();
-        //pokazać ładowanie
         $('#username').prop('disabled', true)
         $('#password').prop('disabled', true)
         $.ajax({
@@ -114,10 +107,7 @@ $(document).ready(function() {
         addContentModal.modal('show')
         addContentModal.find('.add-content-form').find('#id_module_id').val(event.originalEvent.target.dataset.id)
     })
-    addContentModal.on('show.bs.modal', function(event){
-        var thisModal = $(this)
-        thisModal.find('.add-content-form').find('#id_content_id').val(null)
-    })
+
     var addContentForm = addContentModal.find('.add-content-form')
     addContentForm.submit(function(event){
         event.preventDefault();
@@ -241,16 +231,16 @@ $(document).ready(function() {
     var courseDeleteModal = $('.course-delete-modal')
     var courseDeleteModalSubmitBtn = $('.delete-course-modal-submit-btn')
     var courseDeleteTitleSpan = $('.course-delete-title')
-//    courseDeleteBtn.click(function(event){
-//        event.preventDefault()
-//        var url = event.originalEvent.target.attributes.href.value
-//        courseDeleteModal.modal('show')
-//        console.log(url)
-//        courseDeleteModalSubmitBtn[0].dataset.endpoint = url
-//        console.log(courseDeleteTitleSpan)
-//        courseDeleteTitleSpan[0].textContent = event.originalEvent.target.dataset.title
-//        console.log(courseDeleteModalSubmitBtn[0].dataset.endpoint)
-//    })
+   courseDeleteBtn.click(function(event){
+       event.preventDefault()
+       var url = event.originalEvent.target.attributes.href.value
+       courseDeleteModal.modal('show')
+       console.log(url)
+       courseDeleteModalSubmitBtn[0].dataset.endpoint = url
+       console.log(courseDeleteTitleSpan)
+       courseDeleteTitleSpan[0].textContent = event.originalEvent.target.dataset.title
+       console.log(courseDeleteModalSubmitBtn[0].dataset.endpoint)
+   })
     courseDeleteModalSubmitBtn.click(function(event){
         var endpoint = event.originalEvent.target.dataset.endpoint
         console.log(endpoint)
@@ -279,25 +269,6 @@ $(document).ready(function() {
         moduleDeleteTitleSpan[0].textContent = event.originalEvent.target.dataset.contenttitle
         console.log("DELETE:", event.originalEvent.target.dataset.id)
     })
-    // moduleDeleteSubmitBtn.click(function(event){
-    //     var endpoint = event.originalEvent.target.dataset.endpoint
-    //     console.log("Legancko")
-    //     $.ajax({
-    //         method: 'POST',
-    //         url: endpoint,
-    //         headers: {'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken')},
-    //         success: function(data){
-    //             moduleDeleteModal.modal('hide')
-    //             infoModal.find('.modal-body').text(data.message)
-    //             infoModal.modal('show')
-    //         },
-    //         error: function(errorData){
-    //             moduleDeleteModal.modal('hide')
-    //             infoModal.find('.modal-body').text(errorData.message)
-    //             infoModal.modal('show')
-    //         }
-    //     })
-    // })
 
     var contentShowHideBtn = $('.content-hide')
     contentShowHideBtn.click(function(event){
@@ -351,32 +322,37 @@ $(document).ready(function() {
     })
     addContentModal.on('show.bs.modal', function(event){
         var thisModal = $(this)
-        if (event.relatedTarget.edit){
-            switch (event.relatedTarget.type.substring(10)) {
-            case 'text':
-                thisModal.find('.add-content-form').find('#id_content').val(event.relatedTarget.text)
-                thisModal.find('#list-tab').find('#list-text-list').tab('show')
-                break;
-            case 'image':
-                thisModal.find('#list-tab').find('#list-image-list').tab('show')
-                break;
-            case 'file':
-                thisModal.find('#list-tab').find('#list-file-list').tab('show')
-                break;
-            case 'video':
-                // thisModal.find('.add-content-form').find('#id_file').val(event.relatedTarget.file)
-                thisModal.find('#list-tab').find('#list-video-list').tab('show')
-                break;
-            default:
-                break;
-        }
-        thisModal.find('.add-content-form').find('#id_content_id').val(event.relatedTarget.id)
-        thisModal.find('.add-content-form').find('#id_title').val(event.relatedTarget.title)
-        var visible = event.relatedTarget.visible === "False" ? false : true;
-        thisModal.find('.add-content-form').find('#id_visible').attr('checked', visible)
+        if (event.relatedTarget) {
+            if (event.relatedTarget.edit){
+                switch (event.relatedTarget.type.substring(10)) {
+                case 'text':
+                    thisModal.find('.add-content-form').find('#id_content').val(event.relatedTarget.text)
+                    thisModal.find('#list-tab').find('#list-text-list').tab('show')
+                    break;
+                case 'image':
+                    thisModal.find('#list-tab').find('#list-image-list').tab('show')
+                    break;
+                case 'file':
+                    thisModal.find('#list-tab').find('#list-file-list').tab('show')
+                    break;
+                case 'video':
+                    // thisModal.find('.add-content-form').find('#id_file').val(event.relatedTarget.file)
+                    thisModal.find('#list-tab').find('#list-video-list').tab('show')
+                    break;
+                default:
+                    break;
+            }
+            thisModal.find('.add-content-form').find('#id_content_id').val(event.relatedTarget.id)
+            thisModal.find('.add-content-form').find('#id_title').val(event.relatedTarget.title)
+            var visible = event.relatedTarget.visible === "False" ? false : true;
+            thisModal.find('.add-content-form').find('#id_visible').attr('checked', visible)
+            } else {
+                thisModal.find('.add-content-form').trigger('reset');
+            }
         } else {
+            var thisModal = $(this)
             thisModal.find('.add-content-form').trigger('reset');
-        }            
+        }
     })
     var moveContentUp = $('.move-content')
         moveContentUp.click(function(event){
