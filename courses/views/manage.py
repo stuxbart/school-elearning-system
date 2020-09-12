@@ -1,5 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import get_object_or_404, reverse
+from django.shortcuts import get_object_or_404, reverse, HttpResponseRedirect
 from django.views.generic import (
     ListView,
     FormView,
@@ -10,7 +10,7 @@ from django.views.generic import (
     UpdateView
 )
 from django.views.generic.detail import SingleObjectMixin
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.db.models import F, Subquery, OuterRef
 
@@ -437,7 +437,7 @@ class ContentDeleteView(LoginRequiredMixin, IsTeacherMixin, DeleteView):
     def get_object(self, queryset=None):
         obj = get_object_or_404(Content, pk=self.kwargs.get('pk'))
         if obj.item.owner != self.request.user:
-            raise ObjectDoesNotExist()
+            raise Http404
         return obj
 
     def post(self, request, *args, **kwargs):
@@ -478,63 +478,30 @@ class ContentShowHideView(LoginRequiredMixin, IsTeacherMixin, SingleObjectMixin,
 class ContentOrderView(LoginRequiredMixin, IsTeacherMixin, View):
     http_method_names = 'post'
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, **_):
         data = request.body.decode('utf-8')
         json_data = json.loads(data)
 
         pk = json_data.get('id')
         up_down = json_data.get('direction')
 
-        content = Content.objects.get(pk=pk)
-        module = content.module
+        content = get_object_or_404(Content, pk=pk)
+        if content.item.owner != self.request.user:
+            raise Http404
+
         if up_down == "up":
-            if content.order == 1:
-                if request.is_ajax():
-                    data = {
-                        'message': 'success',
-                    }
-                    return JsonResponse(data)
-                else:
-                    return response
-            else:
-                up_content = module.content_set.get(order=content.order - 1)
-
-                up_content.order = content.order
-                content.order -= 1
-                content.save()
-                up_content.save()
-
-                if request.is_ajax():
-                    data = {
-                        'message': 'success',
-                    }
-                    return JsonResponse(data)
-                else:
-                    return response
+            content.move_up()
         elif up_down == "down":
-            if content.order == module.content_set.latest('order').order:
-                if request.is_ajax():
-                    data = {
-                        'message': 'success',
-                    }
-                    return JsonResponse(data)
-                else:
-                    return response
-            else:
-                down_content = module.content_set.get(order=content.order + 1)
+            content.move_down()
 
-                down_content.order = content.order
-                content.order += 1
-                content.save()
-                down_content.save()
-
-                if request.is_ajax():
-                    data = {
-                        'message': 'success',
-                    }
-                    return JsonResponse(data)
-                else:
-                    return response
+        if request.is_ajax():
+            data = {
+                'message': 'success',
+            }
+            return JsonResponse(data)
+        else:
+            course = content.module.course
+            return HttpResponseRedirect(reverse('courses:course_home', kwargs={'slug': course.slug}))
 
 # class ModuleOrderView(LoginRequiredMixin, IsTeacherMixin, View):
 #     def post(self, request, *args, **kwargs):
