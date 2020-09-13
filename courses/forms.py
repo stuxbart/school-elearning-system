@@ -1,5 +1,5 @@
 from django import forms
-from .models import Text, Image, File, Video, Module, Course
+from .models import Text, Image, File, Video, Module, Course, Content
 from accounts.models import User
 
 
@@ -29,6 +29,48 @@ class TextContentForm(forms.ModelForm):
     class Meta:
         model = Text
         fields = ['title', 'content', 'visible']
+
+
+class TextContentCreateForm(forms.Form):
+    title = forms.CharField(max_length=200)
+    content = forms.CharField(widget=forms.Textarea())
+    visible = forms.BooleanField(required=False)
+    module_id = forms.CharField(widget=forms.HiddenInput, required=False)
+    content_id = forms.CharField(widget=forms.HiddenInput, required=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['title'].widget.attrs.update({'class': 'form-control'})
+        self.fields['content'].widget.attrs.update({'class': 'form-control'})
+        self.fields['visible'].widget.attrs.update({'class': 'form-check-input'})
+
+    def save(self, owner=None, module_id=None):
+        if owner is not None:
+            data = self.cleaned_data
+            item = Text(owner=owner, title=data['title'], content=data['content'])
+            item.save()
+            if module_id is not None:
+                module = Module.objects.get(pk=module_id)
+            else:
+                module = Module.objects.get(pk=data['module_id'])
+            content = Content(module=module, visible=data['visible'], item=item)
+            content.save()
+            return content
+
+
+class TextUpdateForm(forms.ModelForm):
+    content_id = forms.CharField(widget=forms.HiddenInput, required=False)
+    visible = forms.BooleanField(required=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['title'].widget.attrs.update({'class': 'form-control'})
+        self.fields['content'].widget.attrs.update({'class': 'form-control'})
+        self.fields['visible'].widget.attrs.update({'class': 'form-check-input'})
+
+    class Meta:
+        model = Text
+        fields = ['title', 'content']
 
 
 class ImageContentForm(forms.ModelForm):

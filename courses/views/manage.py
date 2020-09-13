@@ -17,17 +17,18 @@ from django.db.models import F, Subquery, OuterRef
 import json
 
 from ..forms import (
-    TextContentForm,
     ImageContentForm,
     FileContentForm,
     VideoContentForm,
     ModuleCreateForm,
     AddUserToCourseForm,
-    CourseCreateForm
+    CourseCreateForm,
+    TextContentCreateForm,
+    TextUpdateForm
 )
 
 from ..mixins import IsTeacherMixin
-from ..models import Course, Content, Module, Membership
+from ..models import Course, Content, Module, Membership, Text
 
 from activity.models import CourseViewed
 
@@ -82,8 +83,9 @@ class CourseAddContentView(LoginRequiredMixin, IsTeacherMixin, DetailView):
         context = super(CourseAddContentView, self).get_context_data(**kwargs)
         context["forms"] = {
             'text': {
-                'instance': TextContentForm(),
-                'action': reverse('courses:add_content_text')
+                'instance': TextContentCreateForm(),
+                'action': reverse('courses:create_text_ajax'),
+                'update_action': reverse('courses:update_text_ajax')
             },
             'image': {
                 'instance': ImageContentForm(),
@@ -105,47 +107,85 @@ class CourseAddContentView(LoginRequiredMixin, IsTeacherMixin, DetailView):
         return context
 
 
-class CreateTextContentView(LoginRequiredMixin, IsTeacherMixin, FormView):
-    form_class = TextContentForm
-    success_url = '/'
+class TextContentCreateView(LoginRequiredMixin, IsTeacherMixin, FormView):
+    form_class = TextContentCreateForm
+    template_name = 'courses/content/create.html'
+
+    def get_success_url(self):
+        course = self.object.module.course
+        return reverse('courses:course_home', kwargs={'slug': course.slug})
+
+    def get_context_data(self, **kwargs):
+        module_pk = self.kwargs.get('pk')
+        qs = Module.objects.filter(owner=self.request.user)
+        module = get_object_or_404(qs, pk=module_pk)
+        course = module.course
+        context = super().get_context_data(**kwargs)
+        context['module'] = module
+        context['course'] = course
+        return context
 
     def form_valid(self, form):
-        pk = form.cleaned_data.get('content_id') or None
-        if pk is not None:
-            content = Content.objects.get(pk=pk)
-            content.item.title = form.cleaned_data.get('title')
-            content.visible = form.cleaned_data.get('visible')
-            content.item.content = form.cleaned_data.get('content')
-
-            content.item.save()
-            content.save()
-
-            if self.request.is_ajax():
-                data = {
-                    'message': 'success',
-                }
-                return JsonResponse(data)
-            else:
-                return response
+        user = self.request.user
+        module_id = self.kwargs.get('pk')
+        self.object = form.save(owner=user, module_id=module_id)
+        response = super().form_valid(form)
+        if self.request.is_ajax():
+            data = {
+                'message': 'Text Created',
+            }
+            return JsonResponse(data)
         else:
-            response = super().form_valid(form)
-            module_id = form.cleaned_data.get('module_id')
-            visible = form.cleaned_data.get('visible')
-            module_obj = get_object_or_404(Module, pk=module_id)
-            form.instance.owner = self.request.user
-            item = form.save()
-            content_obj = Content(module=module_obj, item=item, visible=visible)
-            content_obj.save()
-            if self.request.is_ajax():
-                data = {
-                    'message': 'success',
-                }
-                return JsonResponse(data)
-            else:
-                return response
+            return response
 
-    def form_invalid(self, form):
-        print(form.errors)
+
+class TextContentUpdateView(LoginRequiredMixin, IsTeacherMixin, FormView):
+    form_class = TextUpdateForm
+    template_name = 'courses/content/update.html'
+
+    def get_queryset(self):
+        return Text.objects.filter(owner=self.request.user)
+
+    def get_success_url(self):
+        return self.request.GET.get('next') or reverse('courses:text_detail', kwargs={'pk': self.object.pk})
+
+    def get_initial(self):
+        text_id = self.kwargs.get('pk')
+        text = get_object_or_404(self.get_queryset(), pk=text_id)
+        # content = get_object_or_404(Content, item=text)
+        return {
+            'title': text.title,
+            'content': text.content,
+            # 'visible': content.visible
+        }
+
+    def form_valid(self, form):
+        data = form.cleaned_data
+        if self.request.is_ajax():
+            content_id = data['content_id']
+            content = get_object_or_404(Content, pk=content_id)
+            text = content.item
+            content.visible = data['visible']
+            content.save()
+        else:
+            text_id = self.kwargs.get('pk')
+            text = get_object_or_404(self.get_queryset(), pk=text_id)
+            # content = get_object_or_404(Content, item=text)
+
+        text.title = data['title']
+        text.content = data['content']
+        text.save()
+
+        self.object = text
+
+        response = super().form_valid(form)
+        if self.request.is_ajax():
+            data = {
+                'message': 'Text Updated',
+            }
+            return JsonResponse(data)
+        else:
+            return response
 
 
 class CreateImageContentView(LoginRequiredMixin, IsTeacherMixin, FormView):

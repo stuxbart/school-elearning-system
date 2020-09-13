@@ -20,7 +20,7 @@
                 <div class="col-10">
                   <div class="tab-content" id="nav-tabContent">
                     <div class="tab-pane fade show active" id="list-text" role="tabpanel" aria-labelledby="list-text-list">
-                        <form action="{{ forms.text.action }}" method="POST" class="add-content-form">
+                        <form action="{{ forms.text.action }}" data-update-endpoint="{{ forms.text.update_action }}" method="POST" class="add-content-form">
                             {% csrf_token %}
                             {{ forms.text.instance }}
                         </form>

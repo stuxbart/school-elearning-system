@@ -28,6 +28,7 @@
                                 <button type="button" data-id="{{ module.id }}" data-endpoint="{% url 'courses:show_module' module.id %}" class="btn btn-primary module-hide">Show</button>
                             {% endif %}
                             <button type="button" data-id="{{ module.id }}" class="btn btn-success module-add-text">Add</button>
+<!--                            <a href="{% url 'courses:create_text' module.id %}" class="btn btn-success">Add</a>-->
                             <button type="button" data-id="{{ module.id }}" data-endpoint="{% url 'courses:edit_module' module.id %}" data-moduletitle="{{ module.title }}" data-moduledesc="{{ module.description }}" data-visible="{{ module.visible }}" class="btn btn-success module-desc-edit">Edit</button>
                             <button type="button" data-id="{{ module.id }}" data-endpoint="{% url 'courses:delete_module' module.id %}" data-moduletitle="{{ module.title }}" class="btn btn-danger module-delete">Delete</button>
                         </div>
@@ -39,7 +40,7 @@
                                 <li class="list-group-item">
                                     <div class="row">
                                         <div class="col-8">
-                                            <a href="{{ content.item.get_absolute_url }}">{{ content.order }}. {{ content.item.title }}, {{ content.id }}</a>
+                                            <a href="{{ content.item.get_absolute_url }}">{{ content.order }}. {{ content.item.title }}</a>
                                             <p>Created: {{ content.item.created }}</p>
                                             <p>{{ content.content_type }}</p>
                                         </div>
@@ -49,16 +50,18 @@
                                             {% else %}
                                                 <button type="button" data-id="{{ content.id }}" data-endpoint="{% url 'courses:show_hide_content' content.id %}" class="btn btn-primary content-hide">Show</button>
                                             {% endif %}
-                                            <button 
-                                                type="button" 
-                                                data-id="{{ content.id }}" 
-                                                data-title="{{ content.item.title }}" 
-                                                data-type="{{ content.content_type }}" 
+                                            <button
+                                                type="button"
+                                                data-id="{{ content.id }}"
+                                                data-title="{{ content.item.title }}"
+                                                data-type="{{ content.content_type }}"
                                                 data-visible="{{ content.visible }}"
                                                 data-text="{{ content.item.content }}"
                                                 data-file="{{ content.item.file }}"
+                                                data-endpoint="{% url 'courses:update_text_ajax' %}"
                                                 class="btn btn-success content-edit"
                                             >Edit</button>
+<!--                                            <a href="{% url 'courses:update_text' content.item.id %}?next={{ request.path }}">Edit</a>-->
                                             <button type="button" data-id="{{ content.id }}" data-endpoint="{% url 'courses:delete_content' content.id %}" data-contenttitle="{{ content.item.title }}" class="btn btn-danger content-delete">Delete</button>
                                             <div class="btn-group-vertical btn-group-sm">
                                                 <button type="button" class="btn btn-secondary move-content" data-id="{{ content.id }}" data-direc="up" data-endpoint="{% url 'courses:move_content' %}"><i class="fas fa-arrow-up"></i></button>

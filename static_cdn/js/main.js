@@ -104,7 +104,7 @@ $(document).ready(function() {
     var addContentModal = $('.module-add-text-modal')
     var moduleAddTextButton = $('.module-add-text')
     moduleAddTextButton.click(function(event){
-        addContentModal.modal('show')
+        addContentModal.modal('show', data={edit:false})
         addContentModal.find('.add-content-form').find('#id_module_id').val(event.originalEvent.target.dataset.id)
     })
 
@@ -113,7 +113,13 @@ $(document).ready(function() {
         event.preventDefault();
         var thisForm = $(this)
         var httpMethod = thisForm.attr('method')
-        var formEndpoint = thisForm.attr('action')
+        var edit = thisForm.attr('edit')
+        if (edit === 'true'){
+            var formEndpoint = thisForm.attr('data-update-endpoint')
+        } else {
+            var formEndpoint = thisForm.attr('action')
+        }
+
         // var formData = thisForm.serialize();
         var fd = new FormData(this);
         // if (thisForm.attr('data-type') === 'image'){
@@ -315,6 +321,7 @@ $(document).ready(function() {
             text: event.target.dataset.text,
             file: event.target.dataset.file,
             visible: event.target.dataset.visible,
+            endpoint: event.target.dataset.endpoint,
             edit: true
         }
         addContentModal.modal('show', data=data)
@@ -323,6 +330,9 @@ $(document).ready(function() {
     addContentModal.on('show.bs.modal', function(event){
         var thisModal = $(this)
         if (event.relatedTarget) {
+            var att = document.createAttribute("edit");
+            att.value = event.relatedTarget.edit;
+            thisModal.find('.add-content-form')[0].setAttributeNode(att);
             if (event.relatedTarget.edit){
                 switch (event.relatedTarget.type.substring(10)) {
                 case 'text':
@@ -342,6 +352,7 @@ $(document).ready(function() {
                 default:
                     break;
             }
+            console.log("ENDPOINT", event.relatedTarget.endpoint)
             thisModal.find('.add-content-form').find('#id_content_id').val(event.relatedTarget.id)
             thisModal.find('.add-content-form').find('#id_title').val(event.relatedTarget.title)
             var visible = event.relatedTarget.visible === "False" ? false : true;

@@ -11,7 +11,6 @@ from .views import (
     CategoryCoursesListView,
     ManageCourseList,
     CourseAddContentView,
-    CreateTextContentView,
     CreateImageContentView,
     CreateFileContentView,
     CreateVideoContentView,
@@ -27,7 +26,9 @@ from .views import (
     ContentOrderView,
     CourseCreateView,
     CourseEditView,
-    ModuleOrderView
+    ModuleOrderView,
+    TextContentCreateView,
+    TextContentUpdateView
 )
 
 app_name = 'courses'
@@ -49,12 +50,15 @@ manage_urls = [
     path('course/edit-module/<pk>/', ModuleUpdateView.as_view(), name="edit_module"),
     path('course/delete-module/<pk>/', ModuleDeleteView.as_view(), name="delete_module"),
 
-    path('course/add/text', CreateTextContentView.as_view(), name='add_content_text'),
+    path('course/create/text', TextContentCreateView.as_view(), name='create_text_ajax'),
+    path('course/<pk>/create/text', TextContentCreateView.as_view(), name='create_text'),
+    path('course/update/text', TextContentUpdateView.as_view(), name='update_text_ajax'),
+    path('course/update/text/<pk>', TextContentUpdateView.as_view(), name='update_text'),
+
     path('course/add/image', CreateImageContentView.as_view(), name='add_content_image'),
     path('course/add/file', CreateFileContentView.as_view(), name='add_content_file'),
     path('course/add/video', CreateVideoContentView.as_view(), name='add_content_video'),
 
-    path('course/edit/text/<pk>/', CreateTextContentView.as_view(), name='edit_content_text'),
     path('course/edit/image/<pk>/', CreateImageContentView.as_view(), name='edit_content_image'),
     path('course/edit/file/<pk>/', CreateFileContentView.as_view(), name='edit_content_file'),
     path('course/edit/video/<pk>/', CreateVideoContentView.as_view(), name='edit_content_video'),
