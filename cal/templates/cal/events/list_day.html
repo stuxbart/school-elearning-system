@@ -1,0 +1,52 @@
+{% extends 'cal/base/base.html' %}
+{% load cal_extras %}
+
+{% block content %}
+<div class="ui main container">
+    <div class="ui segment row two columns grid">
+        <div class="column">
+            <h3 class="ui header"> {{ day }}, <a href=".?year={{ year }}&month={{ month }}">{{ month|month_name }}</a> <a href=".?year={{ year }}">{{ year }}</a></h3>
+        </div>
+        <div class="column">
+            <a href="{% url 'cal:event_create' %}" class="ui button green">Create Event</a>
+        </div>
+    </div>
+    
+
+    <div class="ui row">
+        <table class="ui table">
+            <thead>
+                <tr>
+                    <th>Event List</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for event in object_list %}
+                <tr>
+                    <td class="ui red" style="color: {{ event.color }}">
+                        <div class="ui three column grid">
+                            <div class="column">
+                                <a href="{{ event.get_absolute_url }}">{{ event.name }}</a>
+                                <p>{{ event.body|truncatewords:7 }}</p>
+                            </div>
+                            <div class="column">
+                                {% if event.whole_day %}
+                                Whole Day
+                                {% else %}
+                                {{ event.start }} - {{ event.end }}
+                                {% endif %}
+                            </div>
+                            <div class="column">
+                                <a class="ui small button" href="{% url 'cal:event_edit' event.id %}">Edit</a>
+                                <a class="ui small button red" href="{% url 'cal:event_delete' event.id %}">Delete</a>
+                            </div>
+                        </div>
+                        
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

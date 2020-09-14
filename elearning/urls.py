@@ -28,7 +28,7 @@ api_urlpatterns = [
     path('content/', include('courses.api.urls.content')),
     path('users/', include('accounts.api.urls.users')),
     path('auth/', include('accounts.api.urls.auth')),
-    path('news/', include('informations.api.urls'))
+    path('news/', include('information.api.urls'))
 ]
 
 urlpatterns = [
@@ -37,6 +37,8 @@ urlpatterns = [
     path('accounts/', include('accounts.urls', 'accounts')),
     path('courses/', include('courses.urls', 'courses')),
     path('search/', include('search.urls', 'search')),
+    path('information/', include('information.urls', 'information')),
+    path('calendar/', include('cal.urls', 'cal')),
 
     path('api/', include(api_urlpatterns))
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

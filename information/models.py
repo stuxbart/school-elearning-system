@@ -13,6 +13,7 @@ class News(models.Model):
 
     class Meta:
         ordering = ['-updated']
+        db_table = 'informations_news'
         
     def __str__(self):
         return self.title

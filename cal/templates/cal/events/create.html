@@ -1,0 +1,57 @@
+{% extends 'cal/base/base.html' %}
+
+{% block content %}
+<div class="ui main container">
+    <h1 class="ui header">Create Event</h1>
+    <form action="" method="POST" class="ui form">
+        {% csrf_token %}
+        <div class="ui row two column grid">
+            <div class="ui column">
+                <div class="field">
+                    <label>Name</label>
+                    {{ form.name }}
+                </div>
+                <div class="field">
+                    <label>Body</label>
+                    {{ form.body }}
+                </div>
+                <div class="field">
+                    <label>Calendar</label>
+                    {{ form.calendar }}
+                </div>
+            </div>
+            <div class="ui column">
+                <div class="field">
+                    <label>Color</label>
+                    {{ form.color }}
+                </div>
+                <div class="field">
+                    <label>Date</label>
+                    {{ form.date }}
+                </div>
+                <div class="two fields">
+                    <div class="two field">
+                        <label>Start</label>
+                        {{ form.start }}
+                    </div>
+                    <div class="field">
+                        <label>End</label>
+                        {{ form.end }}
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui toggle checkbox">
+                        {{ form.whole_day }}
+                        <label>Whole Day</label>
+                    </div>
+                </div>
+                <div class="field">
+                    <label>Place</label>
+                    {{ form.place }}
+                </div>
+                <button type="submit" class="ui large button green">Create</button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'cal/base/base.html' %}
+
+{% block content %}
+<div class="ui main container">
+    <div class="ui purple segment">
+        <h2 class="ui header">Subscribe Calendar</h2>
+        <h3 class="ui header">{{ object.name }}</h3>
+        <p>Created By: {{ object.owner }}</p>
+        <p>{{ object.overview }}</p>
+        <form method="POST" action="">
+            {% csrf_token %}
+            <button type="submit" class="ui button">Subscribe</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

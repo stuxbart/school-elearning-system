@@ -1,0 +1,23 @@
+{% extends 'cal/base/base.html' %}
+
+{% block content %}
+<div class="ui main container">
+    <h1 class="ui header">Create calendar</h1>
+    <form class="ui form" action="" method="POST">
+        {% csrf_token %}
+        <div class="field">
+            <label>Name</label>
+            {{ form.name }}
+        </div>
+        <div class="field">
+            <label>Overview</label>
+            {{ form.overview }}
+        </div>
+        <div class="field">
+            <label>Color</label>
+            {{ form.color }}
+        </div>
+        <button class="ui button" type="submit">Create</button>
+    </form>
+</div>
+{% endblock content %}

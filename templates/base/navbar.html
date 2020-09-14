@@ -27,6 +27,21 @@
                     </div>
                   </div>
             </li>
+            <li class="nav-item dropdown subjects" style="{% if not request.user.is_authenticated %}display:none;{% else %}display: visible;{% endif %}">
+                <div class="btn-group">
+                    <a type="button" class="btn btn-light" href="{% url 'cal:m_calendar_events_list' %}">Calendar</a>
+                    <button type="button" class="btn dropdown-toggle dropdown-toggle-split btn-light" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <a class="dropdown-item" href="{% url 'cal:m_calendar_events_list' %}">Events</a>
+                        <a class="dropdown-item" href="{% url 'cal:calendar_list' %}">Calendars</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{% url 'cal:calendar_create' %}">Create Calendar</a>
+                        <a class="dropdown-item" href="{% url 'cal:event_create' %}">Create Event</a>
+                    </div>
+                  </div>
+            </li>
             <li class="nav-item content-manage" style="{% if not request.user.is_authenticated or not request.user.is_teacher %}display:none;{% else %}display: unset;{% endif %}">
                 <a class="nav-link" href="{% url 'courses:manage_list' %}">Manage Courses</a>
             </li>

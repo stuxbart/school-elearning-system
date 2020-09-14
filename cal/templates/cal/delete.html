@@ -1,0 +1,15 @@
+{% extends 'cal/base/base.html' %}
+
+{% block content %}
+<div class="ui main container center aligned">
+    <h1 class="ui header">Delete</h1>
+    <p>Are you sure you want to delete {{ object.name }}?</p>
+    <form method="POST" action=".">
+        {% csrf_token %}
+        <a class="ui button" href="{% url 'cal:calendar_detail' object.id %}">Cancel</a>
+        <button class="ui button red" type="submit">Delete</button>
+    </form>
+    
+</div>
+
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends 'cal/base/base.html' %}
+
+{% block content %}
+    <div class="ui main container">
+        <h3 class="ui top attached header">
+            <i class="calendar outline icon"></i>
+            <div class="content">
+                My Calendars
+            </div>
+        </h3>
+        <div class="ui attached segment">
+            <div class="ui three column doubling stackable grid container">
+              {% if owned %}
+                {% for cal in owned %}
+                <div class="column">
+                    <div class="ui card">
+                        <div class="content">
+                          <div class="header">{{ cal.name }}</div>
+                        </div>
+                        <div class="content">
+                          <h4 class="ui sub header">Overview</h4>
+                          <div class="ui small feed">
+                            <div class="event">
+                              <div class="content">
+                                <div class="summary">
+                                    {{ cal.overview|truncatewords:5 }}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="extra content">
+                          <a href="{{ cal.get_absolute_url }}" class="ui small button">Details</a>
+                          <a href="{% url 'cal:calendar_events_list' cal.id %}" class="ui small button">Events</a>
+                          <a href="{% url 'cal:calendar_share' cal.id %}" class="ui small button">Share</a>
+                        </div>
+                        <div class="extra content">
+                            <a href="{% url 'cal:calendar_edit' cal.id %}" class="ui small button">Edit</a>
+                            <a href="{% url 'cal:calendar_event_create' cal.id %}" class="ui small button">Add event</a>
+                            <a href="{% url 'cal:calendar_delete' cal.id %}" class="ui small button">Delete</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+              {% else %}
+              <div class="ui main container center aligned">
+                <h4 class="ui header">You don't have any calendars.<a href="{% url 'cal:calendar_create' %}">Create One</a></h4>
+                
+              </div>
+              {% endif %}
+            </div>
+        </div>
+        {% if subscribed %}
+        <h3 class="ui attached header">
+            <i class="calendar outline icon"></i>
+            <div class="content">
+                Subscribed calendars
+            </div>
+        </h3>
+        <div class="ui attached segment">
+            <div class="ui three column doubling stackable grid container">
+                {% for cal in subscribed %}
+                <div class="column">
+                    <div class="ui card">
+                        <div class="content">
+                          <div class="header">{{ cal.name }}</div>
+                        </div>
+                        <div class="content">
+                          <h4 class="ui sub header">Overview</h4>
+                          <div class="ui small feed">
+                            <div class="event">
+                              <div class="content">
+                                <div class="summary">
+                                    {{ cal.overview|truncatewords:5 }}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="extra content">
+                          <a href="{{ cal.get_absolute_url }}" class="ui button">Details</a>
+                          <a href="{% url 'cal:calendar_events_list' cal.id %}" class="ui button">Events</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>    
+{% endblock %}

@@ -1,0 +1,17 @@
+<div class="ui inverted vertical footer segment">
+    <div class="ui center aligned container">
+      <div class="ui stackable inverted divided grid">
+        <div class="three wide column">
+          <h4 class="ui inverted header">Calendar</h4>
+          <div class="ui inverted link list">
+            <a href="/" class="item">Home</a>
+            <a href="{% url 'cal:calendar_list' %}" class="item">Calendar Home</a>
+            <a href="{% url 'cal:m_calendar_events_list' %}" class="item">Events</a>
+          </div>
+        </div>
+        <div class="ten wide column">
+          <h4 class="ui inverted header">Django Calendar</h4>
+          <p>Simple calendar app for django.</p>
+        </div>
+      </div>
+  </div>

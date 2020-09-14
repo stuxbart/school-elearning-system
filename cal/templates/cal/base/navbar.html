@@ -1,0 +1,19 @@
+<div class="ui fixed inverted menu">
+    <div class="ui container">
+      <a href="{% url 'cal:calendar_list' %}" class="header item">
+        <i class="calendar alternate outline icon big"></i>
+        Calendar
+      </a>
+      <a href="{% url 'cal:calendar_list' %}" class="item">Home</a>
+      <a href="{% url 'cal:m_calendar_events_list' %}" class="item">Events</a>
+      <div class="ui simple dropdown item">
+        Calendars <i class="dropdown icon"></i>
+        <div class="menu">
+          <a class="item" href="{% url 'cal:calendar_create' %}">Create</a>
+          <div class="divider"></div>
+          <div class="header">Events</div>
+          <a class="item" href="{% url 'cal:event_create' %}">Create</a>
+        </div>
+      </div>
+    </div>
+</div>

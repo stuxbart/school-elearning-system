@@ -3,11 +3,30 @@
       <p class="float-right">
         <a href="#">Back to top</a>
       </p>
-      <p>E-Learning</p>
-      <p>
-        <ul>
-          <li><a href="/">Home</a></li>
-          <li><a href="/courses">Courses</a></li>
-        </ul></p>
+      <div class="container">
+        <div class="row">
+          <div class="col-6">
+            <p>E-Learning</p>
+            <p>
+              <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/courses">Courses</a></li>
+                <li><a href="{% url 'cal:m_calendar_events_list' %}">Calendar</a></li>
+              </ul>
+            </p>
+          </div>
+          <div class="col-6">
+            <p>Info</p>
+            <p>
+              <ul>
+                <li><a href="{% url 'information:about' %}">About</a></li>
+                <li><a href="{% url 'information:statute' %}">Statute</a></li>
+                <li><a href="{% url 'information:contact' %}">Contact</a></li>
+              </ul>
+            </p>
+          </div>
+        </div>
+      </div>
+
     </div>
 </footer>

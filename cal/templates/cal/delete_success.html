@@ -1,0 +1,10 @@
+{% extends 'cal/base/base.html' %}
+
+{% block content %}
+<div class="ui main container center aligned">
+    <h1 class="ui header">
+        Calendar Deleted
+    </h1>
+    <a href="{% url 'cal:calendar_list' %}" class="ui button green">Back to list</a>
+</div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'cal/base/base.html' %}
+
+{% block content %}
+<div class="ui main container">
+    <h2 class="ui header">Add Subscribers</h2>
+    <table class="ui table">
+        <thead>
+            <tr>
+                <td colspan="2" class="ui center aligned">Users</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in user_list %}
+            <tr>
+                <td>
+                    {{ user }}
+                </td>
+                <td>
+                {% if user in object.subscribers.all %}
+                    <form action="{% url 'cal:calendar_remove_subscriber' object.id %}" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" value="{{ user.id }}" name="user_id">
+                        <input type="hidden" value="{% url 'cal:calendar_add_subscriber' object.id %}" name="next">
+                        <button class="ui tiny button red" type="submit">Remove</button>
+                    </form>
+                {% else %}
+                    <form action="" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" value="{{ user.id }}" name="user_id">
+                        <button class="ui tiny button green" type="submit">Add</button>
+                    </form>
+                {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'cal/base/base.html' %}
+
+{% block content %}
+<div class="ui main container">
+    <div class="ui grid">
+        <div class="row">
+            <div class="ten wide column"><h1 class="ui header">{{ object.name }}</h1></div>
+            <div class="six wide column">
+                {% if request.user == object.owner %}
+              <a class="ui small button" href="{% url 'cal:event_edit' object.id %}">Edit</a>
+              <a class="ui small button red" href="{% url 'cal:event_delete' object.id %}">Delete</a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="row">
+          <div class="four wide column"><p>Created: {{ object.created }}</p></div>
+          <div class="four wide column"></div>
+          <div class="four wide column">Date : {{ object.date }}</div>
+          <div class="four wide column">{{ object.start }} - {{ object.end }}</div>
+        </div>
+        
+        <div class="row">
+          <div class="four wide column">Created by: {{ object.owner }}</div>
+          <div class="four wide column"></div>
+          <div class="four wide column">Whole Day: {{ object.whole_day }}</div>
+          <div class="four wide column">Place: {{ object.place }}</div>
+          
+        </div>
+        <div class="row">
+            <div class="ten wide column">{{ object.body }}</div>
+            <div class="six wide column"></div>
+          </div>
+      </div>
+    
+    <p></p>
+</div>
+{% endblock %}

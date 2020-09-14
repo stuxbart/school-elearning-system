@@ -1,0 +1,18 @@
+.main.container {
+    padding-top: 7em;
+}
+.ui.footer.segment {
+    margin: 5em 0em 0em;
+    padding: 5em 0em;
+}
+body {
+    background-color: #eeeeee;
+    display: flex;
+    flex-direction: column;
+}
+.ui.main.container {
+    flex: 1 0 auto;
+}
+.footer {
+    flex-shrink: 0;
+}

@@ -1,0 +1,23 @@
+{% extends 'cal/base/base.html' %}
+
+{% block content %}
+<div class="ui main container">
+    <h3 class="ui header">Share your calendar</h3>
+    <p>Everyone with share link can subscribe your calendar.</p>
+    {% if token %}
+    <div class="ui fluid icon input">
+        <input type="text" readonly value="{{ token_link }}">
+    </div>
+    <form action="" method="POST">
+        {% csrf_token %}
+        <input type="hidden" value="{{ token }}" name="token" />
+        <button type="submit" class="ui button blue">Disable Link</button>
+    </form>
+    {% else %}
+    <form action="" method="POST">
+        {% csrf_token %}
+        <button type="submit" class="ui button green">Generate Link</button>
+    </form>
+    {% endif %}
+</div>
+{% endblock %}

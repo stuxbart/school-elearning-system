@@ -1,0 +1,59 @@
+{% extends 'cal/base/base.html' %}
+
+{% block content %}
+<div class="ui main container calendar-detail">
+    <div class="ui segment">
+        <div class="ui two column very relaxed stackable grid">
+            <div class="column">
+                <h1 style="color: {{object.color }}" class="ui header">{{ object.name }}</h1>
+                <h3 class="ui header">Owner: {{ object.owner }}</h3>
+                <p>
+                    {{ object.overview }}
+                </p>
+                <a href="{% url 'cal:calendar_events_list' object.id %}" class="ui small button">Events</a>
+                {% if request.user == object.owner %}
+                <a href="{% url 'cal:calendar_event_create' object.id %}" class="ui small button">Add event</a>
+                <a href="{% url 'cal:calendar_edit' object.id %}" class="ui small button">Edit</a>
+                <a href="{% url 'cal:calendar_delete' object.id %}" class="ui small button red">Delete</a>
+                {% endif %}
+            </div>
+            <div class="middle aligned column">
+                <div class="ui row two column grid">
+                    <div class="column">
+                        <h3 class="ui header">Subscribers</h3>
+                    </div>
+                    <div class="column">
+                        <a class="ui button green" href="{% url 'cal:calendar_add_subscriber' object.id %}">Add Subscribers</a>
+                    </div>
+                </div>
+
+                {% if object.subscribers.all %}
+                <table class="ui table">
+                    <tbody>
+                        {% for subscriber in object.subscribers.all %}
+                      <tr>
+                        <td class="two wide column">
+                            {{ subscriber }}
+                            <form action="{% url 'cal:calendar_remove_subscriber' object.id %}" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" value="{{ subscriber.id }}" name="user_id">
+                                <button class="ui tiny button red" type="submit">Remove</button>
+                            </form>
+
+                        </td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <h4 class="ui header">This calendar doesn't have any subscribers</h4>
+                {% endif %}
+            </div>
+        </div>
+        <div class="ui vertical divider">
+            >
+        </div>
+    </div>
+    
+</div>
+{% endblock %}
