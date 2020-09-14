@@ -58,6 +58,87 @@ class TextContentCreateForm(forms.Form):
             return content
 
 
+class ImageContentCreateForm(forms.Form):
+    title = forms.CharField(max_length=200)
+    file = forms.ImageField()
+    visible = forms.BooleanField(required=False)
+    module_id = forms.CharField(widget=forms.HiddenInput, required=False)
+    content_id = forms.CharField(widget=forms.HiddenInput, required=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['title'].widget.attrs.update({'class': 'form-control'})
+        # self.fields['content'].widget.attrs.update({'class': 'form-control'})
+        self.fields['visible'].widget.attrs.update({'class': 'form-check-input'})
+
+    def save(self, owner=None, module_id=None):
+        if owner is not None:
+            data = self.cleaned_data
+            item = Image(owner=owner, title=data['title'], file=data['file'])
+            item.save()
+            if module_id is not None:
+                module = Module.objects.get(pk=module_id)
+            else:
+                module = Module.objects.get(pk=data['module_id'])
+            content = Content(module=module, visible=data['visible'], item=item)
+            content.save()
+            return content
+
+
+class FileContentCreateForm(forms.Form):
+    title = forms.CharField(max_length=200)
+    file = forms.FileField()
+    visible = forms.BooleanField(required=False)
+    module_id = forms.CharField(widget=forms.HiddenInput, required=False)
+    content_id = forms.CharField(widget=forms.HiddenInput, required=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['title'].widget.attrs.update({'class': 'form-control'})
+        # self.fields['file'].widget.attrs.update({'class': 'form-control'})
+        self.fields['visible'].widget.attrs.update({'class': 'form-check-input'})
+
+    def save(self, owner=None, module_id=None):
+        if owner is not None:
+            data = self.cleaned_data
+            item = File(owner=owner, title=data['title'], file=data['file'])
+            item.save()
+            if module_id is not None:
+                module = Module.objects.get(pk=module_id)
+            else:
+                module = Module.objects.get(pk=data['module_id'])
+            content = Content(module=module, visible=data['visible'], item=item)
+            content.save()
+            return content
+
+
+class VideoContentCreateForm(forms.Form):
+    title = forms.CharField(max_length=200)
+    file = forms.URLField()
+    visible = forms.BooleanField(required=False)
+    module_id = forms.CharField(widget=forms.HiddenInput, required=False)
+    content_id = forms.CharField(widget=forms.HiddenInput, required=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['title'].widget.attrs.update({'class': 'form-control'})
+        self.fields['file'].widget.attrs.update({'class': 'form-control'})
+        self.fields['visible'].widget.attrs.update({'class': 'form-check-input'})
+
+    def save(self, owner=None, module_id=None):
+        if owner is not None:
+            data = self.cleaned_data
+            item = Video(owner=owner, title=data['title'], file=data['file'])
+            item.save()
+            if module_id is not None:
+                module = Module.objects.get(pk=module_id)
+            else:
+                module = Module.objects.get(pk=data['module_id'])
+            content = Content(module=module, visible=data['visible'], item=item)
+            content.save()
+            return content
+
+
 class TextUpdateForm(forms.ModelForm):
     content_id = forms.CharField(widget=forms.HiddenInput, required=False)
     visible = forms.BooleanField(required=False)
@@ -73,53 +154,49 @@ class TextUpdateForm(forms.ModelForm):
         fields = ['title', 'content']
 
 
-class ImageContentForm(forms.ModelForm):
+class ImageUpdateForm(forms.ModelForm):
+    content_id = forms.CharField(widget=forms.HiddenInput, required=False)
     visible = forms.BooleanField(required=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['title'].widget.attrs.update({'class': 'form-control'})
-        # self.fields['file'].widget.attrs.update({'class': 'custom-file-input'})
-        self.fields['visible'].widget.attrs.update({'class': 'form-control'})
-
-    module_id = forms.CharField(widget=forms.HiddenInput)
+        # self.fields['content'].widget.attrs.update({'class': 'form-control'})
+        self.fields['visible'].widget.attrs.update({'class': 'form-check-input'})
 
     class Meta:
         model = Image
-        fields = ['title', 'file', 'visible']
+        fields = ['title', 'file']
 
 
-class FileContentForm(forms.ModelForm):
+class FileUpdateForm(forms.ModelForm):
+    content_id = forms.CharField(widget=forms.HiddenInput, required=False)
     visible = forms.BooleanField(required=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['title'].widget.attrs.update({'class': 'form-control'})
-        # self.fields['file'].widget.attrs.update({'class': 'custom-file-input'})
-        self.fields['visible'].widget.attrs.update({'class': 'form-control'})
-
-    module_id = forms.CharField(widget=forms.HiddenInput)
+        # self.fields['content'].widget.attrs.update({'class': 'form-control'})
+        self.fields['visible'].widget.attrs.update({'class': 'form-check-input'})
 
     class Meta:
         model = File
         fields = ['title', 'file']
 
 
-class VideoContentForm(forms.ModelForm):
+class VideoUpdateForm(forms.ModelForm):
+    content_id = forms.CharField(widget=forms.HiddenInput, required=False)
     visible = forms.BooleanField(required=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['title'].widget.attrs.update({'class': 'form-control'})
         self.fields['file'].widget.attrs.update({'class': 'form-control'})
-        self.fields['visible'].widget.attrs.update({'class': 'form-control'})
-        self.fields['file'].label = 'Video URL'
-
-    module_id = forms.CharField(widget=forms.HiddenInput)
+        self.fields['visible'].widget.attrs.update({'class': 'form-check-input'})
 
     class Meta:
         model = Video
-        fields = ['title', 'file', 'visible']
+        fields = ['title', 'file']
 
 
 class ModuleCreateForm(forms.ModelForm):

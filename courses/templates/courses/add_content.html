@@ -28,7 +28,7 @@
                                 <button type="button" data-id="{{ module.id }}" data-endpoint="{% url 'courses:show_module' module.id %}" class="btn btn-primary module-hide">Show</button>
                             {% endif %}
                             <button type="button" data-id="{{ module.id }}" class="btn btn-success module-add-text">Add</button>
-<!--                            <a href="{% url 'courses:create_text' module.id %}" class="btn btn-success">Add</a>-->
+<!--                            <a href="{% url 'courses:create_file' module.id %}" class="btn btn-success">Add</a>-->
                             <button type="button" data-id="{{ module.id }}" data-endpoint="{% url 'courses:edit_module' module.id %}" data-moduletitle="{{ module.title }}" data-moduledesc="{{ module.description }}" data-visible="{{ module.visible }}" class="btn btn-success module-desc-edit">Edit</button>
                             <button type="button" data-id="{{ module.id }}" data-endpoint="{% url 'courses:delete_module' module.id %}" data-moduletitle="{{ module.title }}" class="btn btn-danger module-delete">Delete</button>
                         </div>
@@ -58,7 +58,6 @@
                                                 data-visible="{{ content.visible }}"
                                                 data-text="{{ content.item.content }}"
                                                 data-file="{{ content.item.file }}"
-                                                data-endpoint="{% url 'courses:update_text_ajax' %}"
                                                 class="btn btn-success content-edit"
                                             >Edit</button>
 <!--                                            <a href="{% url 'courses:update_text' content.item.id %}?next={{ request.path }}">Edit</a>-->

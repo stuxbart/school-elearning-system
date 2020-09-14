@@ -11,9 +11,6 @@ from .views import (
     CategoryCoursesListView,
     ManageCourseList,
     CourseAddContentView,
-    CreateImageContentView,
-    CreateFileContentView,
-    CreateVideoContentView,
     ModuleCreateView,
     CourseManageDetailView,
     ModuleUpdateView,
@@ -28,7 +25,13 @@ from .views import (
     CourseEditView,
     ModuleOrderView,
     TextContentCreateView,
-    TextContentUpdateView
+    TextContentUpdateView,
+    ImageContentCreateView,
+    ImageContentUpdateView,
+    FileContentCreateView,
+    FileContentUpdateView,
+    VideoContentCreateView,
+    VideoContentUpdateView
 )
 
 app_name = 'courses'
@@ -43,7 +46,6 @@ manage_urls = [
     path('course/<slug>/add', CourseAddContentView.as_view(), name="add_content"),
     path('course/<slug>/participants', CourseParticipantsManageDetailView.as_view(), name="participants"),
 
-
     path('course/<slug>/add-module', ModuleCreateView.as_view(), name="add_module"),
     path('course/show-module/<pk>/', ModuleShowHideView.as_view(), name="show_module"),
     path('course/move-module/', ModuleOrderView.as_view(), name='move_module'),
@@ -55,13 +57,20 @@ manage_urls = [
     path('course/update/text', TextContentUpdateView.as_view(), name='update_text_ajax'),
     path('course/update/text/<pk>', TextContentUpdateView.as_view(), name='update_text'),
 
-    path('course/add/image', CreateImageContentView.as_view(), name='add_content_image'),
-    path('course/add/file', CreateFileContentView.as_view(), name='add_content_file'),
-    path('course/add/video', CreateVideoContentView.as_view(), name='add_content_video'),
+    path('course/create/image', ImageContentCreateView.as_view(), name='create_image_ajax'),
+    path('course/<pk>/create/image', ImageContentCreateView.as_view(), name='create_image'),
+    path('course/update/image', ImageContentUpdateView.as_view(), name='update_image_ajax'),
+    path('course/update/image/<pk>', ImageContentUpdateView.as_view(), name='update_image'),
 
-    path('course/edit/image/<pk>/', CreateImageContentView.as_view(), name='edit_content_image'),
-    path('course/edit/file/<pk>/', CreateFileContentView.as_view(), name='edit_content_file'),
-    path('course/edit/video/<pk>/', CreateVideoContentView.as_view(), name='edit_content_video'),
+    path('course/create/file', FileContentCreateView.as_view(), name='create_file_ajax'),
+    path('course/<pk>/create/file', FileContentCreateView.as_view(), name='create_file'),
+    path('course/update/file', FileContentUpdateView.as_view(), name='update_file_ajax'),
+    path('course/update/file/<pk>', FileContentUpdateView.as_view(), name='update_file'),
+
+    path('course/create/video', VideoContentCreateView.as_view(), name='create_video_ajax'),
+    path('course/<pk>/create/video', VideoContentCreateView.as_view(), name='create_video'),
+    path('course/update/video', VideoContentUpdateView.as_view(), name='update_video_ajax'),
+    path('course/update/video/<pk>', VideoContentUpdateView.as_view(), name='update_video'),
 
     path('course/move-content/', ContentOrderView.as_view(), name='move_content'),
     path('course/delete-content/<pk>/', ContentDeleteView.as_view(), name='delete_content'),

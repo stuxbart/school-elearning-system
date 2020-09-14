@@ -314,6 +314,7 @@ $(document).ready(function() {
 
     var contentEditButton = $('.content-edit')
     contentEditButton.click(function(event){
+        console.log("Klikane")
         var data = {
             id: event.target.dataset.id,
             title: event.target.dataset.title,
@@ -332,22 +333,26 @@ $(document).ready(function() {
         if (event.relatedTarget) {
             var att = document.createAttribute("edit");
             att.value = event.relatedTarget.edit;
-            thisModal.find('.add-content-form')[0].setAttributeNode(att);
+
             if (event.relatedTarget.edit){
                 switch (event.relatedTarget.type.substring(10)) {
                 case 'text':
                     thisModal.find('.add-content-form').find('#id_content').val(event.relatedTarget.text)
                     thisModal.find('#list-tab').find('#list-text-list').tab('show')
+                    thisModal.find('.add-content-form')[0].setAttributeNode(att);
                     break;
                 case 'image':
                     thisModal.find('#list-tab').find('#list-image-list').tab('show')
+                    thisModal.find('.add-content-form')[1].setAttributeNode(att);
                     break;
                 case 'file':
                     thisModal.find('#list-tab').find('#list-file-list').tab('show')
+                    thisModal.find('.add-content-form')[2].setAttributeNode(att);
                     break;
                 case 'video':
                     // thisModal.find('.add-content-form').find('#id_file').val(event.relatedTarget.file)
                     thisModal.find('#list-tab').find('#list-video-list').tab('show')
+                    thisModal.find('.add-content-form')[3].setAttributeNode(att);
                     break;
                 default:
                     break;

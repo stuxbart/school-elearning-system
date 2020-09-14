@@ -5,7 +5,7 @@
     <div class="row my-3">
         <div class="col">
             Creating {{ content_type }} for {{ module }} module in {{ course }} course.
-            <form action="" method="POST">
+            <form action="" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form }}
                 <button class="btn btn-success my-3" type="submit">Create</button>

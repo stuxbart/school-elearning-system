@@ -26,19 +26,19 @@
                         </form>
                     </div>
                     <div class="tab-pane fade" id="list-image" role="tabpanel" aria-labelledby="list-image-list">
-                        <form action="{{ forms.image.action }}" method="POST" class="add-content-form custom-file">
+                        <form action="{{ forms.image.action }}" data-update-endpoint="{{ forms.image.update_action }}" method="POST" class="add-content-form custom-file">
                           {% csrf_token %}
                           {{ forms.image.instance.as_p }}
                         </form>
                     </div>
                     <div class="tab-pane fade" id="list-file" role="tabpanel" aria-labelledby="list-file-list">
-                      <form action="{{ forms.file.action }}" method="POST" class="add-content-form custom-file">
+                      <form action="{{ forms.file.action }}" data-update-endpoint="{{ forms.file.update_action }}" method="POST" class="add-content-form custom-file">
                         {% csrf_token %}
                         {{ forms.file.instance.as_p }}
                       </form>
                     </div>
                     <div class="tab-pane fade" id="list-video" role="tabpanel" aria-labelledby="list-video-list">
-                      <form action="{{ forms.video.action }}" method="POST" class="add-content-form">
+                      <form action="{{ forms.video.action }}" data-update-endpoint="{{ forms.video.update_action }}" method="POST" class="add-content-form">
                         {% csrf_token %}
                         {{ forms.video.instance.as_p }}
                       </form>

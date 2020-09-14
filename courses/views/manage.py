@@ -17,18 +17,30 @@ from django.db.models import F, Subquery, OuterRef
 import json
 
 from ..forms import (
-    ImageContentForm,
-    FileContentForm,
-    VideoContentForm,
     ModuleCreateForm,
     AddUserToCourseForm,
     CourseCreateForm,
     TextContentCreateForm,
-    TextUpdateForm
+    TextUpdateForm,
+    ImageContentCreateForm,
+    ImageUpdateForm,
+    VideoContentCreateForm,
+    VideoUpdateForm,
+    FileContentCreateForm,
+    FileUpdateForm
 )
 
 from ..mixins import IsTeacherMixin
-from ..models import Course, Content, Module, Membership, Text
+from ..models import (
+    Course,
+    Content,
+    Module,
+    Membership,
+    Text,
+    Image,
+    File,
+    Video
+)
 
 from activity.models import CourseViewed
 
@@ -88,16 +100,19 @@ class CourseAddContentView(LoginRequiredMixin, IsTeacherMixin, DetailView):
                 'update_action': reverse('courses:update_text_ajax')
             },
             'image': {
-                'instance': ImageContentForm(),
-                'action': reverse('courses:add_content_image')
+                'instance': ImageContentCreateForm(),
+                'action': reverse('courses:create_image_ajax'),
+                'update_action': reverse('courses:update_image_ajax')
             },
             'file': {
-                'instance': FileContentForm(),
-                'action': reverse('courses:add_content_file')
+                'instance': FileContentCreateForm(),
+                'action': reverse('courses:create_file_ajax'),
+                'update_action': reverse('courses:update_file_ajax')
             },
             'video': {
-                'instance': VideoContentForm(),
-                'action': reverse('courses:add_content_video')
+                'instance': VideoContentCreateForm(),
+                'action': reverse('courses:create_video_ajax'),
+                'update_action': reverse('courses:update_video_ajax')
             },
             'module': {
                 'instance': ModuleCreateForm(),
@@ -107,9 +122,9 @@ class CourseAddContentView(LoginRequiredMixin, IsTeacherMixin, DetailView):
         return context
 
 
-class TextContentCreateView(LoginRequiredMixin, IsTeacherMixin, FormView):
-    form_class = TextContentCreateForm
+class BaseContentCreateView(LoginRequiredMixin, IsTeacherMixin, FormView):
     template_name = 'courses/content/create.html'
+    success_message = "Created"
 
     def get_success_url(self):
         course = self.object.module.course
@@ -132,11 +147,85 @@ class TextContentCreateView(LoginRequiredMixin, IsTeacherMixin, FormView):
         response = super().form_valid(form)
         if self.request.is_ajax():
             data = {
-                'message': 'Text Created',
+                'message': self.success_message,
             }
             return JsonResponse(data)
         else:
             return response
+
+    def form_invalid(self, form):
+        response = super().form_invalid(form)
+        if self.request.is_ajax():
+
+            data = {
+                'message': 'error',
+            }
+            return JsonResponse(data)
+        else:
+            return response
+
+
+class TextContentCreateView(BaseContentCreateView):
+    form_class = TextContentCreateForm
+    success_message = "Text created"
+
+
+class ImageContentCreateView(BaseContentCreateView):
+    form_class = ImageContentCreateForm
+    success_message = "Image created"
+
+
+class FileContentCreateView(BaseContentCreateView):
+    form_class = FileContentCreateForm
+    success_message = "File created"
+
+
+class VideoContentCreateView(BaseContentCreateView):
+    form_class = VideoContentCreateForm
+    success_message = "Video created"
+
+# class TextContentCreateView(LoginRequiredMixin, IsTeacherMixin, FormView):
+#     form_class = TextContentCreateForm
+#     template_name = 'courses/content/create.html'
+#
+#     def get_success_url(self):
+#         course = self.object.module.course
+#         return reverse('courses:course_home', kwargs={'slug': course.slug})
+#
+#     def get_context_data(self, **kwargs):
+#         module_pk = self.kwargs.get('pk')
+#         qs = Module.objects.filter(owner=self.request.user)
+#         module = get_object_or_404(qs, pk=module_pk)
+#         course = module.course
+#         context = super().get_context_data(**kwargs)
+#         context['module'] = module
+#         context['course'] = course
+#         return context
+#
+#     def form_valid(self, form):
+#         user = self.request.user
+#         module_id = self.kwargs.get('pk')
+#         self.object = form.save(owner=user, module_id=module_id)
+#         response = super().form_valid(form)
+#         if self.request.is_ajax():
+#             data = {
+#                 'message': 'Text Created',
+#             }
+#             return JsonResponse(data)
+#         else:
+#             return response
+#
+#     def form_invalid(self, form):
+#         response = super().form_invalid(form)
+#         if self.request.is_ajax():
+#
+#             print(form.cleaned_data)
+#             data = {
+#                 'message': 'error',
+#             }
+#             return JsonResponse(data)
+#         else:
+#             return response
 
 
 class TextContentUpdateView(LoginRequiredMixin, IsTeacherMixin, FormView):
@@ -150,14 +239,17 @@ class TextContentUpdateView(LoginRequiredMixin, IsTeacherMixin, FormView):
         return self.request.GET.get('next') or reverse('courses:text_detail', kwargs={'pk': self.object.pk})
 
     def get_initial(self):
-        text_id = self.kwargs.get('pk')
-        text = get_object_or_404(self.get_queryset(), pk=text_id)
-        # content = get_object_or_404(Content, item=text)
-        return {
-            'title': text.title,
-            'content': text.content,
-            # 'visible': content.visible
-        }
+        if not self.request.is_ajax():
+            text_id = self.kwargs.get('pk')
+            text = get_object_or_404(self.get_queryset(), pk=text_id)
+            # content = get_object_or_404(Content, item=text)
+            return {
+                'title': text.title,
+                'content': text.content,
+                # 'visible': content.visible
+            }
+        else:
+            return {}
 
     def form_valid(self, form):
         data = form.cleaned_data
@@ -187,69 +279,63 @@ class TextContentUpdateView(LoginRequiredMixin, IsTeacherMixin, FormView):
         else:
             return response
 
-
-class CreateImageContentView(LoginRequiredMixin, IsTeacherMixin, FormView):
-    form_class = ImageContentForm
-    success_url = '/'
-
-    def post(self, request, *args, **kwargs):
-        form_class = self.get_form_class()
-        form = self.get_form(form_class)
-        print(form.errors)
-
-        if form.is_valid():
-            # for f in files:
-            #     ...  # Do something with each file.
-            return self.form_valid(form)
-        else:
-            return self.form_invalid(form)
-
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        module_id = form.cleaned_data.get('module_id')
-        module_obj = get_object_or_404(Module, pk=module_id)
-        form.instance.owner = self.request.user
-        item = form.save()
-        content_obj = Content(module=module_obj, item=item)
-        content_obj.save()
-        if self.request.is_ajax():
-            print(form.cleaned_data)
-            data = {
-                'message': 'success',
-            }
-            return JsonResponse(data)
-        else:
-            return response
-
     def form_invalid(self, form):
         response = super().form_invalid(form)
         if self.request.is_ajax():
-
-            print(form.cleaned_data)
             data = {
                 'message': 'error',
             }
-            return JsonResponse(data, status=400)
+            return JsonResponse(data)
         else:
             return response
 
 
-class CreateFileContentView(LoginRequiredMixin, IsTeacherMixin, FormView):
-    form_class = FileContentForm
-    success_url = '/'
+class ImageContentUpdateView(LoginRequiredMixin, IsTeacherMixin, FormView):
+    form_class = ImageUpdateForm
+    template_name = 'courses/content/update.html'
+
+    def get_queryset(self):
+        return Image.objects.filter(owner=self.request.user)
+
+    def get_success_url(self):
+        return self.request.GET.get('next') or reverse('courses:image_detail', kwargs={'pk': self.object.pk})
+
+    def get_initial(self):
+        if not self.request.is_ajax():
+            image_id = self.kwargs.get('pk')
+            image = get_object_or_404(self.get_queryset(), pk=image_id)
+            # content = get_object_or_404(Content, item=image)
+            return {
+                'title': image.title,
+                'file': image.file,
+                # 'visible': content.visible
+            }
+        else:
+            return {}
 
     def form_valid(self, form):
-        response = super().form_valid(form)
-        module_id = form.cleaned_data.get('module_id')
-        module_obj = get_object_or_404(Module, pk=module_id)
-        form.instance.owner = self.request.user
-        item = form.save()
-        content_obj = Content(module=module_obj, item=item)
-        content_obj.save()
+        data = form.cleaned_data
         if self.request.is_ajax():
-            print(form.cleaned_data)
+            content_id = data['content_id']
+            content = get_object_or_404(Content, pk=content_id)
+            image = content.item
+            content.visible = data['visible']
+            content.save()
+        else:
+            image_id = self.kwargs.get('pk')
+            image = get_object_or_404(self.get_queryset(), pk=image_id)
+            # content = get_object_or_404(Content, item=image)
+
+        image.title = data['title']
+        image.file = data['file']
+        image.save()
+
+        self.object = image
+
+        response = super().form_valid(form)
+        if self.request.is_ajax():
             data = {
-                'message': 'success',
+                'message': 'Image Updated',
             }
             return JsonResponse(data)
         else:
@@ -258,31 +344,60 @@ class CreateFileContentView(LoginRequiredMixin, IsTeacherMixin, FormView):
     def form_invalid(self, form):
         response = super().form_invalid(form)
         if self.request.is_ajax():
-            print(form.cleaned_data)
             data = {
                 'message': 'error',
             }
-            return JsonResponse(data, status=400)
+            return JsonResponse(data)
         else:
             return response
 
 
-class CreateVideoContentView(LoginRequiredMixin, IsTeacherMixin, FormView):
-    form_class = VideoContentForm
-    success_url = '/'
+class FileContentUpdateView(LoginRequiredMixin, IsTeacherMixin, FormView):
+    form_class = FileUpdateForm
+    template_name = 'courses/content/update.html'
+
+    def get_queryset(self):
+        return File.objects.filter(owner=self.request.user)
+
+    def get_success_url(self):
+        return self.request.GET.get('next') or reverse('courses:file_detail', kwargs={'pk': self.object.pk})
+
+    def get_initial(self):
+        if not self.request.is_ajax():
+            file_id = self.kwargs.get('pk')
+            file = get_object_or_404(self.get_queryset(), pk=file_id)
+            # content = get_object_or_404(Content, item=file)
+            return {
+                'title': file.title,
+                'file': file.file,
+                # 'visible': content.visible
+            }
+        else:
+            return {}
 
     def form_valid(self, form):
-        response = super().form_valid(form)
-        module_id = form.cleaned_data.get('module_id')
-        module_obj = get_object_or_404(Module, pk=module_id)
-        form.instance.owner = self.request.user
-        item = form.save()
-        content_obj = Content(module=module_obj, item=item)
-        content_obj.save()
+        data = form.cleaned_data
         if self.request.is_ajax():
-            print(form.cleaned_data)
+            content_id = data['content_id']
+            content = get_object_or_404(Content, pk=content_id)
+            file = content.item
+            content.visible = data['visible']
+            content.save()
+        else:
+            file_id = self.kwargs.get('pk')
+            file = get_object_or_404(self.get_queryset(), pk=file_id)
+            # content = get_object_or_404(Content, item=video)
+
+        file.title = data['title']
+        file.file = data['file']
+        file.save()
+
+        self.object = file
+
+        response = super().form_valid(form)
+        if self.request.is_ajax():
             data = {
-                'message': 'success',
+                'message': 'File Updated',
             }
             return JsonResponse(data)
         else:
@@ -291,12 +406,72 @@ class CreateVideoContentView(LoginRequiredMixin, IsTeacherMixin, FormView):
     def form_invalid(self, form):
         response = super().form_invalid(form)
         if self.request.is_ajax():
-
-            print(form.cleaned_data)
             data = {
-                'message': 'success',
+                'message': 'error',
             }
-            return JsonResponse(data, status=400)
+            return JsonResponse(data)
+        else:
+            return response
+
+
+class VideoContentUpdateView(LoginRequiredMixin, IsTeacherMixin, FormView):
+    form_class = VideoUpdateForm
+    template_name = 'courses/content/update.html'
+
+    def get_queryset(self):
+        return Video.objects.filter(owner=self.request.user)
+
+    def get_success_url(self):
+        return self.request.GET.get('next') or reverse('courses:video_detail', kwargs={'pk': self.object.pk})
+
+    def get_initial(self):
+        if not self.request.is_ajax():
+            video_id = self.kwargs.get('pk')
+            video = get_object_or_404(self.get_queryset(), pk=video_id)
+            # content = get_object_or_404(Content, item=video)
+            return {
+                'title': video.title,
+                'file': video.file,
+                # 'visible': content.visible
+            }
+        else:
+            return {}
+
+    def form_valid(self, form):
+        data = form.cleaned_data
+        if self.request.is_ajax():
+            content_id = data['content_id']
+            content = get_object_or_404(Content, pk=content_id)
+            video = content.item
+            content.visible = data['visible']
+            content.save()
+        else:
+            video_id = self.kwargs.get('pk')
+            video = get_object_or_404(self.get_queryset(), pk=video_id)
+            # content = get_object_or_404(Content, item=video)
+
+        video.title = data['title']
+        video.file = data['file']
+        video.save()
+
+        self.object = video
+
+        response = super().form_valid(form)
+        if self.request.is_ajax():
+            data = {
+                'message': 'Video Updated',
+            }
+            return JsonResponse(data)
+        else:
+            return response
+
+    def form_invalid(self, form):
+        response = super().form_invalid(form)
+        if self.request.is_ajax():
+            data = {
+                'message': 'error',
+            }
+            return JsonResponse(data)
         else:
             return response
 
