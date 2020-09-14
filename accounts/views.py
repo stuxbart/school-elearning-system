@@ -1,10 +1,12 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
 from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout
 
 from django.contrib.auth import get_user_model
+
 User = get_user_model()
-# Create your views here.
+
+
 def login_view(request):
     if request.method == "POST":
         username = request.POST.get('username')
@@ -22,16 +24,17 @@ def login_view(request):
         if user is not None:
             login(request, user)
             response_obj = {
-                    'message': 'Pomyślnie zalogowano',
-                    'username': user.email,
-                    'teacher': user.is_teacher,
-                }
+                'message': 'Successfully logged in',
+                'username': user.email,
+                'teacher': user.is_teacher,
+            }
             if user.full_name:
                 response_obj['full_name'] = user.full_name
             return JsonResponse(response_obj, status=200)
-        return JsonResponse({'message': 'Złe dane logowania'}, status=400)
+        return JsonResponse({'message': 'Bad authentication credentials'}, status=400)
     else:
         return redirect('/')
+
 
 def logout_view(request):
     logout(request)

@@ -13,7 +13,6 @@ class IsStaff(BasePermission):
 
 class IsAdmin(BasePermission):
     def has_permission(self, request, view):
-        print("eeeeeeejo")
         return bool(request.user and request.user.is_admin)
 
     def has_object_permission(self, request, view, obj):
@@ -22,7 +21,6 @@ class IsAdmin(BasePermission):
 
 class IsCurrentUser(BasePermission):
     def has_object_permission(self, request, view, obj):
-        print("a tu?")
         return bool(request.user == obj)
 
 

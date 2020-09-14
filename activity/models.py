@@ -6,7 +6,7 @@ from .signals import course_viewed_signal
 
 User = settings.AUTH_USER_MODEL
 
-# Create your models here.
+
 class CourseViewed(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
@@ -17,7 +17,6 @@ class CourseViewed(models.Model):
 
     def __str__(self):
         return f"{self.user} viewed {self.course}, {self.timestamp}"
-    
 
 
 def course_viewed_receiver(sender, course, request, *args, **kwargs):
