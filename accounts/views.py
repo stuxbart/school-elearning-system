@@ -50,6 +50,7 @@ class UserHomeView(LoginRequiredMixin, DetailView):
     def get_object(self, queryset=None):
         return self.request.user
 
-# user home page
-# user update profile
-# user info
+
+class UserDetailView(LoginRequiredMixin, DetailView):
+    template_name = 'accounts/user_detail.html'
+    queryset = User.objects.active()

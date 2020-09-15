@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12 text-center">
+            <img src="{{ object.photo.url }}" class="rounded mx-auto d-block" alt="..." style="max-height: 200px;">
+            <h3>{{ object.get_full_name }}</h3>
+            <p>
+                <h5>Contact</h5>
+                <b>Email:</b>&nbsp;{{ object.email }}
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

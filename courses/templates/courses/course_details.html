@@ -13,7 +13,9 @@
                 <div class="col-9">
                     <h1>{{ object.title }}</h1>
                         <p>
-                            Owner {{ object.owner.full_name }}<br/>
+                            {% if object.owner %}
+                            Owner <a href="{% url 'accounts:user_detail' object.owner.pk %}">{{ object.owner.full_name }}</a><br/>
+                            {% endif %}
                             Updated {{object.updated }}
                         </p>
                     <p>{{ object.overview }}</p>
