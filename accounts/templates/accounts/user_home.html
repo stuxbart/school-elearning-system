@@ -51,6 +51,27 @@
               </div>
             </div>
             {% endif %}
+            <div class="card mb-3" style="width: 100%;">
+                <div class="card-header text-center">
+                <h5>Owned Courses</h5>
+              </div>
+              <div class="card-body">
+                <p class="card-text">
+                    <table class="table table-borderless">
+                      <tbody>
+                      {% for course in object.course_set.all %}
+                        <tr>
+                          <td><a href="{{ course.get_absolute_url }}">{{ course }}</a></td>
+                        </tr>
+                      {% endfor %}
+                      </tbody>
+                    </table>
+                </p>
+              </div>
+              <div class="card-footer text-muted">
+                <a href="{% url 'courses:manage_list' %}" class="card-link">Manage courses</a>
+              </div>
+            </div>
         </div>
         <div class="col-12 col-lg-6">
             <div class="card mb-3" style="width: 100%;">
@@ -74,7 +95,7 @@
                 <p class="card-text">
                     <table class="table table-borderless">
                       <tbody>
-                      {% for course in object.course_set.all %}
+                      {% for course in object.courses.all %}
                         <tr>
                           <td><a href="{{ course.get_absolute_url }}">{{ course }}</a></td>
                         </tr>

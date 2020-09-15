@@ -109,13 +109,13 @@ class MonthCustomHTMLCal(calendar.HTMLCalendar):
         next_year = theyear + 1 if themonth == 12 else theyear
         return f'''
         <tr>
-            <th class="{self.cssclass_month_head}">
+            <th colspan="2" class="{self.cssclass_month_head}">
                 <a href="{reverse('cal:m_calendar_events_list')}?year={prev_year}&month={prev_month}">{calendar.month_name[prev_month]}</a>
             </th>
-            <th colspan="5" class="{self.cssclass_month_head}">
+            <th colspan="3" class="{self.cssclass_month_head}">
                 {s}
             </th>
-            <th class="{self.cssclass_month_head}">
+            <th colspan="2" class="{self.cssclass_month_head}">
                 <a href="{reverse('cal:m_calendar_events_list')}?year={next_year}&month={next_month}">{calendar.month_name[next_month]}</a>
             </th>
         </tr>
