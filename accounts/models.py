@@ -88,8 +88,10 @@ class User(AbstractBaseUser):
         through="courses.Membership"
 
     )
-    # user_photo
-    # about
+    date_of_birth = models.DateField(null=True, blank=True)
+    photo = models.ImageField(upload_to='user_images', null=True, blank=True)
+    info = models.TextField(null=True, blank=True)
+    # department = models.CharField(max_length=200, null=True, blank=True)
     # class
     USERNAME_FIELD = 'email'
 

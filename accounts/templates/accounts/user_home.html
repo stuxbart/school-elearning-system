@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load cal_extras %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12 col-lg-6">
+            <div class="card mb-3" style="width: 100%;">
+              <div class="row no-gutters">
+                <div class="col-md-4">
+                  <img src="{{ object.photo.url }}" class="card-img" alt="...">
+                </div>
+                <div class="col-md-8">
+                  <div class="card-body">
+                    <h5 class="card-title">{% if object.full_name %}{{ object.full_name }}{% else %}{{ object.user_index }}{% endif %}</h5>
+                    <p class="card-text">
+                        <a href="#" class="card-link">Edit Profile</a>
+                    </p>
+                    <p class="card-text"><small class="text-muted">Member since {{ object.timestamp }}</small></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card mb-3" style="width: 100%;">
+                <div class="card-header text-center">
+                    <h5>Personal Info</h5>
+                </div>
+              <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted">Full Name</h6>
+                <p class="card-text">{{ object.full_name }}</p>
+                <h6 class="card-subtitle mb-2 text-muted">Date of Birth</h6>
+                <p class="card-text">{{ object.date_of_birth }}</p>
+              </div>
+            </div>
+            <div class="card mb-3" style="width: 100%;">
+                 <div class="card-header text-center">
+                    <h5>Study Info</h5>
+                </div>
+              <div class="card-body">
+                <p class="card-text"><b>User Index:</b>&nbsp;{{ object.user_index }}</p>
+                <p class="card-text"><b>Email:</b>&nbsp;{{ object.email }}</p>
+              </div>
+            </div>
+            {% if object.info %}
+            <div class="card mb-3" style="width: 100%;">
+                <div class="card-header text-center">
+                    <h5>Additional Info</h5>
+                </div>
+              <div class="card-body">
+                <p class="card-text">{{ object.info }}</p>
+              </div>
+            </div>
+            {% endif %}
+        </div>
+        <div class="col-12 col-lg-6">
+            <div class="card mb-3" style="width: 100%;">
+                <div class="card-header text-center">
+                    <h5>Calendar</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">
+                        {% get_month_calendar %}
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'cal:m_calendar_events_list' %}" class="card-link">Open Calendar</a>
+                </div>
+            </div>
+            <div class="card mb-3" style="width: 100%;">
+                <div class="card-header text-center">
+                <h5>My Courses</h5>
+              </div>
+              <div class="card-body">
+                <p class="card-text">
+                    <table class="table table-borderless">
+                      <tbody>
+                      {% for course in object.course_set.all %}
+                        <tr>
+                          <td><a href="{{ course.get_absolute_url }}">{{ course }}</a></td>
+                        </tr>
+                      {% endfor %}
+                      </tbody>
+                    </table>
+                </p>
+
+              </div>
+              <div class="card-footer text-muted">
+                <a href="{% url 'courses:home' %}" class="card-link">Browse more courses</a>
+              </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

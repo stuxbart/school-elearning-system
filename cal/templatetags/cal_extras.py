@@ -1,7 +1,10 @@
 import calendar
+import datetime
 from django import template
 from django.utils.safestring import mark_safe
 from cal.utils import YearCustomHTMLCal, MonthCustomHTMLCal
+
+from ..models import Event
 
 register = template.Library()
 
@@ -21,8 +24,9 @@ def get_year_calendar(context):
 
 @register.simple_tag(takes_context=True)
 def get_month_calendar(context):
-    year = context['year']
-    month = context['month']
-    events = context['object_list']
+    now = datetime.datetime.now()
+    year = context.get('year') or now.year
+    month = context.get('month') or now.month
+    events = context.get('object_list') or Event.objects.available(context['request'])
     cal = MonthCustomHTMLCal(events=events)
     return mark_safe(cal.formatmonth(year, month))

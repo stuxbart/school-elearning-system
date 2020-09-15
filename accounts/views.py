@@ -1,8 +1,10 @@
 from django.shortcuts import redirect
 from django.http import JsonResponse
+from django.views.generic import DetailView
 from django.contrib.auth import authenticate, login, logout
-
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import get_user_model
+
 
 User = get_user_model()
 
@@ -39,3 +41,15 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return redirect('home')
+
+
+class UserHomeView(LoginRequiredMixin, DetailView):
+    template_name = 'accounts/user_home.html'
+    model = User
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+# user home page
+# user update profile
+# user info

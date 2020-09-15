@@ -1,3 +1,49 @@
+/* CSS HEX */
+--rich-black-fogra-39: #0a090cff;
+--isabelline: #f0edeeff;
+--rich-black: #07393cff;
+--ming: #2c666eff;
+--middle-blue: #90ddf0ff;
+
+/* CSS HSL */
+--rich-black-fogra-39: hsla(260, 14%, 4%, 1);
+--isabelline: hsla(340, 9%, 94%, 1);
+--rich-black: hsla(183, 79%, 13%, 1);
+--ming: hsla(187, 43%, 30%, 1);
+--middle-blue: hsla(192, 76%, 75%, 1);
+
+/* SCSS HEX */
+$rich-black-fogra-39: #0a090cff;
+$isabelline: #f0edeeff;
+$rich-black: #07393cff;
+$ming: #2c666eff;
+$middle-blue: #90ddf0ff;
+
+/* SCSS HSL */
+$rich-black-fogra-39: hsla(260, 14%, 4%, 1);
+$isabelline: hsla(340, 9%, 94%, 1);
+$rich-black: hsla(183, 79%, 13%, 1);
+$ming: hsla(187, 43%, 30%, 1);
+$middle-blue: hsla(192, 76%, 75%, 1);
+
+/* SCSS RGB */
+$rich-black-fogra-39: rgba(10, 9, 12, 1);
+$isabelline: rgba(240, 237, 238, 1);
+$rich-black: rgba(7, 57, 60, 1);
+$ming: rgba(44, 102, 110, 1);
+$middle-blue: rgba(144, 221, 240, 1);
+
+/* SCSS Gradient */
+$gradient-top: linear-gradient(0deg, #0a090cff, #f0edeeff, #07393cff, #2c666eff, #90ddf0ff);
+$gradient-right: linear-gradient(90deg, #0a090cff, #f0edeeff, #07393cff, #2c666eff, #90ddf0ff);
+$gradient-bottom: linear-gradient(180deg, #0a090cff, #f0edeeff, #07393cff, #2c666eff, #90ddf0ff);
+$gradient-left: linear-gradient(270deg, #0a090cff, #f0edeeff, #07393cff, #2c666eff, #90ddf0ff);
+$gradient-top-right: linear-gradient(45deg, #0a090cff, #f0edeeff, #07393cff, #2c666eff, #90ddf0ff);
+$gradient-bottom-right: linear-gradient(135deg, #0a090cff, #f0edeeff, #07393cff, #2c666eff, #90ddf0ff);
+$gradient-top-left: linear-gradient(225deg, #0a090cff, #f0edeeff, #07393cff, #2c666eff, #90ddf0ff);
+$gradient-bottom-left: linear-gradient(315deg, #0a090cff, #f0edeeff, #07393cff, #2c666eff, #90ddf0ff);
+$gradient-radial: radial-gradient(#0a090cff, #f0edeeff, #07393cff, #2c666eff, #90ddf0ff);
+
 .navbar-custom {
     background-color: white;
     /* border-bottom: rgb(150, 0, 142) 1px solid; */
@@ -95,6 +141,12 @@ pre {
     border: 1px solid rgb(189, 189, 189);
     
 } */
+body {
+    background-color: whitesmoke;
+    display:flex;
+    flex-direction:column;
+    height: 100vh;
+}
 .container{
     /* background-color: white; */
     /* min-height: 90vh; */
@@ -102,7 +154,8 @@ pre {
 }
 footer {
     background-color: white;
+    margin-top:auto;
 }
-main {
-    background-color: whitesmoke;
+.fixed {
+    table-layout: fixed;
 }

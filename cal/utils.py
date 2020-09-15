@@ -2,6 +2,7 @@ import calendar
 import datetime
 import random
 import string
+from django.urls import reverse
 
 
 class YearCustomHTMLCal(calendar.HTMLCalendar):
@@ -45,7 +46,7 @@ class YearCustomHTMLCal(calendar.HTMLCalendar):
         return f'''
         <tr>
             <th colspan="7" class="{self.cssclass_month_head}">
-                <a href=".?year={theyear}&month={themonth}">{s}</a>
+                <a href="{reverse('cal:m_calendar_events_list')}?year={theyear}&month={themonth}">{s}</a>
             </th>
         </tr>
         '''
@@ -73,7 +74,7 @@ class YearCustomHTMLCal(calendar.HTMLCalendar):
 
             return f'''
             <td class="{self.cssclasses[weekday]}">
-                <a href=".{create_url_from_date(self.current_date)}">
+                <a href="{reverse('cal:m_calendar_events_list')}{create_url_from_date(self.current_date)}">
                     <span style="color: {"red" if event else ""}">{day}</span>
                 </a>
             </td>
@@ -96,7 +97,7 @@ class MonthCustomHTMLCal(calendar.HTMLCalendar):
         if withyear:
             s = f'''
                 {calendar.month_name[themonth]}
-                <a href=".?year={theyear}">
+                <a href="{reverse('cal:m_calendar_events_list')}?year={theyear}">
                      {theyear}
                 </a>
             '''
@@ -109,13 +110,13 @@ class MonthCustomHTMLCal(calendar.HTMLCalendar):
         return f'''
         <tr>
             <th class="{self.cssclass_month_head}">
-                <a href=".?year={prev_year}&month={prev_month}">{calendar.month_name[prev_month]}</a>
+                <a href="{reverse('cal:m_calendar_events_list')}?year={prev_year}&month={prev_month}">{calendar.month_name[prev_month]}</a>
             </th>
             <th colspan="5" class="{self.cssclass_month_head}">
                 {s}
             </th>
             <th class="{self.cssclass_month_head}">
-                <a href=".?year={next_year}&month={next_month}">{calendar.month_name[next_month]}</a>
+                <a href="{reverse('cal:m_calendar_events_list')}?year={next_year}&month={next_month}">{calendar.month_name[next_month]}</a>
             </th>
         </tr>
         '''
@@ -163,7 +164,7 @@ class MonthCustomHTMLCal(calendar.HTMLCalendar):
 
             return f'''
             <td class="{self.cssclasses[weekday]}">
-                <a href=".{create_url_from_date(self.current_date)}">
+                <a href="{reverse('cal:m_calendar_events_list')}{create_url_from_date(self.current_date)}">
                     <span style="color: {"red" if event else ""}">{day}</span>
                 </a>
             </td>
