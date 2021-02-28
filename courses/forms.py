@@ -1,5 +1,5 @@
 from django import forms
-from .models import Text, Image, File, Video, Module, Course, Content
+from .models import Text, Image, File, Video, Module, Course, Content, CourseAdmin
 from accounts.models import User
 
 
@@ -223,3 +223,56 @@ class AddUserToCourseForm(forms.ModelForm):
     class Meta:
         model = Course
         fields = ['participants']
+
+
+class AddAdminsToCourseForm(forms.ModelForm):
+    admins = forms.ModelMultipleChoiceField(
+        queryset=User.objects.all(),
+        required=False,
+    )
+
+    def __init__(self, course, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.course = course
+        self.fields['admins'].widget.attrs.update({
+            'class': 'form-control', 
+            'style': "max-height: 100px;"
+        })
+        self.fields['admins'].queryset = (self.fields['admins']
+            .queryset.exclude(id=self.course.owner.id)
+            .filter(teacher=True))
+
+
+    class Meta:
+        model = Course
+        fields = ['admins']
+
+
+class CourseAdminForm(forms.ModelForm):
+    course = forms.ModelChoiceField(
+        queryset=Course.objects.all(),
+        required=False, 
+        disabled=True,
+        widget=forms.HiddenInput()
+    )
+    user = forms.ModelChoiceField(
+        queryset=User.objects.all()
+    )
+
+    class Meta:
+        model = CourseAdmin
+        fields = [
+            'user', 
+            'course', 
+            'can_add_participants', 
+            'can_add_content', 
+            'can_remove_participants', 
+            'can_remove_content', 
+            'can_edit_course'
+        ]
+
+    def __init__(self, course, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.course = course
+        self.fields['user'].queryset = self.fields['user'] \
+                                        .queryset.exclude(id__in=course.admins.all().distinct())

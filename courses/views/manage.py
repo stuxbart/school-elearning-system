@@ -27,7 +27,9 @@ from ..forms import (
     VideoContentCreateForm,
     VideoUpdateForm,
     FileContentCreateForm,
-    FileUpdateForm
+    FileUpdateForm,
+    AddAdminsToCourseForm,
+    CourseAdminForm
 )
 
 from ..mixins import IsTeacherMixin
@@ -36,6 +38,7 @@ from ..models import (
     Content,
     Module,
     Membership,
+    CourseAdmin,
     Text,
     Image,
     File,
@@ -627,7 +630,8 @@ class CourseParticipantsManageDetailView(LoginRequiredMixin, IsTeacherMixin, For
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        course = get_object_or_404(Course, slug=self.kwargs['slug'])
+        course_qs = self.get_queryset()
+        course = get_object_or_404(course_qs, slug=self.kwargs['slug'])
         context['participants'] = Membership.objects.filter(course=course)
         return context
 
@@ -746,3 +750,59 @@ class ModuleOrderView(LoginRequiredMixin, IsTeacherMixin, View):
         else:
             course = module.course
             return HttpResponseRedirect(reverse('courses:course_home', kwargs={'slug': course.slug}))
+
+
+class CourseAdminsManageDetailView(LoginRequiredMixin, IsTeacherMixin, FormView):
+    form_class = CourseAdminForm
+    template_name = 'courses/course_admins.html'
+    prefix = "1"
+
+    def get_queryset(self):
+        return Course.objects.filter(owner=self.request.user)
+
+    def get_object(self):
+        course_qs = self.get_queryset()
+        return get_object_or_404(course_qs, slug=self.kwargs['slug'])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        course = self.get_object()
+        context['admins'] = CourseAdmin.objects.filter(course=course)
+        return context
+
+    def get_success_url(self):
+        return reverse("courses:admins", kwargs={'slug': self.kwargs['slug']})
+
+    def get_initial(self):
+        return {
+            'course': self.get_object()
+        }
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs.update({'course': self.get_object()})
+        return kwargs
+    
+    def post(self, request, *args, **kwargs):
+        forms_count = int(self.request.POST.get('count', 1))
+        all_valid = True
+        valid_forms = []
+
+        for i in range(1, forms_count+1):
+            self.prefix = i
+            form = self.get_form()
+
+            if form.is_valid():
+                valid_forms.append(form)
+            else:
+                all_valid = False
+                break
+
+        if all_valid:
+            for i in valid_forms:
+                i.save()
+
+        if all_valid:
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)

@@ -390,3 +390,6 @@ class CourseAdmin(models.Model):
     can_remove_participants = models.BooleanField(default=False)
     can_remove_content = models.BooleanField(default=False)
     can_edit_course = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ['user', 'course']

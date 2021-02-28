@@ -1,9 +1,8 @@
 from django.contrib import admin
 
-from .models import Course, Module, Content, Text, Image, File, Video, Category
+from .models import Course, Module, Content, Text, Image, File, Video, Category, CourseAdmin
 
-
-# Register your models here.
+admin.site.register(CourseAdmin)
 
 class TextInline(admin.StackedInline):
     model = Text
