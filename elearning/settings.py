@@ -96,11 +96,11 @@ WSGI_APPLICATION = 'elearning.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'elearning',
-        'USER': 'myprojectuser',
-        'PASSWORD': 'password',
+        'NAME': 'school',
+        'USER': 'school',
+        'PASSWORD': 'school',
         'HOST': 'localhost',
-        'PORT': '',
+        'PORT': '5432',
     }
 }
 
