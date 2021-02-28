@@ -13,11 +13,14 @@
         </div>
         <div class="col-7">
             <ul class="list-group" style="max-height: 500px; overflow-y: auto;">
-                {% for member in admins %}
+                {% for admin in admins %}
                     <li class="list-group-item">
                         <div class="row">
                             <div class="col-4">
-                                {{ member.user }}
+                                {{ admin.user }}
+                            </div>
+                            <div class="col-4">
+                                <a class="btn btn-danger small" href="{% url 'courses:delete_admins' course.slug admin.id %}">Delete</a>
                             </div>
                         </div>
                     </li>

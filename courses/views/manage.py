@@ -767,6 +767,7 @@ class CourseAdminsManageDetailView(LoginRequiredMixin, IsTeacherMixin, FormView)
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         course = self.get_object()
+        context['course'] = course
         context['admins'] = CourseAdmin.objects.filter(course=course)
         return context
 
@@ -806,3 +807,19 @@ class CourseAdminsManageDetailView(LoginRequiredMixin, IsTeacherMixin, FormView)
             return self.form_valid(form)
         else:
             return self.form_invalid(form)
+
+
+class CourseAdminDeleteView(IsTeacherMixin, LoginRequiredMixin, DeleteView):
+    template_name = 'courses/delete.html'
+
+    def get_queryset(self):
+        allowed_courses = Course.objects.filter(owner=self.request.user)
+        return CourseAdmin.objects.filter(course__in=allowed_courses)
+
+    def get_object(self):
+        qs = self.get_queryset()
+        obj = get_object_or_404(qs, pk=self.kwargs['pk'], course__slug=self.kwargs['slug'])
+        return obj
+    
+    def get_success_url(self):
+        return reverse("courses:admins", kwargs={'slug': self.kwargs['slug']})
