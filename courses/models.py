@@ -63,12 +63,24 @@ class Course(models.Model):
     title = models.CharField(max_length=255)
     slug = models.SlugField(unique=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    admins = models.ManyToManyField(
+        User, 
+        related_name='admin_courses', 
+        blank=True,
+        through="courses.CourseAdmin"
+    )
     overview = models.TextField()
-    # many owners
     access_key = models.CharField(max_length=100, blank=True, null=True)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
     category = models.ForeignKey("Category", on_delete=models.CASCADE, blank=True, null=True)
+
+    participants = models.ManyToManyField(
+        User, 
+        related_name='courses', 
+        blank=True,
+        through="courses.Membership"
+    )
 
     objects = CourseManager()
 
@@ -367,3 +379,14 @@ class Membership(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     date_joined = models.DateTimeField(auto_now_add=True)
     method = models.CharField(max_length=20, choices=join_methods)
+
+
+class CourseAdmin(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+
+    can_add_participants = models.BooleanField(default=False)
+    can_add_content = models.BooleanField(default=False)
+    can_remove_participants = models.BooleanField(default=False)
+    can_remove_content = models.BooleanField(default=False)
+    can_edit_course = models.BooleanField(default=False)

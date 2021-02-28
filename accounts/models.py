@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 # Create your models here.
 
 from courses.utils import user_index_generator
-from courses.models import Course
+# from courses.models import Course
 
 
 class UserQuerySet(models.query.QuerySet):
@@ -83,11 +83,6 @@ class User(AbstractBaseUser):
     admin = models.BooleanField(default=False)  # superuser
     timestamp = models.DateTimeField(auto_now_add=True)
 
-    courses = models.ManyToManyField(
-        Course, related_name='participants', blank=True,
-        through="courses.Membership"
-
-    )
     date_of_birth = models.DateField(null=True, blank=True)
     photo = models.ImageField(upload_to='user_images', null=True, blank=True)
     info = models.TextField(null=True, blank=True)
