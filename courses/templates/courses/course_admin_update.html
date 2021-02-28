@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row my-3">
+        <div class="col">
+            <h3 class="header">Update admin permissions of user {{ object.user }} to {{ object.course }}.</h3>
+            <form action="" method="POST">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button class="btn btn-success my-3" type="submit">Update</button>
+                <a href="{% url 'courses:admins' object.course.slug %}" class="btn btn-danger">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+    
+{% endblock %}

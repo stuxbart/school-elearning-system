@@ -29,7 +29,8 @@ from ..forms import (
     FileContentCreateForm,
     FileUpdateForm,
     AddAdminsToCourseForm,
-    CourseAdminForm
+    CourseAdminCreateForm,
+    CourseAdminUpdateForm
 )
 
 from ..mixins import IsTeacherMixin
@@ -753,7 +754,7 @@ class ModuleOrderView(LoginRequiredMixin, IsTeacherMixin, View):
 
 
 class CourseAdminsManageDetailView(LoginRequiredMixin, IsTeacherMixin, FormView):
-    form_class = CourseAdminForm
+    form_class = CourseAdminCreateForm
     template_name = 'courses/course_admins.html'
     prefix = "1"
 
@@ -821,5 +822,22 @@ class CourseAdminDeleteView(IsTeacherMixin, LoginRequiredMixin, DeleteView):
         obj = get_object_or_404(qs, pk=self.kwargs['pk'], course__slug=self.kwargs['slug'])
         return obj
     
+    def get_success_url(self):
+        return reverse("courses:admins", kwargs={'slug': self.kwargs['slug']})
+
+
+class CourseAdminUpdateView(IsTeacherMixin, LoginRequiredMixin, UpdateView):
+    template_name = "courses/course_admin_update.html"
+    form_class = CourseAdminUpdateForm
+
+    def get_queryset(self):
+        allowed_courses = Course.objects.filter(owner=self.request.user)
+        return CourseAdmin.objects.filter(course__in=allowed_courses)
+
+    def get_object(self):
+        qs = self.get_queryset()
+        obj = get_object_or_404(qs, pk=self.kwargs['pk'], course__slug=self.kwargs['slug'])
+        return obj
+
     def get_success_url(self):
         return reverse("courses:admins", kwargs={'slug': self.kwargs['slug']})

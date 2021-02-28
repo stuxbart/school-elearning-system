@@ -393,3 +393,6 @@ class CourseAdmin(models.Model):
 
     class Meta:
         unique_together = ['user', 'course']
+
+    def __str__(self):
+        return f"{self.user} admin of {self.course}"

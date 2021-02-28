@@ -248,7 +248,7 @@ class AddAdminsToCourseForm(forms.ModelForm):
         fields = ['admins']
 
 
-class CourseAdminForm(forms.ModelForm):
+class CourseAdminCreateForm(forms.ModelForm):
     course = forms.ModelChoiceField(
         queryset=Course.objects.all(),
         required=False, 
@@ -276,3 +276,15 @@ class CourseAdminForm(forms.ModelForm):
         self.course = course
         self.fields['user'].queryset = self.fields['user'] \
                                         .queryset.exclude(id__in=course.admins.all().distinct())
+
+
+class CourseAdminUpdateForm(forms.ModelForm):
+    class Meta:
+        model = CourseAdmin
+        fields = [
+            'can_add_participants', 
+            'can_add_content', 
+            'can_remove_participants', 
+            'can_remove_content', 
+            'can_edit_course'
+        ]

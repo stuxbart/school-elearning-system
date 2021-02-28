@@ -20,6 +20,9 @@
                                 {{ admin.user }}
                             </div>
                             <div class="col-4">
+                                <a class="btn btn-info small" href="{% url 'courses:update_course_admin' course.slug admin.id %}">Update</a>
+                            </div>
+                            <div class="col-4">
                                 <a class="btn btn-danger small" href="{% url 'courses:delete_admins' course.slug admin.id %}">Delete</a>
                             </div>
                         </div>
