@@ -46,7 +46,7 @@ class CourseSearchListView(ListView):
 
             qs = s.to_queryset()
         else:
-            qs = Activity.objects.none()
+            qs = Course.objects.none()
         return qs
 
     def get_context_data(self, *args, **kwargs):

@@ -20,6 +20,8 @@ from ..permissions import (
     IsAdminStaffDeleteOnly
 )
 
+from ..documents import UserDocument
+
 
 class RegisterAPIView(generics.GenericAPIView):
     serializer_class = UserRegisterSerializer
@@ -127,3 +129,63 @@ class UserRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
         self.check_object_permissions(self.request, obj)
 
         return obj
+
+
+class UserSearchAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        qs = User.objects.all()
+        q = self.request.GET.get('q', None)
+        if q:
+            q = q.lower()
+            if q.isdecimal():
+                should = [
+                    {
+                        "term": {
+                            "user_index": q
+                        }
+                    }
+                ]
+            else:
+                should = [
+                    {
+                        "fuzzy": {
+                            "full_name": {
+                                "value": q,
+                                "fuzziness": "AUTO",
+                                "prefix_length": 3,
+                                "transpositions": True,
+                            }
+                        }
+                    },
+                    {
+                        "prefix": {
+                            "full_name": q
+                        }
+                    }
+                ]
+            s = UserDocument.search().query("bool", should=should)
+            qs = s.to_queryset()
+        else:
+            qs = User.objects.none()
+
+        return qs
+
+    def get(self, request, *args, **kwargs):
+        qs = self.get_queryset()
+        get_args = request.GET
+
+        if 'type' in get_args:
+            valid_types = ['snippet', 'full']
+            t = get_args['type']
+            if t == valid_types[0]:
+                serializer = SnippetUserSerializer(qs, many=True, context={'request': request})
+            elif t == valid_types[1]:
+                serializer = UserSerializer(qs, many=True, context={'request': request})
+            else:
+                serializer = SnippetUserSerializer(qs, many=True, context={'request': request})
+        else:
+            serializer = SnippetUserSerializer(qs, many=True, context={'request': request})
+
+        return Response(serializer.data, status=status.HTTP_200_OK, *args, **kwargs)
