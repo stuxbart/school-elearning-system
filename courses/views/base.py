@@ -3,6 +3,7 @@ from django.views.generic import ListView, DetailView
 from django.http import JsonResponse
 from ..models import Course, Text, Image, File, Video, Membership, Category
 from activity.mixins import CourseViewedMixin
+from ..documents import CourseDocument
 
 
 class CourseListView(ListView):
@@ -15,6 +16,43 @@ class CourseListView(ListView):
         context['object_list'] = Course.objects.filter(category=None)
         return context
 
+
+class CourseSearchListView(ListView):
+    template_name = 'courses/course_list.html'
+
+    def get_queryset(self):
+        qs = Course.objects.all()
+        q = self.request.GET.get('q')
+        if q:
+            q = q.lower()
+            should = [
+                {
+                    "fuzzy": {
+                        "title": {
+                            "value": q,
+                            "fuzziness": "AUTO",
+                            "prefix_length": 3,
+                            "transpositions": True,
+                        }
+                    }
+                },
+                {
+                    "prefix": {
+                        "title": q
+                    }
+                }
+            ]
+            s = CourseDocument.search().query("bool", should=should)
+
+            qs = s.to_queryset()
+        else:
+            qs = Activity.objects.none()
+        return qs
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['q'] = self.request.GET.get('q', None)
+        return context
 
 class CategoryCoursesListView(DetailView):
     queryset = Category.objects.all()

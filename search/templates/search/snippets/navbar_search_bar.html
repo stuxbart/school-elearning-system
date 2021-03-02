@@ -1,4 +1,4 @@
-<form class="form-inline mr-auto" action="{% url 'search:main' %}">
-    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="q">
+<form class="form-inline mr-auto" action="{% url 'courses:search' %}">
+    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="q" value="{{ q }}">
     <button class="btn btn-light my-2 my-sm-0 navbar-search-btn" type="submit">Search</button>
 </form>

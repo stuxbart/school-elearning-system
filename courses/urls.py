@@ -2,6 +2,7 @@ from django.urls import path, include
 
 from .views import (
     CourseListView,
+    CourseSearchListView,
     CourseDetailView,
     enroll_course,
     TextDetailView,
@@ -85,6 +86,7 @@ manage_urls = [
 
 urlpatterns = [
     path('', CourseListView.as_view(), name='home'),
+    path('search', CourseSearchListView.as_view(), name="search"),
     path('category/<slug>/', CategoryCoursesListView.as_view(), name="category"),
     path('details/<slug>/', CourseDetailView.as_view(), name='details'),
     path('enroll/', enroll_course, name='enroll'),
