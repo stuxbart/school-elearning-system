@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404
-
+from django.contrib.auth.mixins import LoginRequiredMixin
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework import generics
@@ -21,6 +21,7 @@ from ..permissions import (
 )
 
 from ..documents import UserDocument
+from courses.models import Course
 
 
 class RegisterAPIView(generics.GenericAPIView):
@@ -131,8 +132,8 @@ class UserRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
         return obj
 
 
-class UserSearchAPIView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+class UserSearchAPIView(LoginRequiredMixin, APIView):
+    # permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         qs = User.objects.all()
@@ -189,3 +190,16 @@ class UserSearchAPIView(APIView):
             serializer = SnippetUserSerializer(qs, many=True, context={'request': request})
 
         return Response(serializer.data, status=status.HTTP_200_OK, *args, **kwargs)
+
+
+class UserNASearchAPIView(UserSearchAPIView):
+    def get_queryset(self):
+        qs = super().get_queryset()
+
+        course_id = self.request.GET.get("course", None)
+        if course_id is not None:
+            if not course_id.isdecimal():
+                return qs
+            course = get_object_or_404(Course, pk=course_id)
+            qs = qs.exclude(id__in=course.admins.all().distinct())
+        return qs

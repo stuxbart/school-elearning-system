@@ -6,14 +6,14 @@ from .models import User
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['user_index', 'full_name', 'email', "is_teacher",
+        fields = ['id','user_index', 'full_name', 'email', "is_teacher",
                   'is_staff', 'is_admin']
 
 
 class SnippetUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['full_name', 'email']
+        fields = ['id', 'full_name', 'email']
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):

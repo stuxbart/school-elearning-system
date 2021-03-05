@@ -371,26 +371,56 @@ $(document).ready(function() {
         }
     })
     var moveContentUp = $('.move-content')
-        moveContentUp.click(function(event){
-            var data = JSON.stringify({
-                id: event.target.dataset.id,
-                direction: event.target.dataset.direc
-            });
-            var endpoint = event.target.dataset.endpoint
-            $.ajax({
-                method: 'POST',
-                url: endpoint,
-                headers: {'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken')},
-                data: data,
-                success: function(data){
-                    infoModal.find('.modal-body').text(data.message)
-                    infoModal.modal('show')
-                },
-                error: function(errorData){
-                    infoModal.find('.modal-body').text(errorData.message)
-                    infoModal.modal('show')
-                }
-            })
+    moveContentUp.click(function(event){
+        var data = JSON.stringify({
+            id: event.target.dataset.id,
+            direction: event.target.dataset.direc
+        });
+        var endpoint = event.target.dataset.endpoint
+        $.ajax({
+            method: 'POST',
+            url: endpoint,
+            headers: {'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken')},
+            data: data,
+            success: function(data){
+                infoModal.find('.modal-body').text(data.message)
+                infoModal.modal('show')
+            },
+            error: function(errorData){
+                infoModal.find('.modal-body').text(errorData.message)
+                infoModal.modal('show')
+            }
         })
+    })
+    // User search field
     
+    $('#search-user').keyup(function(){
+        var userInputResults = $('#user-search-result');
+        userInputResults.html('');
+        var userInputField = $('#search-user');
+        var searchField = userInputField.val();
+        var fieldEndpoint = userInputField.attr('endpoint');
+        $.ajax({
+            url: fieldEndpoint,
+            method: "GET",
+            headers: {'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken')},
+            data: {'q': searchField, 'type': 'full'},
+            success: function(data) {
+                $.each(data, function(key, value) {
+                    userInputResults.append(
+                        '<li class="list-group-item list-group-item-action user-search-option" onclick="setUserInputValue('+value.id+',\''+ 
+                        value.full_name+'\')" data-id="'+ value.id +'">'+value.full_name+' | '+value.user_index+'</li>'
+                        )
+                })
+                
+            },
+            error: function(errorData){
+                console.log(errorData);
+            }
+        })
+        setUserInputValue = (id, name) => {
+            userInputField.val(id);
+            userInputResults.html('');
+        }
+    })
 })

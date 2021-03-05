@@ -1,4 +1,5 @@
 from django import forms
+from django.urls import reverse
 from .models import Text, Image, File, Video, Module, Course, Content, CourseAdmin
 from accounts.models import User
 
@@ -256,7 +257,7 @@ class CourseAdminCreateForm(forms.ModelForm):
         widget=forms.HiddenInput()
     )
     user = forms.ModelChoiceField(
-        queryset=User.objects.all()
+        queryset=User.objects.all(),
     )
 
     class Meta:
@@ -276,6 +277,11 @@ class CourseAdminCreateForm(forms.ModelForm):
         self.course = course
         self.fields['user'].queryset = self.fields['user'] \
                                         .queryset.exclude(id__in=course.admins.all().distinct())
+        self.fields['user'].widget.attrs.update({'id': "search-user"})
+
+        get_arg_str = "?course=%s" % self.course.id
+        self.fields['user'].widget.attrs.update({'endpoint': reverse('api:users:user-search-no-admins') + get_arg_str })
+        self.fields['user'].widget.template_name = "accounts/widgets/js_model_choice_field.html"
 
 
 class CourseAdminUpdateForm(forms.ModelForm):
