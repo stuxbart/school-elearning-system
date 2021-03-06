@@ -375,35 +375,39 @@ class ModuleCreateView(LoginRequiredMixin, IsTeacherMixin, FormView):
     def get_success_url(self):
         return reverse('courses:add_content', kwargs={'slug': self.kwargs.get('slug')})
 
+    def get_course(self):
+        slug = self.kwargs.get('slug')
+        user = self.request.user
+
+        qs = Course.objects.all()
+        obj = qs.filter(slug=slug, owner=user)
+        if obj.exists():
+            return obj.first()
+
+        qs = user.admin_courses.all()
+        obj = qs.filter(slug=slug)
+        if obj.exists():
+            obj = obj.first()
+            if obj.can_edit_content(user):
+                return obj
+        raise Http404("Course does not exist")
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        course_slug = self.kwargs.get('slug')
-        course_qs = Course.objects.filter(owner=self.request.user)
-        course = get_object_or_404(course_qs, slug=course_slug)
-        context['course'] = course
+        context['course'] = self.get_course()
         return context
 
     def form_valid(self, form):
         user = self.request.user
         form.instance.owner = user
 
-        slug = self.kwargs.get('slug')
-        course_obj = get_object_or_404(Course, slug=slug)
+        form.instance.course = self.get_course()
+        form.save()
 
-        if user == course_obj.owner:
-            form.instance.course = course_obj
-            form.save()
-        else:
-            raise PermissionDenied()
-
-        response = super().form_valid(form)
         if self.request.is_ajax():
-            data = {
-                'message': 'success',
-            }
-            return JsonResponse(data)
+            return JsonResponse({'message': 'success',})
         else:
-            return response
+            return super().form_valid(form)
 
 
 class ModuleUpdateView(LoginRequiredMixin, IsTeacherMixin, UpdateView):
@@ -419,15 +423,10 @@ class ModuleUpdateView(LoginRequiredMixin, IsTeacherMixin, UpdateView):
         return Module.objects.filter(owner=self.request.user)
 
     def form_valid(self, form):
-        response = super().form_valid(form)
-
         if self.request.is_ajax():
-            data = {
-                'message': 'success',
-            }
-            return JsonResponse(data)
+            return JsonResponse({'message': 'success',})
         else:
-            return response
+            return super().form_valid(form)
 
 
 class ModuleDeleteView(LoginRequiredMixin, IsTeacherMixin, DeleteView):
@@ -442,15 +441,10 @@ class ModuleDeleteView(LoginRequiredMixin, IsTeacherMixin, DeleteView):
         return Module.objects.filter(owner=self.request.user)
 
     def post(self, request, *args, **kwargs):
-        response = super().post(request, *args, **kwargs)
-
         if request.is_ajax():
-            data = {
-                'message': 'Deleted',
-            }
-            return JsonResponse(data)
+            return JsonResponse({'message': 'Deleted',})
         else:
-            return response
+            return super().post(request, *args, **kwargs)
 
 
 class ModuleShowHideView(LoginRequiredMixin, IsTeacherMixin, DetailView):
@@ -462,17 +456,14 @@ class ModuleShowHideView(LoginRequiredMixin, IsTeacherMixin, DetailView):
     def get_queryset(self):
         return Module.objects.filter(owner=self.request.user)
 
-    def post(self, request, **_):
+    def post(self, request, *args, **kwargs):
         obj = self.get_object()
 
         obj.visible = not obj.visible
         obj.save()
 
         if request.is_ajax():
-            data = {
-                'message': 'Success',
-            }
-            return JsonResponse(data)
+            return JsonResponse({'message': 'Success',})
         else:
             raise Exception("Ajax only")
 
@@ -480,24 +471,25 @@ class ModuleShowHideView(LoginRequiredMixin, IsTeacherMixin, DetailView):
 class CourseManageDetailView(LoginRequiredMixin, IsTeacherMixin, DetailView):
     template_name = 'courses/course_main.html'
 
-    def get_queryset(self):
-        return Course.objects.filter(owner=self.request.user)
+    def get_object(self):
+        slug = self.kwargs.get('slug')
+        user = self.request.user
+
+        qs = Course.objects.all()
+        obj = qs.filter(slug=slug, owner=user)
+        if obj.exists():
+            return obj.first()
+
+        qs = user.admin_courses.all()
+        obj = qs.filter(slug=slug)
+        if obj.exists():
+            return obj.first()
+        raise Http404("Course does not exist")
 
     def get_context_data(self, **kwargs):
-        context = super(CourseManageDetailView, self).get_context_data(**kwargs)
-        obj = context['object']
+        context = super().get_context_data(**kwargs)
+        obj = self.get_object()
         participants = obj.participants.all()
-        # last_activities = []
-        # never_active = []
-        # for p in participants:
-        #     activities = CourseViewed.objects.filter(user=p, course=obj)
-        #     if activities.exists():
-        #         last = activities.first()
-        #         last_activities.append({'user': p, 'last': last.timestamp})
-        #     else:
-        #         never_active.append({'user': p, 'last': None})
-        # context['last_activities'] = sorted(last_activities, key=itemgetter('last'), reverse=True)
-        # context['last_activities'] += never_active
 
         newest = CourseViewed \
             .objects.filter(user=OuterRef('pk')) \
@@ -514,13 +506,26 @@ class CourseParticipantsManageDetailView(LoginRequiredMixin, IsTeacherMixin, For
     form_class = AddUserToCourseForm
     template_name = 'courses/course_participants.html'
 
-    def get_queryset(self):
-        return Course.objects.filter(owner=self.request.user)
+    def get_course(self):
+        slug = self.kwargs.get('slug')
+        user = self.request.user
+
+        qs = Course.objects.all()
+        obj = qs.filter(slug=slug, owner=user)
+        if obj.exists():
+            return obj.first()
+
+        qs = user.admin_courses.all()
+        obj = qs.filter(slug=slug)
+        if obj.exists():
+            obj = obj.first()
+            if obj.can_edit_participants(user):
+                return obj
+        raise Http404("Course does not exist")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        course_qs = self.get_queryset()
-        course = get_object_or_404(course_qs, slug=self.kwargs['slug'])
+        course = self.get_course()
         context['participants'] = Membership.objects.filter(course=course)
         return context
 
@@ -528,8 +533,7 @@ class CourseParticipantsManageDetailView(LoginRequiredMixin, IsTeacherMixin, For
         return reverse("courses:participants", kwargs={'slug': self.kwargs['slug']})
 
     def form_valid(self, form):
-        course_qs = self.get_queryset()
-        course = get_object_or_404(course_qs, slug=self.kwargs['slug'])
+        course = self.get_course()
         course.participants.set(form.cleaned_data['participants'], through_defaults={'method': 'owner'})
         return super().form_valid(form)
 
@@ -539,22 +543,17 @@ class ContentDeleteView(LoginRequiredMixin, IsTeacherMixin, DeleteView):
 
     def get_success_url(self):
         obj = self.get_object()
-        course = obj.module.course
+        course = obj.course
         return reverse('courses:add_content', kwargs={'slug': course.slug})
 
-    def get_object(self, queryset=None):
-        obj = get_object_or_404(Content, pk=self.kwargs.get('pk'))
-        if obj.item.owner != self.request.user:
-            raise Http404
-        return obj
+    def get_queryset(self):
+        return Content.objects.filter(owner=self.request.user)
 
     def post(self, request, *args, **kwargs):
-        response = super().post(request, *args, **kwargs)
+        response = self.delete(request, *args, **kwargs)
+
         if request.is_ajax():
-            data = {
-                'message': 'success',
-            }
-            return JsonResponse(data)
+            return JsonResponse({'message': 'success',})
         else:
             return response
 
@@ -562,11 +561,8 @@ class ContentDeleteView(LoginRequiredMixin, IsTeacherMixin, DeleteView):
 class ContentShowHideView(LoginRequiredMixin, IsTeacherMixin, SingleObjectMixin, View):
     http_method_names = 'post'
 
-    def get_object(self, queryset=None):
-        obj = get_object_or_404(Content, pk=self.kwargs.get('pk'))
-        if obj.item.owner != self.request.user:
-            raise ObjectDoesNotExist()
-        return obj
+    def get_queryset(self):
+        return Content.objects.filter(owner=self.request.user)
 
     def post(self, request, **_):
         obj = self.get_object()
@@ -575,10 +571,7 @@ class ContentShowHideView(LoginRequiredMixin, IsTeacherMixin, SingleObjectMixin,
         obj.save()
 
         if request.is_ajax():
-            data = {
-                'message': 'Success',
-            }
-            return JsonResponse(data)
+            return JsonResponse({'message': 'Success',})
         else:
             raise Exception("Ajax only")
 
