@@ -56,6 +56,11 @@ class ManageCourseList(LoginRequiredMixin, IsTeacherMixin, ListView):
     def get_queryset(self):
         return Course.objects.filter(owner=self.request.user)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['admin_courses'] = self.request.user.courseadmin_set.all()
+        return context
+
 
 class CourseCreateView(LoginRequiredMixin, IsTeacherMixin, CreateView):
     form_class = CourseCreateForm
@@ -76,6 +81,23 @@ class CourseEditView(LoginRequiredMixin, IsTeacherMixin, UpdateView):
     def get_success_url(self):
         return reverse('courses:manage_list')
 
+    def get_object(self):
+        slug = self.kwargs['slug']
+
+        qs = self.get_queryset()
+        obj = qs.filter(slug=slug)
+        if obj.exists():
+            return obj.first()
+
+        qs = self.request.user.admin_courses.all()
+        obj = qs.filter(slug=slug)
+        if obj.exists():
+            obj = obj.first()
+            if obj.can_edit_course(self.request.user):
+                return obj
+        
+        raise Http404()
+        
     def get_queryset(self):
         return Course.objects.filter(owner=self.request.user)
 
@@ -94,6 +116,23 @@ class DeleteCourseView(LoginRequiredMixin, IsTeacherMixin, DeleteView):
 class CourseAddContentView(LoginRequiredMixin, IsTeacherMixin, DetailView):
     model = Course
     template_name = 'courses/add_content.html'
+
+    def get_object(self):
+        slug = self.kwargs['slug']
+        user = self.request.user
+
+        qs = self.get_queryset()
+        obj = qs.filter(slug=slug, owner=user)
+        if obj.exists():
+            return obj.first()
+
+        qs = user.admin_courses.all()
+        obj = qs.filter(slug=slug)
+        if obj.exists():
+            obj = obj.first()
+            if obj.can_edit_content(user):
+                return obj
+        raise Http404()
 
     def get_context_data(self, **kwargs):
         context = super(CourseAddContentView, self).get_context_data(**kwargs)
@@ -138,6 +177,7 @@ class BaseContentCreateView(LoginRequiredMixin, IsTeacherMixin, FormView):
         module_pk = self.kwargs.get('pk')
         qs = Module.objects.filter(owner=self.request.user)
         module = get_object_or_404(qs, pk=module_pk)
+        
         course = module.course
         context = super().get_context_data(**kwargs)
         context['module'] = module

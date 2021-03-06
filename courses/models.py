@@ -15,30 +15,6 @@ User = settings.AUTH_USER_MODEL
 
 class CourseQuerySet(models.query.QuerySet):
     pass
-    # def content_count(self, *args, **kwargs):
-    #     obj = self.get(*args, **kwargs)
-    #     text_type = ContentType.objects.get_for_model(Text)
-    #     image_type = ContentType.objects.get_for_model(Image)
-    #     modules = obj.module_set.annotate(
-    #             texts=Count('content', filter=Q(content__content_type=text_type))
-    #         ).annotate(
-    #             images=Count('content', filter=Q(content__content_type=image_type))
-    #         )
-    #     #obj.annotate(Sum('images'), Sum('texts'))
-    #     return modules.aggregate(Sum('images'), Sum('texts'))
-
-    # def objects_with_counts(self):
-    #     text_type = ContentType.objects.get_for_model(Text)
-    #     image_type = ContentType.objects.get_for_model(Image)
-    #     file_type = ContentType.objects.get_for_model(File)
-    #     video_type = ContentType.objects.get_for_model(Video)
-    #     objects = self.all().annotate(
-    #         texts=Count('module__content', filter=Q(module__content__content_type=text_type)),
-    #         images=Count('module__content', filter=Q(module__content__content_type=image_type)),
-    #         files=Count('module__content', filter=Q(module__content__content_type=file_type)),
-    #         videos=Count('module__content', filter=Q(module__content__content_type=video_type)),
-    #     )
-    #     return objects
 
 
 class CourseManager(models.Manager):
@@ -98,6 +74,33 @@ class Course(models.Model):
             return self.category.get_category_tree()
         else:
             return []
+
+    def can_edit_course(self, user):
+        if user == self.owner:
+            return True
+        qs = user.courseadmin_set.filter(course=self)
+        if qs.exists():
+            qs = qs.first()
+            return qs.can_edit_course
+        return False
+
+    def can_edit_content(self, user):
+        if user == self.owner:
+            return True
+        qs = user.courseadmin_set.filter(course=self)
+        if qs.exists():
+            qs = qs.first()
+            return qs.can_edit_content
+        return False
+
+    def can_edit_participants(self, user):
+        if user == self.owner:
+            return True
+        qs = user.courseadmin_set.filter(course=self)
+        if qs.exists():
+            qs = qs.first()
+            return qs.can_edit_participants
+        return False
 
 
 def course_pre_save_receiver(sender, instance, *args, **kwargs):
@@ -385,10 +388,8 @@ class CourseAdmin(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
 
-    can_add_participants = models.BooleanField(default=False)
-    can_add_content = models.BooleanField(default=False)
-    can_remove_participants = models.BooleanField(default=False)
-    can_remove_content = models.BooleanField(default=False)
+    can_edit_participants = models.BooleanField(default=False)
+    can_edit_content = models.BooleanField(default=False)
     can_edit_course = models.BooleanField(default=False)
 
     class Meta:

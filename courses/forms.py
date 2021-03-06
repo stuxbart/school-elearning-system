@@ -265,10 +265,8 @@ class CourseAdminCreateForm(forms.ModelForm):
         fields = [
             'user', 
             'course', 
-            'can_add_participants', 
-            'can_add_content', 
-            'can_remove_participants', 
-            'can_remove_content', 
+            'can_edit_participants', 
+            'can_edit_content', 
             'can_edit_course'
         ]
 
@@ -288,9 +286,7 @@ class CourseAdminUpdateForm(forms.ModelForm):
     class Meta:
         model = CourseAdmin
         fields = [
-            'can_add_participants', 
-            'can_add_content', 
-            'can_remove_participants', 
-            'can_remove_content', 
+            'can_edit_participants',
+            'can_edit_content',
             'can_edit_course'
         ]

@@ -32,6 +32,38 @@
                     </li>
                 {% endfor %}
             </ul>
+            <ul class="list-group mt-4">
+                {% for admin_course in admin_courses %}
+                    {% with course=admin_course.course %}
+                    <li class="list-group-item">
+                       <div class="row">
+                           <div class="col-12 col-md-8 px-auto">
+                               <a href="{% url 'courses:course_home' course.slug %}"><h3>{{ course.title }}</h3></a>
+                           </div>
+                           <div class="col-12 col-md-4">
+                                <div class="btn-group" role="group" aria-label="Basic example">
+                                    <a class="btn btn-primary text-white">
+                                        Actions <span class="badge badge-light">9</span>
+                                        <span class="sr-only">unread messages</span>
+                                    </a>
+                                    {% if admin_course.can_edit_content %}
+                                    <a href="{% url 'courses:add_content' course.slug %}" class="btn btn-success">Add</a>
+                                    {% else %}
+                                    <a href="#" class="btn btn-success" disabled>Add</a>
+                                    {% endif %}
+
+                                    {% if admin_course.can_edit_course %}
+                                    <a href="{% url 'courses:update' course.slug %}" class="btn btn-secondary">Edit</a>
+                                    {% else %}
+                                    <a href="#" class="btn btn-secondary" disabled>Edit</a>
+                                    {% endif %}
+                                </div>
+                           </div>
+                       </div>
+                    </li>
+                    {% endwith %}
+                {% endfor %}
+            </ul>
         </div>
     </div>
 </div>
