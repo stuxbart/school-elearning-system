@@ -266,7 +266,9 @@ class ContentManager(AvailableContentManager):
 
 
 class Content(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
     module = models.ForeignKey(Module, on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
     visible = models.BooleanField(default=False, blank=False, null=False)
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
@@ -278,12 +280,12 @@ class Content(models.Model):
     class Meta:
         ordering = ['order']
 
-    @property
-    def owner(self):
-        if self.item:
-            return self.item.owner
-        else:
-            return None
+    # @property
+    # def owner(self):
+    #     if self.item:
+    #         return self.item.owner
+    #     else:
+    #         return None
 
     @property
     def title(self):
@@ -292,17 +294,17 @@ class Content(models.Model):
         else:
             return None
 
-    @property
-    def course(self):
-        return self.module.course
+    # @property
+    # def course(self):
+    #     return self.module.course
 
     @property
     def created(self):
-        return self.module.created
+        return self.item.created
 
     @property
     def updated(self):
-        return self.module.updated
+        return self.item.updated
 
     def __str__(self):
         return f"{self.order}. {self.item.title}"
@@ -340,7 +342,6 @@ class Content(models.Model):
 
 
 class ItemBase(models.Model):
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     title = models.CharField(max_length=255)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
