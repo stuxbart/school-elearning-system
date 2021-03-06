@@ -59,23 +59,23 @@ manage_urls = [
     path('course/edit-module/<pk>/', ModuleUpdateView.as_view(), name="edit_module"),
     path('course/delete-module/<pk>/', ModuleDeleteView.as_view(), name="delete_module"),
 
-    path('course/create/text', TextContentCreateView.as_view(), name='create_text_ajax'),
-    path('course/<pk>/create/text', TextContentCreateView.as_view(), name='create_text'),
+    path('course/<slug>/create/text', TextContentCreateView.as_view(), name='create_text_ajax'),
+    path('course/<slug>/<pk>/create/text', TextContentCreateView.as_view(), name='create_text'),
     path('course/update/text', TextContentUpdateView.as_view(), name='update_text_ajax'),
     path('course/update/text/<pk>', TextContentUpdateView.as_view(), name='update_text'),
 
-    path('course/create/image', ImageContentCreateView.as_view(), name='create_image_ajax'),
-    path('course/<pk>/create/image', ImageContentCreateView.as_view(), name='create_image'),
+    path('course/<slug>/create/image', ImageContentCreateView.as_view(), name='create_image_ajax'),
+    path('course/<slug>/<pk>/create/image', ImageContentCreateView.as_view(), name='create_image'),
     path('course/update/image', ImageContentUpdateView.as_view(), name='update_image_ajax'),
     path('course/update/image/<pk>', ImageContentUpdateView.as_view(), name='update_image'),
 
-    path('course/create/file', FileContentCreateView.as_view(), name='create_file_ajax'),
-    path('course/<pk>/create/file', FileContentCreateView.as_view(), name='create_file'),
+    path('course/<slug>/create/file', FileContentCreateView.as_view(), name='create_file_ajax'),
+    path('course/<slug>/<pk>/create/file', FileContentCreateView.as_view(), name='create_file'),
     path('course/update/file', FileContentUpdateView.as_view(), name='update_file_ajax'),
     path('course/update/file/<pk>', FileContentUpdateView.as_view(), name='update_file'),
 
-    path('course/create/video', VideoContentCreateView.as_view(), name='create_video_ajax'),
-    path('course/<pk>/create/video', VideoContentCreateView.as_view(), name='create_video'),
+    path('course/<slug>/create/video', VideoContentCreateView.as_view(), name='create_video_ajax'),
+    path('course/<slug>/<pk>/create/video', VideoContentCreateView.as_view(), name='create_video'),
     path('course/update/video', VideoContentUpdateView.as_view(), name='update_video_ajax'),
     path('course/update/video/<pk>', VideoContentUpdateView.as_view(), name='update_video'),
 

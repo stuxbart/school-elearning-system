@@ -280,23 +280,12 @@ class Content(models.Model):
     class Meta:
         ordering = ['order']
 
-    # @property
-    # def owner(self):
-    #     if self.item:
-    #         return self.item.owner
-    #     else:
-    #         return None
-
     @property
     def title(self):
         if self.item:
             return self.item.title
         else:
             return None
-
-    # @property
-    # def course(self):
-    #     return self.module.course
 
     @property
     def created(self):

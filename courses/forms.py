@@ -1,5 +1,6 @@
 from django import forms
 from django.urls import reverse
+from django.core.exceptions import ValidationError
 from .models import Text, Image, File, Video, Module, Course, Content, CourseAdmin
 from accounts.models import User
 
@@ -45,18 +46,27 @@ class TextContentCreateForm(forms.Form):
         self.fields['content'].widget.attrs.update({'class': 'form-control'})
         self.fields['visible'].widget.attrs.update({'class': 'form-check-input'})
 
-    def save(self, owner=None, module_id=None):
-        if owner is not None:
-            data = self.cleaned_data
-            item = Text(owner=owner, title=data['title'], content=data['content'])
-            item.save()
-            if module_id is not None:
-                module = Module.objects.get(pk=module_id)
-            else:
-                module = Module.objects.get(pk=data['module_id'])
-            content = Content(module=module, visible=data['visible'], item=item)
-            content.save()
-            return content
+    def save(self, owner=None, module=None, course=None):
+        if not owner or not module or not course:
+            raise ValidationError("siema")
+
+        data = self.cleaned_data
+        item = Text(
+            title=data['title'], 
+            content=data['content']
+        )
+        item.save()
+
+        content = Content(
+            module=module, 
+            course=course, 
+            owner=owner, 
+            visible=data['visible'], 
+            item=item
+        )
+        content.save()
+
+        return content
 
 
 class ImageContentCreateForm(forms.Form):
@@ -69,21 +79,29 @@ class ImageContentCreateForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['title'].widget.attrs.update({'class': 'form-control'})
-        # self.fields['content'].widget.attrs.update({'class': 'form-control'})
         self.fields['visible'].widget.attrs.update({'class': 'form-check-input'})
 
-    def save(self, owner=None, module_id=None):
-        if owner is not None:
-            data = self.cleaned_data
-            item = Image(owner=owner, title=data['title'], file=data['file'])
-            item.save()
-            if module_id is not None:
-                module = Module.objects.get(pk=module_id)
-            else:
-                module = Module.objects.get(pk=data['module_id'])
-            content = Content(module=module, visible=data['visible'], item=item)
-            content.save()
-            return content
+    def save(self, owner=None, module=None, course=None):
+        if not owner or not module or not course:
+            raise ValidationError("siema")
+
+        data = self.cleaned_data
+        item = Image(
+            title=data['title'], 
+            file=data['file']
+        )
+        item.save()
+
+        content = Content(
+            module=module, 
+            course=course, 
+            owner=owner, 
+            visible=data['visible'], 
+            item=item
+        )
+        content.save()
+
+        return content
 
 
 class FileContentCreateForm(forms.Form):
@@ -96,21 +114,29 @@ class FileContentCreateForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['title'].widget.attrs.update({'class': 'form-control'})
-        # self.fields['file'].widget.attrs.update({'class': 'form-control'})
         self.fields['visible'].widget.attrs.update({'class': 'form-check-input'})
 
-    def save(self, owner=None, module_id=None):
-        if owner is not None:
-            data = self.cleaned_data
-            item = File(owner=owner, title=data['title'], file=data['file'])
-            item.save()
-            if module_id is not None:
-                module = Module.objects.get(pk=module_id)
-            else:
-                module = Module.objects.get(pk=data['module_id'])
-            content = Content(module=module, visible=data['visible'], item=item)
-            content.save()
-            return content
+    def save(self, owner=None, module=None, course=None):
+        if not owner or not module or not course:
+            raise ValidationError("siema")
+
+        data = self.cleaned_data
+        item = File(
+            title=data['title'], 
+            file=data['file']
+        )
+        item.save()
+
+        content = Content(
+            module=module, 
+            course=course, 
+            owner=owner, 
+            visible=data['visible'], 
+            item=item
+        )
+        content.save()
+
+        return content
 
 
 class VideoContentCreateForm(forms.Form):
@@ -126,18 +152,27 @@ class VideoContentCreateForm(forms.Form):
         self.fields['file'].widget.attrs.update({'class': 'form-control'})
         self.fields['visible'].widget.attrs.update({'class': 'form-check-input'})
 
-    def save(self, owner=None, module_id=None):
-        if owner is not None:
-            data = self.cleaned_data
-            item = Video(owner=owner, title=data['title'], file=data['file'])
-            item.save()
-            if module_id is not None:
-                module = Module.objects.get(pk=module_id)
-            else:
-                module = Module.objects.get(pk=data['module_id'])
-            content = Content(module=module, visible=data['visible'], item=item)
-            content.save()
-            return content
+    def save(self, owner=None, module=None, course=None):
+        if not owner or not module or not course:
+            raise ValidationError("siema")
+
+        data = self.cleaned_data
+        item = Video(
+            title=data['title'], 
+            file=data['file']
+        )
+        item.save()
+
+        content = Content(
+            module=module, 
+            course=course, 
+            owner=owner, 
+            visible=data['visible'], 
+            item=item
+        )
+        content.save()
+
+        return content
 
 
 class TextUpdateForm(forms.ModelForm):
@@ -162,7 +197,6 @@ class ImageUpdateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['title'].widget.attrs.update({'class': 'form-control'})
-        # self.fields['content'].widget.attrs.update({'class': 'form-control'})
         self.fields['visible'].widget.attrs.update({'class': 'form-check-input'})
 
     class Meta:
