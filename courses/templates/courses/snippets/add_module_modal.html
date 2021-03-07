@@ -1,3 +1,4 @@
+{% load crispy_forms_tags %}
 <div class="modal fade module-add-module-modal" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
       <div class="modal-content">
@@ -10,7 +11,7 @@
         <div class="modal-body">
             <form method="POST" action="{{ form.action }}" class="add-module-form">
                 {% csrf_token %}
-                {{ form.instance }}
+                {{ form.instance|crispy }}
             </form>
         </div>
         <div class="modal-footer">

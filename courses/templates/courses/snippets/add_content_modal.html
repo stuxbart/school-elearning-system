@@ -1,5 +1,6 @@
+{% load crispy_forms_tags %}
 <div class="modal fade module-add-text-modal" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered" role="document" style="min-width: 100vw;">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalCenterTitle">Content</h5>
@@ -22,25 +23,25 @@
                     <div class="tab-pane fade show active" id="list-text" role="tabpanel" aria-labelledby="list-text-list">
                         <form action="{{ forms.text.action }}" data-update-endpoint="{{ forms.text.update_action }}" method="POST" class="add-content-form">
                             {% csrf_token %}
-                            {{ forms.text.instance }}
+                            {{ forms.text.instance|crispy }}
                         </form>
                     </div>
                     <div class="tab-pane fade" id="list-image" role="tabpanel" aria-labelledby="list-image-list">
                         <form action="{{ forms.image.action }}" data-update-endpoint="{{ forms.image.update_action }}" method="POST" class="add-content-form custom-file">
                           {% csrf_token %}
-                          {{ forms.image.instance.as_p }}
+                          {{ forms.image.instance|crispy }}
                         </form>
                     </div>
                     <div class="tab-pane fade" id="list-file" role="tabpanel" aria-labelledby="list-file-list">
                       <form action="{{ forms.file.action }}" data-update-endpoint="{{ forms.file.update_action }}" method="POST" class="add-content-form custom-file">
                         {% csrf_token %}
-                        {{ forms.file.instance.as_p }}
+                        {{ forms.file.instance|crispy }}
                       </form>
                     </div>
                     <div class="tab-pane fade" id="list-video" role="tabpanel" aria-labelledby="list-video-list">
                       <form action="{{ forms.video.action }}" data-update-endpoint="{{ forms.video.update_action }}" method="POST" class="add-content-form">
                         {% csrf_token %}
-                        {{ forms.video.instance.as_p }}
+                        {{ forms.video.instance|crispy }}
                       </form>
                     </div>
                   </div>

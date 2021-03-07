@@ -1,13 +1,15 @@
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}
 
 {% block content %}
 <div class="container">
+    {{ path }}
     <div class="row my-3">
         <div class="col">
             Edit module
             <form action="" method="POST">
                 {% csrf_token %}
-                {{ form }}
+                {{ form|crispy }}
                 <button class="btn btn-success my-3" type="submit">Update</button>
             </form>
         </div>

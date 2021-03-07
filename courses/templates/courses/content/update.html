@@ -1,13 +1,15 @@
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}
 
 {% block content %}
 <div class="container">
+{{ path }}
     <div class="row my-3">
         <div class="col">
             Update content
             <form action="" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
-                {{ form }}
+                {{ form|crispy }}
                 <button class="btn btn-info my-3" type="submit">Update</button>
             </form>
         </div>

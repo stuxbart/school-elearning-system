@@ -40,11 +40,6 @@ class TextContentCreateForm(forms.Form):
     module_id = forms.CharField(widget=forms.HiddenInput, required=False)
     content_id = forms.CharField(widget=forms.HiddenInput, required=False)
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['title'].widget.attrs.update({'class': 'form-control'})
-        self.fields['content'].widget.attrs.update({'class': 'form-control'})
-        self.fields['visible'].widget.attrs.update({'class': 'form-check-input'})
 
     def save(self, owner=None, module=None, course=None):
         if not owner or not module or not course:
@@ -76,10 +71,6 @@ class ImageContentCreateForm(forms.Form):
     module_id = forms.CharField(widget=forms.HiddenInput, required=False)
     content_id = forms.CharField(widget=forms.HiddenInput, required=False)
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['title'].widget.attrs.update({'class': 'form-control'})
-        self.fields['visible'].widget.attrs.update({'class': 'form-check-input'})
 
     def save(self, owner=None, module=None, course=None):
         if not owner or not module or not course:
@@ -111,10 +102,6 @@ class FileContentCreateForm(forms.Form):
     module_id = forms.CharField(widget=forms.HiddenInput, required=False)
     content_id = forms.CharField(widget=forms.HiddenInput, required=False)
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['title'].widget.attrs.update({'class': 'form-control'})
-        self.fields['visible'].widget.attrs.update({'class': 'form-check-input'})
 
     def save(self, owner=None, module=None, course=None):
         if not owner or not module or not course:
@@ -146,12 +133,6 @@ class VideoContentCreateForm(forms.Form):
     module_id = forms.CharField(widget=forms.HiddenInput, required=False)
     content_id = forms.CharField(widget=forms.HiddenInput, required=False)
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['title'].widget.attrs.update({'class': 'form-control'})
-        self.fields['file'].widget.attrs.update({'class': 'form-control'})
-        self.fields['visible'].widget.attrs.update({'class': 'form-check-input'})
-
     def save(self, owner=None, module=None, course=None):
         if not owner or not module or not course:
             raise ValidationError("siema")
@@ -179,12 +160,6 @@ class TextUpdateForm(forms.ModelForm):
     content_id = forms.CharField(widget=forms.HiddenInput, required=False)
     visible = forms.BooleanField(required=False)
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['title'].widget.attrs.update({'class': 'form-control'})
-        self.fields['content'].widget.attrs.update({'class': 'form-control'})
-        self.fields['visible'].widget.attrs.update({'class': 'form-check-input'})
-
     class Meta:
         model = Text
         fields = ['title', 'content']
@@ -193,11 +168,6 @@ class TextUpdateForm(forms.ModelForm):
 class ImageUpdateForm(forms.ModelForm):
     content_id = forms.CharField(widget=forms.HiddenInput, required=False)
     visible = forms.BooleanField(required=False)
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['title'].widget.attrs.update({'class': 'form-control'})
-        self.fields['visible'].widget.attrs.update({'class': 'form-check-input'})
 
     class Meta:
         model = Image
@@ -210,9 +180,6 @@ class FileUpdateForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['title'].widget.attrs.update({'class': 'form-control'})
-        # self.fields['content'].widget.attrs.update({'class': 'form-control'})
-        self.fields['visible'].widget.attrs.update({'class': 'form-check-input'})
 
     class Meta:
         model = File
@@ -225,9 +192,6 @@ class VideoUpdateForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['title'].widget.attrs.update({'class': 'form-control'})
-        self.fields['file'].widget.attrs.update({'class': 'form-control'})
-        self.fields['visible'].widget.attrs.update({'class': 'form-check-input'})
 
     class Meta:
         model = Video
@@ -237,8 +201,7 @@ class VideoUpdateForm(forms.ModelForm):
 class ModuleCreateForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['title'].widget.attrs.update({'class': 'form-control', 'autocomplete': 'off'})
-        self.fields['description'].widget.attrs.update({'class': 'form-control'})
+        self.fields['title'].widget.attrs.update({'autocomplete': 'off'})
 
     class Meta:
         model = Module

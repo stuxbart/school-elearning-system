@@ -1,0 +1,13 @@
+{% if paths %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        {% for site in paths %}
+            {% if site.type == 'text' %}
+                <li class="breadcrumb-item {% if forloop.last %}active{% endif %}">{{ site }}</li>
+            {% elif site.type == 'link' %}
+                <li class="breadcrumb-item {% if forloop.last %}active{% endif %}"><a href="{{ site.link }}">{{ site }}</a></li>  
+            {% endif %}
+        {% endfor %}
+    </ol>
+</nav>
+{% endif %}

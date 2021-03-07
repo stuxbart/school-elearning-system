@@ -1,12 +1,14 @@
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}
 
 {% block content %}
 <div class="container">
+{{ path }}
     <div class="row my-3">
         <div class="col-5">
             <form method="POST">
                 {% csrf_token %}
-                {{ form.as_p }}
+                {{ form|crispy }}
                 <input name="count" value="1" type="hidden" />
                 <button class="btn btn-success" type="submit">Submit</button>
             </form>
@@ -14,16 +16,26 @@
         <div class="col-7">
             <ul class="list-group" style="max-height: 500px; overflow-y: auto;">
                 {% for admin in admins %}
-                    <li class="list-group-item">
+                    <li href="#" class="list-group-item list-group-item-action">
                         <div class="row">
-                            <div class="col-4">
-                                {{ admin.user }}
+                            <div class="col-12 col-md-8">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">{{ admin.user.full_name }}</h5>
+                                    
+                                </div>
+                                <p class="mb-1">{{ admin.user }}</p>
+                                <small>
+                                    <a class="btn btn-info btn-sm" href="{% url 'courses:update_course_admin' course.slug admin.id %}">Update</a>
+
+                                    <a class="btn btn-danger btn-sm" href="{% url 'courses:delete_admins' course.slug admin.id %}">Delete</a>
+                                </small>
                             </div>
-                            <div class="col-4">
-                                <a class="btn btn-info small" href="{% url 'courses:update_course_admin' course.slug admin.id %}">Update</a>
-                            </div>
-                            <div class="col-4">
-                                <a class="btn btn-danger small" href="{% url 'courses:delete_admins' course.slug admin.id %}">Delete</a>
+                            <div class="col-12 col-md-4">
+                                <small>
+                                    Edit Participants: <b>{{ admin.can_edit_participants|yesno }}</b><br/>
+                                    Edit Content: <b>{{ admin.can_edit_content|yesno }}</b><br/>
+                                    Edit Course: <b>{{ admin.can_edit_course|yesno }}</b>
+                                </small>
                             </div>
                         </div>
                     </li>

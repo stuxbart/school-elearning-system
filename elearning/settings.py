@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'knox',
     'corsheaders',
-    'django_elasticsearch_dsl'
+    'django_elasticsearch_dsl',
+    'crispy_forms',
 ]
 
 REST_FRAMEWORK = {
@@ -163,3 +164,6 @@ ELASTICSEARCH_DSL = {
         'hosts': 'localhost:9200'
     },
 }
+
+# crispy forms
+CRISPY_TEMPLATE_PACK = 'bootstrap4'

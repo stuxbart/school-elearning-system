@@ -1,5 +1,11 @@
+import json
+
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import get_object_or_404, reverse, HttpResponseRedirect
+from django.shortcuts import (
+    get_object_or_404, 
+    reverse,
+    HttpResponseRedirect
+)
 from django.views.generic import (
     ListView,
     FormView,
@@ -14,8 +20,7 @@ from django.http import JsonResponse, Http404
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.db.models import F, Subquery, OuterRef
 from django.contrib.contenttypes.models import ContentType
-
-import json
+from django.urls import reverse_lazy
 
 from ..forms import (
     ModuleCreateForm,
@@ -34,7 +39,16 @@ from ..forms import (
     CourseAdminUpdateForm
 )
 
-from ..mixins import IsTeacherMixin
+from ..mixins import (
+    IsTeacherMixin,
+    PathText,
+    PathLink,
+    PathMixin,
+    ManageAdminsPathMixin,
+    ManageCoursePathMixin,
+    ManageCoursesPathMixin,
+    ManageCourseContentPathMixin
+)
 from ..models import (
     Course,
     Content,
@@ -50,7 +64,12 @@ from ..models import (
 from activity.models import CourseViewed
 
 
-class ManageCourseList(LoginRequiredMixin, IsTeacherMixin, ListView):
+class ManageCourseList(
+    ManageCoursesPathMixin,
+    LoginRequiredMixin, 
+    IsTeacherMixin, 
+    ListView):
+
     model = Course
     template_name = 'courses/list.html'
 
@@ -63,9 +82,19 @@ class ManageCourseList(LoginRequiredMixin, IsTeacherMixin, ListView):
         return context
 
 
-class CourseCreateView(LoginRequiredMixin, IsTeacherMixin, CreateView):
+class CourseCreateView(
+    ManageCoursesPathMixin,
+    LoginRequiredMixin, 
+    IsTeacherMixin, 
+    CreateView):
+
     form_class = CourseCreateForm
     template_name = 'courses/edit.html'
+    
+    def get_paths(self):
+        paths = super().get_paths()
+        paths.append(PathText("Create"))
+        return paths
 
     def get_success_url(self):
         return reverse('courses:manage_list')
@@ -75,9 +104,24 @@ class CourseCreateView(LoginRequiredMixin, IsTeacherMixin, CreateView):
         return super().form_valid(form)
 
 
-class CourseEditView(LoginRequiredMixin, IsTeacherMixin, UpdateView):
+class CourseEditView(
+    ManageCoursePathMixin,
+    LoginRequiredMixin, 
+    IsTeacherMixin, 
+    UpdateView):
+
     form_class = CourseCreateForm
     template_name = 'courses/edit.html'
+
+    def get_paths(self):
+        paths = super().get_paths()
+        paths.append(PathLink(
+            "Update Info",
+            reverse_lazy("courses:update", kwargs={
+                "slug": self.object.slug
+                })
+        ))
+        return paths
 
     def get_success_url(self):
         return reverse('courses:manage_list')
@@ -103,9 +147,24 @@ class CourseEditView(LoginRequiredMixin, IsTeacherMixin, UpdateView):
         return Course.objects.filter(owner=self.request.user)
 
 
-class DeleteCourseView(LoginRequiredMixin, IsTeacherMixin, DeleteView):
+class DeleteCourseView(
+    ManageCoursePathMixin,
+    LoginRequiredMixin, 
+    IsTeacherMixin, 
+    DeleteView):
+
     model = Course
     template_name = 'courses/delete.html'
+
+    def get_paths(self):
+        paths = super().get_paths()
+        paths.append(PathLink(
+            "Delete",
+            reverse_lazy("courses:delete", kwargs={
+                "slug": self.object.slug
+                })
+        ))
+        return paths
 
     def get_success_url(self):
         return reverse('courses:manage_list')
@@ -114,7 +173,12 @@ class DeleteCourseView(LoginRequiredMixin, IsTeacherMixin, DeleteView):
         return Course.objects.filter(owner=self.request.user)
 
 
-class CourseAddContentView(LoginRequiredMixin, IsTeacherMixin, DetailView):
+class CourseAddContentView(
+    ManageCourseContentPathMixin,
+    LoginRequiredMixin, 
+    IsTeacherMixin, 
+    DetailView):
+
     model = Course
     template_name = 'courses/add_content.html'
 
@@ -167,13 +231,20 @@ class CourseAddContentView(LoginRequiredMixin, IsTeacherMixin, DetailView):
         return context
 
 
-class BaseContentCreateView(LoginRequiredMixin, IsTeacherMixin, FormView):
+class BaseContentCreateView(
+    ManageCourseContentPathMixin,
+    LoginRequiredMixin, 
+    IsTeacherMixin, 
+    FormView):
     template_name = 'courses/content/create.html'
     success_message = "Created"
 
     def get_success_url(self):
         course = self.object.course
         return reverse('courses:course_home', kwargs={'slug': course.slug})
+
+    def get_object(self):
+        return self.get_course()
 
     def get_course(self):
         slug = self.kwargs['slug']
@@ -249,26 +320,70 @@ class TextContentCreateView(BaseContentCreateView):
     form_class = TextContentCreateForm
     success_message = "Text created"
 
+    def get_paths(self):
+        paths = super().get_paths()
+        paths.append(PathText("Add Text"))
+        return paths
+
 
 class ImageContentCreateView(BaseContentCreateView):
     form_class = ImageContentCreateForm
     success_message = "Image created"
+
+    def get_paths(self):
+        paths = super().get_paths()
+        paths.append(PathText("Add Image"))
+        return paths
 
 
 class FileContentCreateView(BaseContentCreateView):
     form_class = FileContentCreateForm
     success_message = "File created"
 
+    def get_paths(self):
+        paths = super().get_paths()
+        paths.append(PathText("Add File"))
+        return paths
+
 
 class VideoContentCreateView(BaseContentCreateView):
     form_class = VideoContentCreateForm
     success_message = "Video created"
 
+    def get_paths(self):
+        paths = super().get_paths()
+        paths.append(PathText("Add Video"))
+        return paths
 
-class BaseContentUpdateView(LoginRequiredMixin, IsTeacherMixin, FormView):
+
+class BaseContentUpdateView(
+    ManageCoursesPathMixin,
+    LoginRequiredMixin, 
+    IsTeacherMixin, 
+    FormView):
     template_name = 'courses/content/update.html'
     SUCCESS_MESSAGE = "Success"
     ERROR_MESSAGE = "Error"
+
+    def get_paths(self):
+        paths = super().get_paths()
+        obj = self.get_object()
+        paths.append(PathLink(
+            str(obj.course),
+            reverse_lazy("courses:course_home", kwargs={
+                    'slug': obj.course.slug
+                })
+        ))
+        paths.append(PathLink(
+            "Content",
+            reverse_lazy("courses:add_content", kwargs={
+                    "slug": obj.course.slug
+                })
+        ))
+        paths.append(PathText(
+            "Update %s" % str(obj.title)
+        ))
+        return paths
 
     def get_queryset(self):
         content_type = ContentType.objects.get_for_model(self.model)
@@ -335,7 +450,6 @@ class TextContentUpdateView(BaseContentUpdateView):
         return reverse('courses:text_detail', kwargs={'pk': self.object.pk})
     
 
-
 class ImageContentUpdateView(BaseContentUpdateView):
     form_class = ImageUpdateForm
     model = Image
@@ -368,12 +482,25 @@ class VideoContentUpdateView(BaseContentUpdateView):
     def get_success_url(self):
         return reverse('courses:video_detail', kwargs={'pk': self.object.pk})
 
-class ModuleCreateView(LoginRequiredMixin, IsTeacherMixin, FormView):
+class ModuleCreateView(
+    ManageCoursePathMixin,
+    LoginRequiredMixin, 
+    IsTeacherMixin, 
+    FormView):
     form_class = ModuleCreateForm
     template_name = 'courses/module/create.html'
 
+    def get_paths(self):
+        paths = super().get_paths()
+        paths.append(PathText("Modules"))
+        paths.append(PathText("Create"))
+        return paths
+
     def get_success_url(self):
         return reverse('courses:add_content', kwargs={'slug': self.kwargs.get('slug')})
+
+    def get_object(self):
+        return self.get_course()
 
     def get_course(self):
         slug = self.kwargs.get('slug')
@@ -410,9 +537,25 @@ class ModuleCreateView(LoginRequiredMixin, IsTeacherMixin, FormView):
             return super().form_valid(form)
 
 
-class ModuleUpdateView(LoginRequiredMixin, IsTeacherMixin, UpdateView):
+class ModuleUpdateView(
+    ManageCoursesPathMixin,
+    LoginRequiredMixin, 
+    IsTeacherMixin, 
+    UpdateView):
     form_class = ModuleCreateForm
     template_name = 'courses/module/edit.html'
+
+    def get_paths(self):
+        paths = super().get_paths()
+        module = self.get_object()
+        course = module.course
+        paths.append(PathLink(str(course), reverse_lazy("courses:course_home", kwargs={
+                    'slug': course.slug
+                    })
+                ))
+        paths.append(PathText("Modules"))
+        paths.append(PathText("Update %s" % module))
+        return paths
 
     def get_success_url(self):
         obj = self.get_object()
@@ -429,8 +572,24 @@ class ModuleUpdateView(LoginRequiredMixin, IsTeacherMixin, UpdateView):
             return super().form_valid(form)
 
 
-class ModuleDeleteView(LoginRequiredMixin, IsTeacherMixin, DeleteView):
+class ModuleDeleteView(
+    ManageCoursesPathMixin,
+    LoginRequiredMixin, 
+    IsTeacherMixin, 
+    DeleteView):
     template_name = 'courses/module/delete.html'
+
+    def get_paths(self):
+        paths = super().get_paths()
+        module = self.get_object()
+        course = module.course
+        paths.append(PathLink(str(course), reverse_lazy("courses:course_home", kwargs={
+                    'slug': course.slug
+                    })
+                ))
+        paths.append(PathText("Modules"))
+        paths.append(PathText("Delete"))
+        return paths
 
     def get_success_url(self):
         obj = self.get_object()
@@ -468,7 +627,11 @@ class ModuleShowHideView(LoginRequiredMixin, IsTeacherMixin, DetailView):
             raise Exception("Ajax only")
 
 
-class CourseManageDetailView(LoginRequiredMixin, IsTeacherMixin, DetailView):
+class CourseManageDetailView(
+    ManageCoursePathMixin,
+    LoginRequiredMixin, 
+    IsTeacherMixin, 
+    DetailView):
     template_name = 'courses/course_main.html'
 
     def get_object(self):
@@ -502,9 +665,24 @@ class CourseManageDetailView(LoginRequiredMixin, IsTeacherMixin, DetailView):
         return context
 
 
-class CourseParticipantsManageDetailView(LoginRequiredMixin, IsTeacherMixin, FormView):
+class CourseParticipantsManageDetailView(
+    ManageCoursePathMixin,
+    LoginRequiredMixin, 
+    IsTeacherMixin, 
+    FormView):
     form_class = AddUserToCourseForm
     template_name = 'courses/course_participants.html'
+
+    def get_paths(self):
+        paths = super().get_paths()
+        paths.append(PathLink(
+            "Participants",
+            reverse_lazy("courses:participants", kwargs={"slug": self.kwargs.get("slug")})
+        ))
+        return paths
+
+    def get_object(self):
+        return self.get_course()
 
     def get_course(self):
         slug = self.kwargs.get('slug')
@@ -538,8 +716,33 @@ class CourseParticipantsManageDetailView(LoginRequiredMixin, IsTeacherMixin, For
         return super().form_valid(form)
 
 
-class ContentDeleteView(LoginRequiredMixin, IsTeacherMixin, DeleteView):
+class ContentDeleteView(
+    ManageCoursesPathMixin,
+    LoginRequiredMixin, 
+    IsTeacherMixin, 
+    DeleteView):
+
     template_name = 'courses/content/delete.html'
+
+    def get_paths(self):
+        paths = super().get_paths()
+        obj = self.get_object()
+        paths.append(PathLink(
+            str(obj.course),
+            reverse_lazy("courses:course_home", kwargs={
+                    'slug': obj.course.slug
+                })
+        ))
+        paths.append(PathLink(
+            "Content",
+            reverse_lazy("courses:add_content", kwargs={
+                    "slug": obj.course.slug
+                })
+        ))
+        paths.append(PathText(
+            "Update %s" % str(obj.title)
+        ))
+        return paths
 
     def get_success_url(self):
         obj = self.get_object()
@@ -634,7 +837,12 @@ class ModuleOrderView(LoginRequiredMixin, IsTeacherMixin, View):
             return HttpResponseRedirect(reverse('courses:course_home', kwargs={'slug': course.slug}))
 
 
-class CourseAdminsManageDetailView(LoginRequiredMixin, IsTeacherMixin, FormView):
+class CourseAdminsManageDetailView(
+    ManageAdminsPathMixin, 
+    LoginRequiredMixin, 
+    IsTeacherMixin, 
+    FormView):
+
     form_class = CourseAdminCreateForm
     template_name = 'courses/admins/course_admins.html'
     prefix = "1"
@@ -691,8 +899,18 @@ class CourseAdminsManageDetailView(LoginRequiredMixin, IsTeacherMixin, FormView)
             return self.form_invalid(form)
 
 
-class CourseAdminDeleteView(IsTeacherMixin, LoginRequiredMixin, DeleteView):
+class CourseAdminDeleteView(
+    ManageAdminsPathMixin,
+    IsTeacherMixin, 
+    LoginRequiredMixin, 
+    DeleteView):
+
     template_name = 'courses/admins/course_admin_delete.html'
+
+    def get_paths(self):
+        paths = super().get_paths()
+        paths.append(PathText("Delete"))
+        return paths
 
     def get_queryset(self):
         allowed_courses = Course.objects.filter(owner=self.request.user)
@@ -707,9 +925,19 @@ class CourseAdminDeleteView(IsTeacherMixin, LoginRequiredMixin, DeleteView):
         return reverse("courses:admins", kwargs={'slug': self.kwargs['slug']})
 
 
-class CourseAdminUpdateView(IsTeacherMixin, LoginRequiredMixin, UpdateView):
+class CourseAdminUpdateView(
+    ManageAdminsPathMixin,
+    IsTeacherMixin, 
+    LoginRequiredMixin, 
+    UpdateView):
+
     template_name = "courses/admins/course_admin_update.html"
     form_class = CourseAdminUpdateForm
+
+    def get_paths(self):
+        paths = super().get_paths()
+        paths.append(PathText("Update"))
+        return paths
 
     def get_queryset(self):
         allowed_courses = Course.objects.filter(owner=self.request.user)
