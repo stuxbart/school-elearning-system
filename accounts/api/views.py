@@ -201,5 +201,5 @@ class UserNASearchAPIView(UserSearchAPIView):
             if not course_id.isdecimal():
                 return qs
             course = get_object_or_404(Course, pk=course_id)
-            qs = qs.exclude(id__in=course.admins.all().distinct())
+            qs = qs.exclude(id__in=course.admins.all().distinct()).exclude(id=course.owner.id)
         return qs

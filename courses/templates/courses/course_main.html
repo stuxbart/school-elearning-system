@@ -26,6 +26,9 @@
                     <div class="btn-group-vertical" role="group" aria-label="Basic example">
                         <a class="btn text-dark" href="{% url 'courses:update' object.slug %}"><h5>Update Course Info</h5></a>
                         <a class="btn text-dark" href="{% url 'courses:add_content' object.slug %}"><h5>Add Content</h5></a>
+                        {% if object.owner == request.user %}
+                        <a class="btn text-dark" href="{% url 'courses:admins' object.slug %}"><h5>Admins</h5></a>
+                        {% endif %}
                     </div>
                     
                 </div>

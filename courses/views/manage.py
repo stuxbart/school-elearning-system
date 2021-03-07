@@ -636,7 +636,7 @@ class ModuleOrderView(LoginRequiredMixin, IsTeacherMixin, View):
 
 class CourseAdminsManageDetailView(LoginRequiredMixin, IsTeacherMixin, FormView):
     form_class = CourseAdminCreateForm
-    template_name = 'courses/course_admins.html'
+    template_name = 'courses/admins/course_admins.html'
     prefix = "1"
 
     def get_queryset(self):
@@ -692,7 +692,7 @@ class CourseAdminsManageDetailView(LoginRequiredMixin, IsTeacherMixin, FormView)
 
 
 class CourseAdminDeleteView(IsTeacherMixin, LoginRequiredMixin, DeleteView):
-    template_name = 'courses/delete.html'
+    template_name = 'courses/admins/course_admin_delete.html'
 
     def get_queryset(self):
         allowed_courses = Course.objects.filter(owner=self.request.user)
@@ -708,7 +708,7 @@ class CourseAdminDeleteView(IsTeacherMixin, LoginRequiredMixin, DeleteView):
 
 
 class CourseAdminUpdateView(IsTeacherMixin, LoginRequiredMixin, UpdateView):
-    template_name = "courses/course_admin_update.html"
+    template_name = "courses/admins/course_admin_update.html"
     form_class = CourseAdminUpdateForm
 
     def get_queryset(self):

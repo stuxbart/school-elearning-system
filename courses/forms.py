@@ -309,7 +309,10 @@ class CourseAdminCreateForm(forms.ModelForm):
         self.course = course
         self.fields['user'].queryset = self.fields['user'] \
                                         .queryset.exclude(id__in=course.admins.all().distinct())
-        self.fields['user'].widget.attrs.update({'id': "search-user"})
+        self.fields['user'].widget.attrs.update({
+            'id': "search-user",
+            "autocomplete":"off"
+        })
 
         get_arg_str = "?course=%s" % self.course.id
         self.fields['user'].widget.attrs.update({'endpoint': reverse('api:users:user-search-no-admins') + get_arg_str })
