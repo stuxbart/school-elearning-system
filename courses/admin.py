@@ -3,6 +3,10 @@ from django.contrib import admin
 from .models import Course, Module, Content, Text, Image, File, Video, Category, CourseAdmin
 
 admin.site.register(CourseAdmin)
+admin.site.register(Text)
+admin.site.register(Image)
+admin.site.register(File)
+admin.site.register(Video)
 
 class TextInline(admin.StackedInline):
     model = Text

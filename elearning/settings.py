@@ -150,6 +150,8 @@ STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'static_my_proj_cdn', 'sta
 
 MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'static_my_proj_cdn', 'media')
 
+PROTECTED_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'static_my_proj_cdn', 'protected')
+
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static_cdn')]
 
 CORS_ALLOWED_ORIGINS = [

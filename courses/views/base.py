@@ -1,7 +1,12 @@
+from wsgiref.util import FileWrapper
+from mimetypes import guess_type
+
 from django.shortcuts import render, get_object_or_404, HttpResponse
-from django.views.generic import ListView, DetailView
-from django.http import JsonResponse
-from ..models import Course, Text, Image, File, Video, Membership, Category
+from django.views.generic import ListView, DetailView, View
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.contenttypes.models import ContentType
+from django.http import JsonResponse, Http404
+from ..models import Course, Text, Image, File, Video, Membership, Category, Content
 from activity.mixins import CourseViewedMixin
 from ..documents import CourseDocument
 
@@ -97,21 +102,66 @@ def enroll_course(request):
     return JsonResponse({'message': 'error'}, status=400)
 
 
-class TextDetailView(DetailView):
-    model = Text
+class BaseContentDetailview(LoginRequiredMixin, DetailView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['content'] = context['object'] # Content object
+        context['object'] = context['content'].item
+        return context
+        
+
+class TextDetailView(BaseContentDetailview):
     template_name = 'courses/content/text.html'
 
+    def get_queryset(self):
+        return Content.objects.get_texts(self.request.user)
 
-class ImageDetailView(DetailView):
-    model = Image
+
+class ImageDetailView(BaseContentDetailview):
     template_name = 'courses/content/image.html'
 
+    def get_queryset(self):
+        return Content.objects.get_images(self.request.user)
 
-class FileDetailView(DetailView):
-    model = File
+
+class FileDetailView(BaseContentDetailview):
     template_name = 'courses/content/file.html'
 
+    def get_queryset(self):
+        return Content.objects.get_files(self.request.user)
 
-class VideoDetailView(DetailView):
-    model = Video
+
+class VideoDetailView(BaseContentDetailview):
     template_name = 'courses/content/video.html'
+
+    def get_queryset(self):
+        return Content.objects.get_videos(self.request.user)
+
+
+class FileDownloadView(LoginRequiredMixin, View):
+    def get(self, *args, **kwargs):
+        content_pk = kwargs.get('pk1')
+        item_pk = kwargs.get('pk2')
+        qs = Content.objects\
+            .get_available_queryset(self.request.user)\
+            .filter(pk=content_pk, object_id=item_pk)
+        if not qs.exists():
+            raise Http404("File doesn't exit")
+        
+        content_obj = qs.first()
+        item = content_obj.item
+        if hasattr(item, "file"):
+            filepath = item.file.path
+            with open(filepath, 'rb') as f:
+                wrapper = FileWrapper(f)
+                mimetype = 'application/force-download'
+                guessed_mimetype = guess_type(filepath)[0]
+                if guessed_mimetype:
+                    mimetype = guessed_mimetype
+
+                response = HttpResponse(wrapper, content_type=mimetype)
+                response['Content-Disposition'] = "attachment;filename=%s" % item.name
+                response['X-SendFile'] = str(item.name)
+                return response
+        else:
+            raise Http404()

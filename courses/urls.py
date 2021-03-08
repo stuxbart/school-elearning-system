@@ -35,7 +35,8 @@ from .views import (
     FileContentCreateView,
     FileContentUpdateView,
     VideoContentCreateView,
-    VideoContentUpdateView
+    VideoContentUpdateView,
+    FileDownloadView
 )
 
 app_name = 'courses'
@@ -93,6 +94,7 @@ urlpatterns = [
     path('details/content/text/<pk>', TextDetailView.as_view(), name='text_detail'),
     path('details/content/image/<pk>', ImageDetailView.as_view(), name='image_detail'),
     path('details/content/file/<pk>', FileDetailView.as_view(), name='file_detail'),
+    path('details/content/file/<pk1>/<pk2>/download', FileDownloadView.as_view(), name='file_download'),
     path('details/content/video/<pk>', VideoDetailView.as_view(), name='video_detail'),
 
     path('manage/', include(manage_urls))

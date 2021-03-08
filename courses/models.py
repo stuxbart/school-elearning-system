@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings 
+from django.core.files.storage import FileSystemStorage
 from django.db.models.signals import pre_save
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -7,7 +8,7 @@ from django.shortcuts import reverse
 from django.contrib.auth import get_user_model
 from django.db.models import Count, Q
 
-from .utils import slug_generator
+from .utils import slug_generator, get_filename
 from .fields import OrderField
 
 User = settings.AUTH_USER_MODEL
@@ -244,7 +245,7 @@ class Module(models.Model):
 class AvailableContentManager(models.Manager):
     def get_available_queryset(self, user):
         qs = super().get_queryset()
-        return qs.filter(module__course__participants__in=[user])
+        return qs.filter(Q(owner=user) | Q(course__in=user.courses.all()) | Q(course__in=user.course_set.all()))
 
 
 class ContentManager(AvailableContentManager):
@@ -298,6 +299,16 @@ class Content(models.Model):
     def __str__(self):
         return f"{self.order}. {self.item.title}"
 
+    def delete(self):
+        self.item.delete()
+        return super().delete()
+
+    def get_absolute_url(self):
+        return reverse(f"courses:{self.item.__class__.__name__.lower()}_detail", kwargs={"pk": self.pk})
+
+    def get_download_url(self):
+        return reverse("courses:file_download", kwargs={"pk1": self.pk, "pk2": self.item.pk})
+
     def move(self, n):
         if isinstance(n, int):
             if n > 0:
@@ -350,11 +361,25 @@ class Text(ItemBase):
 
 
 class File(ItemBase):
-    file = models.FileField(upload_to='files')
+    file = models.FileField(upload_to='files', storage=FileSystemStorage(location=settings.PROTECTED_ROOT))
+
+    def get_download_url(self):
+        return self.file.url
+
+    @property
+    def name(self):
+        return get_filename(self.file.name)
 
 
 class Image(ItemBase):
-    file = models.FileField(upload_to='images')
+    file = models.FileField(upload_to='images', storage=FileSystemStorage(location=settings.PROTECTED_ROOT))
+
+    def get_download_url(self):
+        return self.file.url
+
+    @property
+    def name(self):
+        return get_filename(self.file.name)
 
 
 class Video(ItemBase):

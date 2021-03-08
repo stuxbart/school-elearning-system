@@ -1,3 +1,4 @@
+import os
 import random
 import string
 from django.utils.text import slugify
@@ -32,3 +33,7 @@ def user_index_generator(instance):
     if qs_exists:
         return user_index_generator(instance)
     return index
+
+
+def get_filename(path):
+    return os.path.basename(path)

@@ -41,7 +41,7 @@
                                 <li class="list-group-item">
                                     <div class="row">
                                         <div class="col-8">
-                                            <a href="{{ content.item.get_absolute_url }}">{{ content.order }}. {{ content.item.title }}</a>
+                                            <a href="{{ content.get_absolute_url }}">{{ content.order }}. {{ content.item.title }}</a>
                                             <p>Created: {{ content.item.created }}</p>
                                             <p>{{ content.content_type }}</p>
                                         </div>
