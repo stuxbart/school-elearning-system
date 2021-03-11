@@ -1,20 +1,26 @@
 {% extends 'base.html' %}
 {% load cal_extras %}
+{% load static %}
 
 {% block content %}
 <div class="container">
+    {{ path }}
     <div class="row">
         <div class="col-12 col-lg-6">
             <div class="card mb-3" style="width: 100%;">
               <div class="row no-gutters">
                 <div class="col-md-4">
-                  <img src="{# {{ object.photo.url }} #}" class="card-img" alt="...">
+                  {% if object.photo %}
+                      <img class="card-img" src="{{ object.photo.url }}" alt="...">
+                  {% else %}
+                      <img class="card-img" src="{% static 'img/user_default.png' %}" alt="default" />
+                  {% endif %}
                 </div>
                 <div class="col-md-8">
                   <div class="card-body">
                     <h5 class="card-title">{% if object.full_name %}{{ object.full_name }}{% else %}{{ object.user_index }}{% endif %}</h5>
                     <p class="card-text">
-                        <a href="#" class="card-link">Edit Profile</a>
+                        <a href="{% url 'accounts:my_profile_update' %}" class="card-link">Edit Profile</a>
                     </p>
                     <p class="card-text"><small class="text-muted">Member since {{ object.timestamp }}</small></p>
                   </div>
@@ -56,17 +62,13 @@
                 <h5>Owned Courses</h5>
               </div>
               <div class="card-body">
-                <p class="card-text">
-                    <table class="table table-borderless">
-                      <tbody>
-                      {% for course in object.course_set.all %}
-                        <tr>
-                          <td><a href="{{ course.get_absolute_url }}">{{ course }}</a></td>
-                        </tr>
-                      {% endfor %}
-                      </tbody>
-                    </table>
-                </p>
+              <ul class="list-group list-group-flush">
+                  {% for course in object.course_set.all %}
+                    <li class="list-group-item"><a href="{{ course.get_absolute_url }}">{{ course }}</a></li>
+                  {% empty %}
+                    You don't have any courses created.
+                  {% endfor %}
+                </ul>
               </div>
               <div class="card-footer text-muted">
                 <a href="{% url 'courses:manage_list' %}" class="card-link">Manage courses</a>
@@ -92,18 +94,13 @@
                 <h5>My Courses</h5>
               </div>
               <div class="card-body">
-                <p class="card-text">
-                    <table class="table table-borderless">
-                      <tbody>
-                      {% for course in object.courses.all %}
-                        <tr>
-                          <td><a href="{{ course.get_absolute_url }}">{{ course }}</a></td>
-                        </tr>
-                      {% endfor %}
-                      </tbody>
-                    </table>
-                </p>
-
+                <ul class="list-group list-group-flush">
+                  {% for course in object.courses.all %}
+                    <li class="list-group-item"><a href="{{ course.get_absolute_url }}">{{ course }}</a></li>
+                  {% empty %}
+                    You don't have any courses created.
+                  {% endfor %}
+                </ul>
               </div>
               <div class="card-footer text-muted">
                 <a href="{% url 'courses:home' %}" class="card-link">Browse more courses</a>

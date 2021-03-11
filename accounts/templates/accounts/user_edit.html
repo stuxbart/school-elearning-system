@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+
+{% block content %}
+<div class="container">
+    {{ path }}
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-3">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        {% if object.photo %}
+                            <img class="card-img-sm" src="{{ object.photo.url }}" alt="...">
+                        {% else %}
+                            <img class="card-img-sm" src="{% static 'img/user_default.png' %}" alt="default" />
+                        {% endif %}
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">Edit User Photo</h5>
+                            <form action="{{ forms.photo.action }}" method="POST" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                {{ forms.photo.instance|crispy }}
+                                <button class="btn btn-success" type="submit">Save</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title text-center">Edit Password</h5>
+                    <form action="{{ forms.password.action }}" method="POST">
+                        {% csrf_token %}
+                        {{ forms.password.instance|crispy }}
+                        <button class="btn btn-success text-center" type="submit">Save</button>
+                    </form>
+                </div>
+            </div>
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title text-center">Edit User Info</h5>
+                    <form action="{{ forms.info.action }}" method="POST">
+                        {% csrf_token %}
+                        {{ forms.info.instance|crispy }}
+                        <button class="btn btn-success text-center" type="submit">Save</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

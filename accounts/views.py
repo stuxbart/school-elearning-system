@@ -1,12 +1,17 @@
-from django.shortcuts import redirect
+from django.shortcuts import redirect, reverse
 from django.http import JsonResponse
-from django.views.generic import DetailView, ListView
-from django.contrib.auth import authenticate, login, logout
+from django.views.generic import DetailView, ListView, UpdateView
+from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.views import PasswordChangeView
+
 
 
 from .documents import UserDocument
+from .forms import UserChangePhotoForm, UserInfoUpdateForm
+
+from courses.mixins import PathMixin, PathText, PathLink
 
 
 User = get_user_model()
@@ -46,9 +51,15 @@ def logout_view(request):
     return redirect('home')
 
 
-class UserHomeView(LoginRequiredMixin, DetailView):
+class UserHomeView(PathMixin, LoginRequiredMixin, DetailView):
     template_name = 'accounts/user_home.html'
     model = User
+
+    def get_paths(self):
+        return [
+            PathText("Home"),
+            PathLink("Profile", reverse("accounts:my_profile"))
+        ]
 
     def get_object(self, queryset=None):
         return self.request.user
@@ -57,6 +68,65 @@ class UserHomeView(LoginRequiredMixin, DetailView):
 class UserDetailView(LoginRequiredMixin, DetailView):
     template_name = 'accounts/user_detail.html'
     queryset = User.objects.active()
+
+
+class UserEditView(PathMixin, LoginRequiredMixin, DetailView):
+    template_name = 'accounts/user_edit.html'
+
+    def get_paths(self):
+        return [
+            PathText("Home"),
+            PathLink("Profile", reverse("accounts:my_profile")),
+            PathLink("Update", reverse("accounts:my_profile_update"))
+        ]
+        
+    def get_object(self):
+        return self.request.user
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.get_object()
+        context['forms'] = {
+            'photo': {
+                'instance': UserChangePhotoForm(),
+                'action': reverse("accounts:my_profile_update_photo")
+            },
+            'password': {
+                'instance': PasswordChangeForm(user),
+                'action': reverse("accounts:password_change")
+            },
+            'info': {
+                'instance': UserInfoUpdateForm(initial={"info": user.info}),
+                'action': reverse("accounts:my_profile_update_info")
+            }
+        }
+        return context
+
+
+class UserPhotoUpdate(LoginRequiredMixin, UpdateView):
+    form_class = UserChangePhotoForm
+
+    def get_object(self):
+        return self.request.user
+
+    def get_success_url(self):
+        return reverse("accounts:my_profile_update")
+        
+
+class UserInfoUpdate(LoginRequiredMixin, UpdateView):
+    form_class = UserInfoUpdateForm
+
+    def get_object(self):
+        return self.request.user
+
+    def get_success_url(self):
+        return reverse("accounts:my_profile_update")
+
+
+class UserPasswordChangeView(PasswordChangeView):
+    def get_success_url(self):
+        return reverse("accounts:my_profile_update")
+
 
 
 class UserSearchListView(LoginRequiredMixin, ListView):
