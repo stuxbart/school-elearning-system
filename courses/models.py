@@ -10,6 +10,7 @@ from django.db.models import Count, Q
 
 from .utils import slug_generator, get_filename
 from .fields import OrderField
+from courses import tasks
 
 User = settings.AUTH_USER_MODEL
 
@@ -397,6 +398,9 @@ class Membership(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     date_joined = models.DateTimeField(auto_now_add=True)
     method = models.CharField(max_length=20, choices=join_methods)
+
+    def send_info_email(self):
+        tasks.send_added_to_course_confirmation_email.delay(self.id) 
 
 
 class CourseAdmin(models.Model):

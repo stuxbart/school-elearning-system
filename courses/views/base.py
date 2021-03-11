@@ -9,9 +9,10 @@ from django.http import JsonResponse, Http404
 from ..models import Course, Text, Image, File, Video, Membership, Category, Content
 from activity.mixins import CourseViewedMixin
 from ..documents import CourseDocument
+from ..mixins import CachePageMixin
 
 
-class CourseListView(ListView):
+class CourseListView(CachePageMixin, ListView):
     queryset = Category.objects.all()
     template_name = 'courses/course_list.html'
     context_object_name = "categories"
@@ -59,7 +60,7 @@ class CourseSearchListView(ListView):
         context['q'] = self.request.GET.get('q', None)
         return context
 
-class CategoryCoursesListView(DetailView):
+class CategoryCoursesListView(CachePageMixin, DetailView):
     queryset = Category.objects.all()
     template_name = 'courses/course_list.html'
 

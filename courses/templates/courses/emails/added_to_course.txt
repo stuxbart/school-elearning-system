@@ -1,0 +1,5 @@
+Hi, {{ user.full_name }},
+You has been added to {{ course.title }}, 
+you can go {{ course_link }} to see content of this course.
+
+Visit our ELearning platform at {{ platform_url }} .

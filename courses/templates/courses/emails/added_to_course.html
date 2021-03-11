@@ -1,0 +1,7 @@
+{% extends "courses/emails/base.html" %}
+
+{% block body %}
+  <p>Hi {{ user.full_name }},</p>
+  <p>You has been added to {{ course.title }}, 
+  you can go <a href="{{ course_link }}">here</a> to see content of this course.</p >
+{% endblock %}

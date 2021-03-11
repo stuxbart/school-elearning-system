@@ -47,7 +47,8 @@ from ..mixins import (
     ManageAdminsPathMixin,
     ManageCoursePathMixin,
     ManageCoursesPathMixin,
-    ManageCourseContentPathMixin
+    ManageCourseContentPathMixin,
+    CachePageMixin
 )
 from ..models import (
     Course,
@@ -628,6 +629,7 @@ class ModuleShowHideView(LoginRequiredMixin, IsTeacherMixin, DetailView):
 
 
 class CourseManageDetailView(
+    CachePageMixin,
     ManageCoursePathMixin,
     LoginRequiredMixin, 
     IsTeacherMixin, 

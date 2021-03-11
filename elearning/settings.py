@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_elasticsearch_dsl',
     'crispy_forms',
+    'django_celery_results',
 ]
 
 REST_FRAMEWORK = {
@@ -169,3 +170,29 @@ ELASTICSEARCH_DSL = {
 
 # crispy forms
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+# Cache
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'default-locmemcache',
+        'TIMEOUT': 5,
+    }
+ }
+
+CSRF_USE_SESSIONS = True
+
+
+# emails
+EMAIL_HOST = 'smtp.example.com'
+EMAIL_HOST_USER = 'username'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_PASSWORD')
+
+FROM_EMAIL = 'noreply@example.com'
+LINK_DOMAIN = 'http://localhost:8000'
+
+# celery 
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'django-db'

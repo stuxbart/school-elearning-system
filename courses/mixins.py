@@ -1,6 +1,8 @@
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
+from django.core.cache import caches
+from django.views.decorators.cache import cache_page
 
 from .models import (
     Course,
@@ -129,3 +131,24 @@ class ManageAdminsPathMixin(PathMixin):
                     })
             ),
         ]
+
+
+class CachePageMixin:
+    cache_name = 'default'
+
+    @classmethod
+    def get_timeout(cls):
+        if hasattr(cls, 'timeout'):
+            return cls.timeout
+        cache = caches[cls.cache_name]
+        return cache.default_timeout
+
+    @classmethod
+    def as_view(cls, *args, **kwargs):
+        view = super().as_view(
+            *args, **kwargs)
+        view = cache_page(
+            timeout=cls.get_timeout(),
+            cache=cls.cache_name,
+        )(view)
+        return view
