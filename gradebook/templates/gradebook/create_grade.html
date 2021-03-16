@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load crispy_forms_filters %}
+
+{% block content %}
+<div class="container">
+{{ path }}
+    <div class="row">
+        <div class="col">
+            <h4>Add grade</h4>
+            <p>Student: <b>{{ object.student_record_book.user.full_name }}</b></p>
+            <p>Subject: <b>{{ object.subject_record_book.subject}}</b></p>
+            <form method="POST" action="{{ endpoint }}">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <button type="submit" class="btn btn-success">Add</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock content %}

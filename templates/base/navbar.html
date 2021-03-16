@@ -42,8 +42,11 @@
                     </div>
                   </div>
             </li>
-            <li class="nav-item content-manage" style="{% if not request.user.is_authenticated or not request.user.is_teacher %}display:none;{% else %}display: unset;{% endif %}">
+            <li class="nav-item content-manage active" style="{% if not request.user.is_authenticated or not request.user.is_teacher %}display:none;{% else %}display: unset;{% endif %}">
                 <a class="nav-link" href="{% url 'courses:manage_list' %}">Manage Courses</a>
+            </li>
+            <li class="nav-item active" style="{% if not request.user.is_authenticated or not request.user.is_teacher %}display:none;{% else %}display: unset;{% endif %}">
+                <a class="nav-link" href="{% url 'gradebook:teacher_home' %}">Gradebook</a>
             </li>
         </ul>
 
@@ -55,7 +58,7 @@
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                     <a class="dropdown-item" href="{% url 'accounts:my_profile' %}"><i class="fas fa-columns"></i> &nbsp;My Profile</a>
                     <a class="dropdown-item" href="{% url 'accounts:my_profile_update' %}"><i class="fas fa-user-cog"></i>&nbsp; Edit profile</a>
-                    <a class="dropdown-item" href="#"><i class="fas fa-chart-line"></i> &nbsp;Grades</a>
+                    <a class="dropdown-item" href="{% url 'gradebook:user_home' %}"><i class="fas fa-chart-line"></i> &nbsp;Grades</a>
                     <a class="dropdown-item" href="#"><i class="fas fa-cog"></i>&nbsp; Settings</a>
                     <a class="dropdown-item" href="{% url 'cal:m_calendar_events_list' %}"><i class="fas fa-calendar-week"></i> &nbsp;Calendar</a>
                     <div class="dropdown-divider"></div>

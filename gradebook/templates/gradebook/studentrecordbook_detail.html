@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    {{ path }}
+    <div class="row">
+        <div class="col-12 col-md-3">
+            <ul class="list-group">
+            {% for gradebook in record_books %}
+                {% if gradebook == object %}
+                    <a href="{% url 'gradebook:user_home' gradebook.id %}" class="list-group-item list-group-item-action active">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">{{ gradebook.semestr }}</h5>
+                        </div>
+                    </a>
+                {% else %}
+                    <a href="{% url 'gradebook:user_home' gradebook.id %}" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">{{ gradebook.semestr }}</h5>
+                    </div>
+                </a>
+                {% endif %}
+            {% endfor %}
+            </ul>
+        </div>
+        <div class="col-12 col-md-9">
+            <div class="row">
+                <div class="col-12">
+                    <p> Jakies info </p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12" style="font-size: 12px;">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th scope="col">Code</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Instructor</th>
+                                <th scope="col">ECTS</th>
+                                <th scope="col">Grades</th>
+                                <th scope="col">Final Grade I</th>
+                                <th scope="col">Final Grade II</th>
+                                <th scope="col">Paid</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for subject in object.subjects_record_books.all %}
+                            <tr>
+                                <td>{{ subject.subject_record_book.subject.subject_code }}</td>
+                                <td>{{ subject.subject_record_book.subject.name }}</td>
+                                <td>{{ subject.subject_record_book.instructor.full_name }}</td>
+                                <td>{{ subject.subject_record_book.subject.ects_points }}</td>
+                                <td>
+                                    {% for grade in subject.grades.all %}
+                                        {% if forloop.last %}
+                                            <span tabindex="0" data-toggle="tooltip" data-placement="top" title="{{ grade.description }}">{{ grade.grade }}</span>
+                                        {% else %}
+                                            <span tabindex="0" data-toggle="tooltip" data-placement="top" title="{{ grade.description }}">{{ grade.grade }}</span>,
+                                        {% endif %}
+                                    {% empty %}
+                                    -
+                                    {% endfor %}
+                                </td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>{{ subject.paid|yesno }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

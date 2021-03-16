@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'search',
     'information',
     'cal',
+    'gradebook',
     'rest_framework',
     'knox',
     'corsheaders',

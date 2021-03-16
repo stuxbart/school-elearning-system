@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+{{ path }}
+    <div class="row">
+        <div class="col-12 col-md-8">
+            <h4>Grade Detail</h4>
+        </div>
+        <div class="col-12 col-md-4">
+            <a href="{% url 'gradebook:update_grade' object.id %}" class="btn btn-info">Update</a>
+            <a href="{% url 'gradebook:delete_grade' object.id %}" class="btn btn-danger">Delete</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <p>Student: <b>{{ object.student_subject_record_book.student_record_book.user.full_name }}</b></p>
+            <p>Subject: <b>{{ object.student_subject_record_book.subject_record_book.subject}}</b></p>
+            <p>Created: <b>{{ object.created|date:"d.m.Y G:i" }}</b></p>
+            <p>Grade: <b>{{ object.grade }}</b></p>
+            <p>Weight: <b>{{ object.weight }}</b></p>
+            <p>Description: <b>{{ object.description }}</b></p>
+        </div>
+    </div>
+</div>
+{% endblock content %}

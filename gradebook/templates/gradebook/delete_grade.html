@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+{{ path }}
+    <div class="row my-3">
+        <div class="col">
+            Are you sure you want to delete grade <b>{{ object.grade }}</b> of user <b>{{ object.student_subject_record_book.student_record_book.user.full_name }}</b> in subject <b>"{{ object.student_subject_record_book.subject_record_book.subject }}"</b>?
+            <form action="" method="POST">
+                {% csrf_token %}
+                <button class="btn btn-danger my-3" type="submit">Delete</button>
+                <a href="{% url 'gradebook:detail_grade' object.id %}" class="btn btn-info">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

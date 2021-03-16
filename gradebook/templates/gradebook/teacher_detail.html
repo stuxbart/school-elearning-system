@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    {{ path }}
+    <div class="row">
+        <div class="col-12">
+            <h4>{{ object.subject }} - Gradebook</h4>
+            <p>{{ object.semestr }}</p>
+            <p>Open: {{ object.is_open|yesno }}</p>
+        </div>
+    </div>
+    <div class="row">
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Student</th>
+                    <th scope="col">Grades</th>
+                    <th scope="col">Final Grade I</th>
+                    <th scope="col">Final Grade II</th>
+                    <th scope="col">Final Grade III</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for student in object.students_record_books.all %}
+                <tr>
+                    <td>{{ student.student_record_book.user.full_name }}</td>
+                    <td>
+                        {% for grade in student.grades.all %}
+                            {% if forloop.last %}
+                                <a href="{% url 'gradebook:detail_grade' grade.id %}"><b><span tabindex="0" data-toggle="tooltip" data-placement="top" title="{{ grade.description }}">{{ grade.grade }}</span></b></a>
+                            {% else %}
+                                <a href="{% url 'gradebook:detail_grade' grade.id %}"><b><span tabindex="0" data-toggle="tooltip" data-placement="top" title="{{ grade.description }}">{{ grade.grade }}</span></b></a>,
+                            {% endif %}
+                        {% empty %}
+                        -
+                        {% endfor %}
+                        {% if student.is_open %}
+                            <a class="btn btn-success btn-sm" href="{% url 'gradebook:create_grade' student.id %}">Add</a>
+                        {% endif %}
+                    </td>
+                    <td>{{ student.final_grade_1|default:"-" }}</td>
+                    <td>{{ student.final_grade_2|default:"-" }}</td>
+                    <td>{{ student.final_grade_3|default:"-" }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock content %}
